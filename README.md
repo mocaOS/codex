@@ -1,7 +1,7 @@
 # The Codex
 
 <div align="center">
-  <img src="https://raw.githubusercontent.com/mocaOS/codex/refs/heads/main/codex.jpg?token=GHSAT0AAAAAADNBAPODOWWLF3JPAJNC4KDA2ILK6BQ" alt="Art DeCC0s - Museum of Crypto Art" />
+  <img src="https://github.com/mocaOS/codex/blob/main/codex.jpg?raw=true1" alt="Art DeCC0s - Museum of Crypto Art" />
 </div>
 
 The Codex is your gateway to exploring the Art DeCC0 collection from the Museum of Crypto Art. This repository provides access to comprehensive data about all 10,000 DeCC0 NFTs, including rich character biographies, traits, locations, and more.
