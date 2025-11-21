@@ -123,8 +123,9 @@ COPY --from=builder --chown=node:node /app/apps/api/directus-sync.config.js /dir
 # Install dotenv for directus-sync.config.js and @directus/update-check for Directus CLI
 RUN mkdir -p /directus/node_modules && \
     cd /directus && \
-    npm install --no-audit --no-fund --save dotenv@^17.2.3 @directus/update-check@^13.0.3 && \
-    chown -R node:node /directus/node_modules && \
+    printf '{\n  "name": "directus-runtime-deps",\n  "version": "1.0.0",\n  "private": true\n}\n' > package.json && \
+    npm install --no-audit --no-fund --legacy-peer-deps dotenv@17.2.3 @directus/update-check@13.0.3 && \
+    chown -R node:node /directus/node_modules /directus/package.json && \
     echo "✅ dotenv and @directus/update-check installed"
 
 # Copy migrations directory from builder stage
