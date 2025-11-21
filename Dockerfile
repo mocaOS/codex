@@ -56,12 +56,16 @@ FROM node:20-alpine as third-party-ext
 RUN apk add --no-cache python3 g++ make
 WORKDIR /extensions
 # Declare third-party Directus extensions to install
-RUN printf '{\n  "name": "directus-extensions",\n  "private": true,\n  "dependencies": {\n    "directus-extension-api-docs": "^2.3.1",\n    "directus-extension-sync": "^3.0.5"\n  }\n}\n' > package.json
+# Include @pnpm/find-workspace-dir explicitly as it's required by directus-extension-api-docs
+RUN printf '{\n  "name": "directus-extensions",\n  "private": true,\n  "dependencies": {\n    "directus-extension-api-docs": "^2.3.1",\n    "directus-extension-sync": "^3.0.5",\n    "@pnpm/find-workspace-dir": "^2.0.0"\n  }\n}\n' > package.json
 RUN npm install --no-audit --no-fund
 # Move all installed directus extensions into /extensions/directus
 RUN mkdir -p ./directus && \
     cd node_modules && \
     find . -maxdepth 1 -type d -name "directus-extension-*" -exec mv {} ../directus \;
+# Copy node_modules to ensure dependencies are available at runtime
+RUN mkdir -p ./directus/node_modules && \
+    cp -r node_modules/@pnpm ./directus/node_modules/ 2>/dev/null || true
 
 FROM directus/directus:latest AS api-production
 
@@ -79,6 +83,13 @@ COPY --from=third-party-ext --chown=node:node /extensions/directus /directus/ext
 
 # Copy built extensions from builder stage
 COPY --from=builder --chown=node:node /app/apps/api/extensions /directus/extensions
+
+# Install missing runtime dependency required by directus-extension-api-docs
+# Install in extensions directory so Node.js can resolve it when extensions require it
+RUN mkdir -p /directus/extensions/node_modules && \
+    npm install --no-audit --no-fund --prefix /directus/extensions @pnpm/find-workspace-dir@^2.0.0 && \
+    chown -R node:node /directus/extensions/node_modules && \
+    echo "✅ @pnpm/find-workspace-dir installed for directus-extension-api-docs"
 
 # Verify all extensions are properly installed
 RUN ls -la /directus/extensions/ && \
