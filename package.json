@@ -9,6 +9,7 @@
     "build": "FORCE_COLOR=1 turbo build",
     "dev": "FORCE_COLOR=1 turbo dev",
     "dev:api": "FORCE_COLOR=1 turbo dev --filter=@local/config --filter=directus-extension-codex --filter=api",
+    "build:api": "FORCE_COLOR=1 turbo build --filter=@local/config --filter=directus-extension-codex --filter=api",
     "dev:docs": "FORCE_COLOR=1 turbo dev --filter=docs",
     "build:docs": "FORCE_COLOR=1 turbo build --filter=docs"
   },

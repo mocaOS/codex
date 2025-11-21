@@ -32,8 +32,7 @@ RUN bun install --frozen-lockfile
 COPY . .
 
 # Build the project using turbo with increased memory limit
-RUN cd packages/config && APP_ENV=production bun run build && cd ../..
-RUN NODE_OPTIONS="--max-old-space-size=4096" APP_ENV=production FORCE_COLOR=1 turbo build --filter=directus-extension-codex --filter=api
+RUN NODE_OPTIONS="--max-old-space-size=4096" APP_ENV=production bun run build:api
 
 # Ensure migrations directory exists for copying (even if empty)
 RUN mkdir -p /app/apps/api/migrations
