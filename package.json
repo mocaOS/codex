@@ -1,0 +1,28 @@
+{
+  "name": "moca-codex",
+  "private": true,
+  "packageManager": "bun@1.2.0",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "build": "FORCE_COLOR=1 turbo build",
+    "dev": "FORCE_COLOR=1 turbo dev",
+    "dev:api": "FORCE_COLOR=1 turbo dev --filter=@local/config --filter=directus-extension-codex --filter=api",
+    "dev:docs": "FORCE_COLOR=1 turbo dev --filter=docs"
+  },
+  "dependencies": {
+    "dotenv": "^17.2.3",
+    "eslint": "^8.57.1"
+  },
+  "devDependencies": {
+    "turbo": "^2.5.8",
+    "typescript": "5.9.3"
+  },
+  "workspaces": [
+    "apps/api",
+    "apps/api/extensions/*",
+    "apps/docs",
+    "packages/*"
+  ]
+}

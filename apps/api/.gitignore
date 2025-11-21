@@ -1,0 +1,5 @@
+uploads/*
+!uploads/.gitkeep
+
+codex/*
+!codex/.gitkeep

@@ -1,0 +1,243 @@
+docsPath: 'api-docs'
+useAuthentication: false
+
+info:
+  title: MOCA Codex API Documentation
+  version: 1.0.0
+  description: |
+    # MOCA Codex API
+    
+    Welcome to the **MOCA Codex API** — a comprehensive RESTful interface for accessing and managing 
+    the MOCA Codex knowledge base. This API provides structured access to curated information about 
+    entities, their relationships, and metadata.
+    
+    ## Features
+    
+    - **Entity Management**: Retrieve and query codex items with rich metadata
+    - **Flexible Filtering**: Advanced query capabilities with filtering, sorting, and search
+    - **RESTful Design**: Standard HTTP methods and status codes
+    - **Structured Responses**: Consistent JSON responses with metadata and pagination support
+    
+    ## Getting Started
+    
+    All endpoints return JSON responses and follow standard REST conventions. Use query parameters 
+    to filter, sort, and paginate results according to your needs.
+
+servers:
+  - url: http://localhost:8055
+    description: MOCA Codex API Server
+
+tags:
+  - name: Codex
+    description: |
+      Operations for accessing and querying the **MOCA Codex** knowledge base. 
+      
+      The Codex contains curated information about entities, including their:
+      - **Identity**: Names, descriptions, and biographical information
+      - **Relationships**: Ancestral connections and associations
+      - **Attributes**: Characteristics, preferences, and metadata
+      - **Temporal Data**: Creation timestamps and historical context
+      
+      Use these endpoints to explore the rich interconnected data within the Codex.
+
+# HIDE ENDPOINTS: Use publishedTags to show only specific tagged endpoints
+# Only endpoints with at least one of these tags will appear in the docs
+# All other paths and unused tags will be removed
+# Note: The extension filters endpoints but may still include all schemas.
+# Scalar should automatically hide schemas not referenced by visible endpoints.
+publishedTags:
+  - Codex
+
+# Override codex endpoints to use "Codex" tag and only show GET operations
+paths:
+  "/items/codex":
+    get:
+      summary: List Codex Items
+      description: |
+        Retrieve a paginated list of all codex items. This endpoint supports advanced querying 
+        capabilities including filtering, sorting, searching, and field selection.
+        
+        ## Query Capabilities
+        
+        - **Filter**: Apply complex filters using Directus filter syntax
+        - **Search**: Full-text search across codex fields
+        - **Sort**: Order results by any field in ascending or descending order
+        - **Pagination**: Control result set size with `limit` and `offset`
+        - **Field Selection**: Specify which fields to include in the response
+        
+        ## Response Structure
+        
+        The response includes:
+        - `data`: Array of codex items matching the query
+        - `meta`: Metadata about the query results (total count, filter count, etc.)
+      tags:
+        - Codex
+      parameters:
+        - $ref: '#/components/parameters/Fields'
+        - $ref: '#/components/parameters/Limit'
+        - $ref: '#/components/parameters/Meta'
+        - $ref: '#/components/parameters/Offset'
+        - $ref: '#/components/parameters/Sort'
+        - $ref: '#/components/parameters/Filter'
+        - $ref: '#/components/parameters/Search'
+      responses:
+        '200':
+          description: |
+            **Success** — Returns a paginated list of codex items.
+            
+            The response includes an array of codex items in the `data` property, along with 
+            metadata about the query results (total count, filter count, etc.) in the `meta` property.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/ItemsCodex'
+                  meta:
+                    $ref: '#/components/schemas/x-metadata'
+              examples:
+                default:
+                  summary: List of codex items
+                  value:
+                    data:
+                      - id: 1
+                        name: "Korka"
+                        ancestor: "Slovenian king"
+                        description: "A contemplative curator with deep roots in Eastern Orthodox hesychasm"
+                        artstyle_disliked: "overly commercial"
+                        timestamp_created: "2025-01-15T10:30:00Z"
+                      - id: 2
+                        name: "Aria"
+                        ancestor: null
+                        description: "An artist exploring digital boundaries"
+                        artstyle_disliked: null
+                        timestamp_created: "2025-01-16T14:20:00Z"
+                    meta:
+                      filter_count: 2
+                      total_count: 2
+  "/items/codex/{id}":
+    get:
+      summary: Get Codex Item by ID
+      description: |
+        Retrieve a single codex item by its unique identifier. This endpoint returns detailed 
+        information about a specific entity in the Codex, including all available fields and metadata.
+        
+        ## Path Parameters
+        
+        - **id** (required): The unique incremental identifier of the codex item
+        
+        ## Query Parameters
+        
+        - **fields**: Specify which fields to include in the response (comma-separated)
+        - **meta**: Include additional metadata in the response
+        
+        ## Use Cases
+        
+        - Fetching complete details for a specific entity
+        - Retrieving full biographical information
+        - Accessing relationship data and attributes
+      tags:
+        - Codex
+      parameters:
+        - $ref: '#/components/parameters/Fields'
+        - $ref: '#/components/parameters/Meta'
+        - name: id
+          in: path
+          required: true
+          description: |
+            The unique incremental identifier of the codex item. This is a sequential integer 
+            that uniquely identifies each entity in the Codex.
+          schema:
+            type: integer
+            minimum: 1
+            example: 1
+      responses:
+        '200':
+          description: |
+            **Success** — Returns the requested codex item.
+            
+            The response contains a single codex item object in the `data` property, including 
+            all available fields such as name, description, ancestor, biographical information, 
+            and metadata.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/ItemsCodex'
+              examples:
+                default:
+                  summary: Single codex item with complete details
+                  value:
+                    data:
+                      id: 1
+                      name: "Korka"
+                      ancestor: "Slovenian king"
+                      description: "A contemplative curator with deep roots in Eastern Orthodox hesychasm, interpreting inner stillness as deeper attention to the world's beautiful chaos."
+                      artstyle_disliked: "overly commercial"
+                      timestamp_created: "2025-01-15T10:30:00Z"
+                      biography: "Her psychology is built on Eastern Orthodox hesychasm..."
+                      whatness: ["curator", "philosopher", "guardian"]
+        '404':
+          description: |
+            **Not Found** — The requested codex item does not exist.
+            
+            This error occurs when:
+            - The provided `id` does not match any existing codex item
+            - The item has been deleted or removed
+            - The `id` is invalid or out of range
+            
+            The response includes an error object with details about what went wrong.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        message:
+                          type: string
+                          description: Human-readable error message
+                        extensions:
+                          type: object
+                          description: Additional error context and metadata
+                          properties:
+                            code:
+                              type: string
+                              description: Machine-readable error code
+                              example: "NOT_FOUND"
+              examples:
+                default:
+                  summary: Item not found error response
+                  value:
+                    errors:
+                      - message: "Item not found"
+                        extensions:
+                          code: "NOT_FOUND"
+
+# Custom components (schemas, securitySchemes, etc.) can be added here
+# To hide specific schemas from Scalar's Models section, use x-scalar-ignore: true
+# Example:
+# components:
+#   schemas:
+#     UnwantedSchema:
+#       x-scalar-ignore: true
+#       type: object
+#     YourCustomSchema:
+#       type: object
+#       properties:
+#         id:
+#           type: string
+#   securitySchemes:
+#     Auth:
+#       in: header
+#       name: Authorization
+#       type: apiKey
+
