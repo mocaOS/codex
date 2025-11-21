@@ -120,12 +120,12 @@ RUN ls -la /directus/extensions/directus-extension-codex/ && \
 COPY --from=builder --chown=node:node /app/apps/api/directus-config /directus/directus-config
 COPY --from=builder --chown=node:node /app/apps/api/directus-sync.config.js /directus/directus-sync.config.js
 
-# Install dotenv for directus-sync.config.js
+# Install dotenv for directus-sync.config.js and @directus/update-check for Directus CLI
 RUN mkdir -p /directus/node_modules && \
     cd /directus && \
-    npm install --no-audit --no-fund --save dotenv@^17.2.3 && \
+    npm install --no-audit --no-fund --save dotenv@^17.2.3 @directus/update-check@^13.0.3 && \
     chown -R node:node /directus/node_modules && \
-    echo "✅ dotenv installed for directus-sync.config.js"
+    echo "✅ dotenv and @directus/update-check installed"
 
 # Copy migrations directory from builder stage
 COPY --from=builder --chown=node:node /app/apps/api/migrations/ /directus/migrations/
