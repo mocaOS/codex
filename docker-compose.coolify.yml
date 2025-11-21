@@ -43,7 +43,7 @@ services:
       - STORAGE_LOCAL_ROOT=${STORAGE_LOCAL_ROOT:-/directus/uploads}
       
       # Email configuration (leave EMAIL_TRANSPORT unset/empty to disable email)
-      - EMAIL_FROM=${EMAIL_FROM:-noreply@moca-codex.com}
+      - EMAIL_FROM=${EMAIL_FROM:-}
       - EMAIL_TRANSPORT=${EMAIL_TRANSPORT:-}
       - EMAIL_SMTP_HOST=${EMAIL_SMTP_HOST:-}
       - EMAIL_SMTP_PORT=${EMAIL_SMTP_PORT:-587}
