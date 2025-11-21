@@ -9,7 +9,8 @@
     "build": "FORCE_COLOR=1 turbo build",
     "dev": "FORCE_COLOR=1 turbo dev",
     "dev:api": "FORCE_COLOR=1 turbo dev --filter=@local/config --filter=directus-extension-codex --filter=api",
-    "dev:docs": "FORCE_COLOR=1 turbo dev --filter=docs"
+    "dev:docs": "FORCE_COLOR=1 turbo dev --filter=docs",
+    "build:docs": "FORCE_COLOR=1 turbo build --filter=docs"
   },
   "dependencies": {
     "dotenv": "^17.2.3",

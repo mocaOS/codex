@@ -18,12 +18,3 @@ dependsOn = ["setup"]
 cmds = [
   "/usr/local/bin/bun install --frozen-lockfile"
 ]
-
-[phases.build]
-dependsOn = ["install"]
-cmds = [
-  "/usr/local/bin/bun run build"
-]
-
-[start]
-cmd = "/usr/local/bin/bun run start" 
