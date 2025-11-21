@@ -10,7 +10,8 @@ ENV TURBO_TOKEN=$TURBO_TOKEN
 RUN bun install -g turbo
 
 # Install build dependencies for native modules (e.g., isolated-vm)
-RUN apk add --no-cache python3 g++ make
+# py3-setuptools provides distutils which is required by node-gyp (removed from Python 3.12+)
+RUN apk add --no-cache python3 py3-setuptools g++ make
 
 # Set working directory
 WORKDIR /app
