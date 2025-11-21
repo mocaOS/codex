@@ -3,7 +3,7 @@
   "info": {
     "title": "Dynamic API Specification",
     "description": "This is a dynamically generated API specification for all endpoints existing on the current project.",
-    "version": "e5b000488fa38bf8a088273dc61f7a868b2114fa"
+    "version": "3ad2450c2b29d7f9855a08ca19cf5663364ef5cf"
   },
   "servers": [
     {
@@ -10383,10 +10383,6 @@
       "ItemsCodex": {
         "type": "object",
         "properties": {
-          "id": {
-            "nullable": false,
-            "type": "integer"
-          },
           "ancestor": {
             "nullable": true,
             "type": "string"
@@ -10394,6 +10390,250 @@
           "artstyle_disliked": {
             "nullable": true,
             "type": "string"
+          },
+          "artstyle_liked": {
+            "nullable": true,
+            "type": "string"
+          },
+          "artstyle_loved": {
+            "nullable": true,
+            "type": "string"
+          },
+          "background_category": {
+            "nullable": true,
+            "type": "string"
+          },
+          "background_texture": {
+            "nullable": true,
+            "type": "string"
+          },
+          "biography": {
+            "nullable": true,
+            "description": "Array of biography text segments (JSON)"
+          },
+          "biography_addendum": {
+            "nullable": true,
+            "type": "string"
+          },
+          "character_image_description": {
+            "nullable": true,
+            "type": "string"
+          },
+          "character_image_summary": {
+            "nullable": true,
+            "type": "string"
+          },
+          "characterization": {
+            "nullable": true,
+            "type": "string"
+          },
+          "citation": {
+            "nullable": true,
+            "type": "string"
+          },
+          "confession": {
+            "nullable": true,
+            "type": "string"
+          },
+          "cryptoart_focus": {
+            "nullable": true,
+            "type": "string"
+          },
+          "cultural_affiliation": {
+            "nullable": true,
+            "type": "string"
+          },
+          "decc0_type": {
+            "nullable": true,
+            "type": "string"
+          },
+          "description": {
+            "nullable": true,
+            "type": "string"
+          },
+          "dna1": {
+            "nullable": true,
+            "type": "string"
+          },
+          "dna2": {
+            "nullable": true,
+            "type": "string"
+          },
+          "dna3": {
+            "nullable": true,
+            "type": "string"
+          },
+          "dna4": {
+            "nullable": true,
+            "type": "string"
+          },
+          "expression_style": {
+            "nullable": true,
+            "type": "string"
+          },
+          "favorite_book": {
+            "nullable": true,
+            "type": "string"
+          },
+          "favorite_cryptoartist": {
+            "nullable": true,
+            "type": "string"
+          },
+          "favorite_role": {
+            "nullable": true,
+            "type": "string"
+          },
+          "fiery": {
+            "nullable": true,
+            "type": "string"
+          },
+          "gender": {
+            "nullable": true,
+            "description": "Array of gender identities (JSON)"
+          },
+          "id": {
+            "nullable": false,
+            "type": "integer"
+          },
+          "ideolectal_words": {
+            "nullable": true,
+            "description": "Array of characteristic words used by the character (JSON)"
+          },
+          "ipfs_background": {
+            "nullable": true,
+            "description": "IPFS hash for background image",
+            "type": "string"
+          },
+          "ipfs_character": {
+            "nullable": true,
+            "description": "IPFS hash for character image",
+            "type": "string"
+          },
+          "ipfs_final": {
+            "nullable": true,
+            "description": "IPFS hash for final composite image",
+            "type": "string"
+          },
+          "kindred": {
+            "nullable": true,
+            "type": "string"
+          },
+          "metaphor_domain": {
+            "nullable": true,
+            "type": "string"
+          },
+          "mood": {
+            "nullable": true,
+            "type": "string"
+          },
+          "multiplicity": {
+            "nullable": true,
+            "type": "integer"
+          },
+          "municipality_significant": {
+            "nullable": true,
+            "type": "string"
+          },
+          "name": {
+            "nullable": true,
+            "description": "Array of names (JSON)"
+          },
+          "paired_art_image_description": {
+            "nullable": true,
+            "type": "string"
+          },
+          "paired_art_image_summary": {
+            "nullable": true,
+            "type": "string"
+          },
+          "paired_art_placement": {
+            "nullable": true,
+            "type": "string"
+          },
+          "personality_mood": {
+            "nullable": true,
+            "type": "string"
+          },
+          "personality_problem_solving": {
+            "nullable": true,
+            "type": "string"
+          },
+          "personality_tradart_view": {
+            "nullable": true,
+            "type": "string"
+          },
+          "philosophical_affiliation": {
+            "nullable": true,
+            "type": "string"
+          },
+          "self_identity": {
+            "nullable": true,
+            "type": "string"
+          },
+          "soul": {
+            "nullable": true,
+            "type": "integer"
+          },
+          "thumbnail": {
+            "nullable": true,
+            "type": "string"
+          },
+          "thumbnail_background": {
+            "nullable": true,
+            "type": "string"
+          },
+          "timestamp_created": {
+            "nullable": true,
+            "type": "string",
+            "format": "timestamp"
+          },
+          "whatness": {
+            "nullable": true,
+            "description": "Array of what this character is (JSON)"
+          },
+          "writing_comma": {
+            "nullable": true,
+            "type": "string"
+          },
+          "writing_ellipses": {
+            "nullable": true,
+            "type": "string"
+          },
+          "writing_exclamation": {
+            "nullable": true,
+            "type": "string"
+          },
+          "writing_flavor": {
+            "nullable": true,
+            "type": "string"
+          },
+          "writing_flavor_cultural": {
+            "nullable": true,
+            "type": "string"
+          },
+          "writing_questions": {
+            "nullable": true,
+            "type": "string"
+          },
+          "writing_quirks": {
+            "nullable": true,
+            "type": "string"
+          },
+          "writing_quotation_marks": {
+            "nullable": true,
+            "type": "string"
+          },
+          "writing_sentence_complexity": {
+            "nullable": true,
+            "type": "string"
+          },
+          "writing_style": {
+            "nullable": true,
+            "description": "Array of writing style characteristics (JSON)"
+          },
+          "x": {
+            "nullable": true,
+            "type": "integer"
           }
         },
         "x-collection": "codex"

@@ -99,9 +99,93 @@ enum EventEnum {
 }
 
 type codex {
-  id: ID!
   ancestor: String
   artstyle_disliked: String
+  artstyle_liked: String
+  artstyle_loved: String
+  background_category: String
+  background_texture: String
+
+  """Array of biography text segments (JSON)"""
+  biography: JSON
+  biography_func: count_functions
+  biography_addendum: String
+  character_image_description: String
+  character_image_summary: String
+  characterization: String
+  citation: String
+  confession: String
+  cryptoart_focus: String
+  cultural_affiliation: String
+  decc0_type: String
+  description: String
+  dna1: String
+  dna2: String
+  dna3: String
+  dna4: String
+  expression_style: String
+  favorite_book: String
+  favorite_cryptoartist: String
+  favorite_role: String
+  fiery: String
+
+  """Array of gender identities (JSON)"""
+  gender: JSON
+  gender_func: count_functions
+  id: ID!
+
+  """Array of characteristic words used by the character (JSON)"""
+  ideolectal_words: JSON
+  ideolectal_words_func: count_functions
+
+  """IPFS hash for background image"""
+  ipfs_background: String
+
+  """IPFS hash for character image"""
+  ipfs_character: String
+
+  """IPFS hash for final composite image"""
+  ipfs_final: String
+  kindred: String
+  metaphor_domain: String
+  mood: String
+  multiplicity: Int
+  municipality_significant: String
+
+  """Array of names (JSON)"""
+  name: JSON
+  name_func: count_functions
+  paired_art_image_description: String
+  paired_art_image_summary: String
+  paired_art_placement: String
+  personality_mood: String
+  personality_problem_solving: String
+  personality_tradart_view: String
+  philosophical_affiliation: String
+  self_identity: String
+  soul: Int
+  thumbnail: String
+  thumbnail_background: String
+  timestamp_created: Date
+  timestamp_created_func: datetime_functions
+
+  """Array of what this character is (JSON)"""
+  whatness: JSON
+  whatness_func: count_functions
+  writing_comma: String
+  writing_ellipses: String
+  writing_exclamation: String
+  writing_flavor: String
+  writing_flavor_cultural: String
+  writing_questions: String
+  writing_quirks: String
+  writing_quotation_marks: String
+  writing_sentence_complexity: String
+
+  """Array of writing style characteristics (JSON)"""
+  writing_style: JSON
+  writing_style_func: count_functions
+  x: Int
 }
 
 type codex_aggregated {
@@ -118,13 +202,93 @@ type codex_aggregated {
 }
 
 type codex_aggregated_count {
-  id: Int
   ancestor: Int
   artstyle_disliked: Int
+  artstyle_liked: Int
+  artstyle_loved: Int
+  background_category: Int
+  background_texture: Int
+
+  """Array of biography text segments (JSON)"""
+  biography: Int
+  biography_addendum: Int
+  character_image_description: Int
+  character_image_summary: Int
+  characterization: Int
+  citation: Int
+  confession: Int
+  cryptoart_focus: Int
+  cultural_affiliation: Int
+  decc0_type: Int
+  description: Int
+  dna1: Int
+  dna2: Int
+  dna3: Int
+  dna4: Int
+  expression_style: Int
+  favorite_book: Int
+  favorite_cryptoartist: Int
+  favorite_role: Int
+  fiery: Int
+
+  """Array of gender identities (JSON)"""
+  gender: Int
+  id: Int
+
+  """Array of characteristic words used by the character (JSON)"""
+  ideolectal_words: Int
+
+  """IPFS hash for background image"""
+  ipfs_background: Int
+
+  """IPFS hash for character image"""
+  ipfs_character: Int
+
+  """IPFS hash for final composite image"""
+  ipfs_final: Int
+  kindred: Int
+  metaphor_domain: Int
+  mood: Int
+  multiplicity: Int
+  municipality_significant: Int
+
+  """Array of names (JSON)"""
+  name: Int
+  paired_art_image_description: Int
+  paired_art_image_summary: Int
+  paired_art_placement: Int
+  personality_mood: Int
+  personality_problem_solving: Int
+  personality_tradart_view: Int
+  philosophical_affiliation: Int
+  self_identity: Int
+  soul: Int
+  thumbnail: Int
+  thumbnail_background: Int
+  timestamp_created: Int
+
+  """Array of what this character is (JSON)"""
+  whatness: Int
+  writing_comma: Int
+  writing_ellipses: Int
+  writing_exclamation: Int
+  writing_flavor: Int
+  writing_flavor_cultural: Int
+  writing_questions: Int
+  writing_quirks: Int
+  writing_quotation_marks: Int
+  writing_sentence_complexity: Int
+
+  """Array of writing style characteristics (JSON)"""
+  writing_style: Int
+  x: Int
 }
 
 type codex_aggregated_fields {
   id: Float
+  multiplicity: Float
+  soul: Float
+  x: Float
 }
 
 type codex_mutated {
@@ -734,9 +898,86 @@ type directus_webhooks_mutated {
 
 """"""
 type version_codex {
-  id: ID
   ancestor: String
   artstyle_disliked: String
+  artstyle_liked: String
+  artstyle_loved: String
+  background_category: String
+  background_texture: String
+
+  """Array of biography text segments (JSON)"""
+  biography: JSON
+  biography_addendum: String
+  character_image_description: String
+  character_image_summary: String
+  characterization: String
+  citation: String
+  confession: String
+  cryptoart_focus: String
+  cultural_affiliation: String
+  decc0_type: String
+  description: String
+  dna1: String
+  dna2: String
+  dna3: String
+  dna4: String
+  expression_style: String
+  favorite_book: String
+  favorite_cryptoartist: String
+  favorite_role: String
+  fiery: String
+
+  """Array of gender identities (JSON)"""
+  gender: JSON
+  id: ID
+
+  """Array of characteristic words used by the character (JSON)"""
+  ideolectal_words: JSON
+
+  """IPFS hash for background image"""
+  ipfs_background: String
+
+  """IPFS hash for character image"""
+  ipfs_character: String
+
+  """IPFS hash for final composite image"""
+  ipfs_final: String
+  kindred: String
+  metaphor_domain: String
+  mood: String
+  multiplicity: Int
+  municipality_significant: String
+
+  """Array of names (JSON)"""
+  name: JSON
+  paired_art_image_description: String
+  paired_art_image_summary: String
+  paired_art_placement: String
+  personality_mood: String
+  personality_problem_solving: String
+  personality_tradart_view: String
+  philosophical_affiliation: String
+  self_identity: String
+  soul: Int
+  thumbnail: String
+  thumbnail_background: String
+  timestamp_created: Date
+
+  """Array of what this character is (JSON)"""
+  whatness: JSON
+  writing_comma: String
+  writing_ellipses: String
+  writing_exclamation: String
+  writing_flavor: String
+  writing_flavor_cultural: String
+  writing_questions: String
+  writing_quirks: String
+  writing_quotation_marks: String
+  writing_sentence_complexity: String
+
+  """Array of writing style characteristics (JSON)"""
+  writing_style: JSON
+  x: Int
 }
 
 """"""
@@ -771,9 +1012,75 @@ input boolean_filter_operators {
 }
 
 input codex_filter {
-  id: number_filter_operators
   ancestor: string_filter_operators
   artstyle_disliked: string_filter_operators
+  artstyle_liked: string_filter_operators
+  artstyle_loved: string_filter_operators
+  background_category: string_filter_operators
+  background_texture: string_filter_operators
+  biography: string_filter_operators
+  biography_func: count_function_filter_operators
+  biography_addendum: string_filter_operators
+  character_image_description: string_filter_operators
+  character_image_summary: string_filter_operators
+  characterization: string_filter_operators
+  citation: string_filter_operators
+  confession: string_filter_operators
+  cryptoart_focus: string_filter_operators
+  cultural_affiliation: string_filter_operators
+  decc0_type: string_filter_operators
+  description: string_filter_operators
+  dna1: string_filter_operators
+  dna2: string_filter_operators
+  dna3: string_filter_operators
+  dna4: string_filter_operators
+  expression_style: string_filter_operators
+  favorite_book: string_filter_operators
+  favorite_cryptoartist: string_filter_operators
+  favorite_role: string_filter_operators
+  fiery: string_filter_operators
+  gender: string_filter_operators
+  gender_func: count_function_filter_operators
+  id: number_filter_operators
+  ideolectal_words: string_filter_operators
+  ideolectal_words_func: count_function_filter_operators
+  ipfs_background: string_filter_operators
+  ipfs_character: string_filter_operators
+  ipfs_final: string_filter_operators
+  kindred: string_filter_operators
+  metaphor_domain: string_filter_operators
+  mood: string_filter_operators
+  multiplicity: number_filter_operators
+  municipality_significant: string_filter_operators
+  name: string_filter_operators
+  name_func: count_function_filter_operators
+  paired_art_image_description: string_filter_operators
+  paired_art_image_summary: string_filter_operators
+  paired_art_placement: string_filter_operators
+  personality_mood: string_filter_operators
+  personality_problem_solving: string_filter_operators
+  personality_tradart_view: string_filter_operators
+  philosophical_affiliation: string_filter_operators
+  self_identity: string_filter_operators
+  soul: number_filter_operators
+  thumbnail: string_filter_operators
+  thumbnail_background: string_filter_operators
+  timestamp_created: date_filter_operators
+  timestamp_created_func: datetime_function_filter_operators
+  whatness: string_filter_operators
+  whatness_func: count_function_filter_operators
+  writing_comma: string_filter_operators
+  writing_ellipses: string_filter_operators
+  writing_exclamation: string_filter_operators
+  writing_flavor: string_filter_operators
+  writing_flavor_cultural: string_filter_operators
+  writing_questions: string_filter_operators
+  writing_quirks: string_filter_operators
+  writing_quotation_marks: string_filter_operators
+  writing_sentence_complexity: string_filter_operators
+  writing_style: string_filter_operators
+  writing_style_func: count_function_filter_operators
+  x: number_filter_operators
   _and: [codex_filter]
   _or: [codex_filter]
 }
@@ -783,9 +1090,86 @@ input count_function_filter_operators {
 }
 
 input create_codex_input {
-  id: ID
   ancestor: String
   artstyle_disliked: String
+  artstyle_liked: String
+  artstyle_loved: String
+  background_category: String
+  background_texture: String
+
+  """Array of biography text segments (JSON)"""
+  biography: JSON
+  biography_addendum: String
+  character_image_description: String
+  character_image_summary: String
+  characterization: String
+  citation: String
+  confession: String
+  cryptoart_focus: String
+  cultural_affiliation: String
+  decc0_type: String
+  description: String
+  dna1: String
+  dna2: String
+  dna3: String
+  dna4: String
+  expression_style: String
+  favorite_book: String
+  favorite_cryptoartist: String
+  favorite_role: String
+  fiery: String
+
+  """Array of gender identities (JSON)"""
+  gender: JSON
+  id: ID
+
+  """Array of characteristic words used by the character (JSON)"""
+  ideolectal_words: JSON
+
+  """IPFS hash for background image"""
+  ipfs_background: String
+
+  """IPFS hash for character image"""
+  ipfs_character: String
+
+  """IPFS hash for final composite image"""
+  ipfs_final: String
+  kindred: String
+  metaphor_domain: String
+  mood: String
+  multiplicity: Int
+  municipality_significant: String
+
+  """Array of names (JSON)"""
+  name: JSON
+  paired_art_image_description: String
+  paired_art_image_summary: String
+  paired_art_placement: String
+  personality_mood: String
+  personality_problem_solving: String
+  personality_tradart_view: String
+  philosophical_affiliation: String
+  self_identity: String
+  soul: Int
+  thumbnail: String
+  thumbnail_background: String
+  timestamp_created: Date
+
+  """Array of what this character is (JSON)"""
+  whatness: JSON
+  writing_comma: String
+  writing_ellipses: String
+  writing_exclamation: String
+  writing_flavor: String
+  writing_flavor_cultural: String
+  writing_questions: String
+  writing_quirks: String
+  writing_quotation_marks: String
+  writing_sentence_complexity: String
+
+  """Array of writing style characteristics (JSON)"""
+  writing_style: JSON
+  x: Int
 }
 
 input create_directus_sync_id_map_input {
@@ -1331,9 +1715,86 @@ input string_filter_operators {
 }
 
 input update_codex_input {
-  id: ID
   ancestor: String
   artstyle_disliked: String
+  artstyle_liked: String
+  artstyle_loved: String
+  background_category: String
+  background_texture: String
+
+  """Array of biography text segments (JSON)"""
+  biography: JSON
+  biography_addendum: String
+  character_image_description: String
+  character_image_summary: String
+  characterization: String
+  citation: String
+  confession: String
+  cryptoart_focus: String
+  cultural_affiliation: String
+  decc0_type: String
+  description: String
+  dna1: String
+  dna2: String
+  dna3: String
+  dna4: String
+  expression_style: String
+  favorite_book: String
+  favorite_cryptoartist: String
+  favorite_role: String
+  fiery: String
+
+  """Array of gender identities (JSON)"""
+  gender: JSON
+  id: ID
+
+  """Array of characteristic words used by the character (JSON)"""
+  ideolectal_words: JSON
+
+  """IPFS hash for background image"""
+  ipfs_background: String
+
+  """IPFS hash for character image"""
+  ipfs_character: String
+
+  """IPFS hash for final composite image"""
+  ipfs_final: String
+  kindred: String
+  metaphor_domain: String
+  mood: String
+  multiplicity: Int
+  municipality_significant: String
+
+  """Array of names (JSON)"""
+  name: JSON
+  paired_art_image_description: String
+  paired_art_image_summary: String
+  paired_art_placement: String
+  personality_mood: String
+  personality_problem_solving: String
+  personality_tradart_view: String
+  philosophical_affiliation: String
+  self_identity: String
+  soul: Int
+  thumbnail: String
+  thumbnail_background: String
+  timestamp_created: Date
+
+  """Array of what this character is (JSON)"""
+  whatness: JSON
+  writing_comma: String
+  writing_ellipses: String
+  writing_exclamation: String
+  writing_flavor: String
+  writing_flavor_cultural: String
+  writing_questions: String
+  writing_quirks: String
+  writing_quotation_marks: String
+  writing_sentence_complexity: String
+
+  """Array of writing style characteristics (JSON)"""
+  writing_style: JSON
+  x: Int
 }
 
 input update_directus_sync_id_map_input {

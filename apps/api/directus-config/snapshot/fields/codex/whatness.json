@@ -20,7 +20,9 @@
     "readonly": false,
     "required": false,
     "sort": 51,
-    "special": ["cast-json"],
+    "special": [
+      "cast-json"
+    ],
     "translations": null,
     "validation": null,
     "validation_message": null,
@@ -45,4 +47,3 @@
     "foreign_key_column": null
   }
 }
-

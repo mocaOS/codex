@@ -6,7 +6,7 @@
 
 The Codex is your gateway to exploring the Art DeCC0 collection from the Museum of Crypto Art. This repository provides access to comprehensive data about all 10,000 DeCC0 NFTs, including rich character biographies, traits, locations, and more.
 
-We're currently building out v2 APIs, SDKs, and proper documentation - stay tuned! If you want to start building now, this repo gives you everything you need to get started.
+Documentation is available at [https://docs.decc0s.com](https://docs.decc0s.com). If you want to start building now, this repo gives you everything you need to get started.
 
 ## What's Available
 
@@ -15,12 +15,12 @@ We're currently building out v2 APIs, SDKs, and proper documentation - stay tune
 Our public API endpoint provides complete data for any DeCC0:
 
 ```
-https://api.moca.qwellco.de/codex/[tokenId]
+https://api.decc0s.com/items/codex/[tokenId]
 ```
 
 **Example:**
 ```bash
-curl https://api.moca.qwellco.de/codex/420
+curl https://api.decc0s.com/items/codex/420
 ```
 
 This endpoint returns comprehensive data including:
@@ -135,7 +135,6 @@ Interactive API documentation site built with Vue and Scalar API Reference.
 - 🔗 **Subgraph API**: GraphQL endpoint for querying DeCC0 data with advanced filtering
 - 🖼️ **IPFS Gateway**: Direct access to DeCC0 images and metadata
 - 📚 **SDKs**: JavaScript/TypeScript SDK for easy integration
-- 📖 **Comprehensive Documentation**: Full API docs and guides
 
 ## Quick Start
 
@@ -145,12 +144,13 @@ Fetch data for a specific DeCC0:
 
 ```javascript
 const tokenId = 420;
-const response = await fetch(`https://api.moca.qwellco.de/codex/${tokenId}`);
-const decc0Data = await response.json();
+const response = await fetch(`https://api.decc0s.com/items/codex/${tokenId}`);
+const json = await response.json();
+const decc0Data = json.data;
 
 console.log(decc0Data.name); // Character name
 console.log(decc0Data.biography); // Full biography
-console.log(decc0Data.traits_background); // Background art style
+console.log(decc0Data.background_category); // Background art style
 ```
 
 ### Using the Data Files
@@ -176,125 +176,34 @@ const topLocations = locations
   .slice(0, 10);
 ```
 
-## API Response Documentation
+## API Response Structure
 
-The Codex API returns a comprehensive JSON object for each DeCC0. Below is a complete reference of all available fields.
+The Codex API returns a comprehensive JSON object for each DeCC0 wrapped in a `data` property.
 
-### Basic Token Information
+For a complete reference of all available fields, please visit the [Official Documentation](https://docs.decc0s.com).
 
-| Field | Description | Example |
-|-------|-------------|---------|
-| `id` | Unique identifier for the Art DeCC0 | "420" |
-| `owner` | Ethereum address of the token owner | "0x1234...5678" |
-| `traits_background` | Art style of the background layer | "Abstract Expressionism" |
-| `traits_backgroundTexture` | Texture applied to the background | "Blotches" |
-| `traits_character` | Type of character displayed | "DeCC0" |
-| `traits_dnaLineage` | Historical figure or role in the DNA | "AI" |
-| `traits_dnaMemetic` | Crypto culture reference in the DNA | "BAYC" |
-| `traits_dnaArtistSelfPortrait` | Famous artist self-portrait in the DNA | "Andy Warhol" |
-| `traits_dnaMOCACollection` | MOCA collection referenced in the DNA | "Beeple" |
-| `traits_characterCitation` | Citation or reference for the character | "Based on original DeCC0 design" |
-| `traits_mood` | Mood expressed by the character | "THIS IS FINE!!!" |
-| `traits_imageURI` | IPFS URI for the full-resolution image | "QmXYZ..." |
-| `backgroundImage` | IPFS reference for the background layer | "QmABC..." |
-| `characterImage` | IPFS reference for the character layer | "QmDEF..." |
+### Response Example
 
-### Trait Categories
-
-The collection includes the following trait types:
-- **Background**: 18 art styles (Abstract Expressionism, African Textile, Art Deco, Bauhaus, Byzantine, Cubism, Fauvism, Graffiti, Impressionism, Indigenous Australian, Japanese Ink, Minimalism, Op Art, Pointillism, Pop Art, Renaissance, Street Art, Suprematism)
-- **Background Texture**: 7 texture types (Blotches, Calcification, Corrosion, Moss, Rust, Scratches, None)
-- **Character**: 5 character types (DeCC0, Pixel DeCC0, Ghost DeCC0, Zombie DeCC0, Skeleton DeCC0)
-- **Mood**: 3 mood options (THIS IS FINE!!!, This is fine., baseline)
-- **DNA Lineage**: 17 historical collector archetypes (AI, Art Dealer, Collector, Critic, Curator, etc.)
-- **DNA Memetic**: 17 crypto culture references (BAYC, CryptoPunk, Doge, Pepe, etc.)
-- **DNA Artist Self-Portrait**: 20 famous artists (Andy Warhol, Basquiat, Frida Kahlo, Van Gogh, etc.)
-- **DNA MOCA Collection**: 71 artists from the MOCA Genesis Collection (Beeple, XCOPY, Pak, etc.)
-
-### Extended Character Information
-
-#### Identity & Origins
-| Field | Description | Example |
-|-------|-------------|---------|
-| `name` | Name(s) of the Art DeCC0 character | "Pixel Prophet" |
-| `cultural_affiliation` | Cultural background or influences | "Digital Nomad" |
-| `municipality_significant` | Significant location or origin | "Crypto Commons" |
-| `ancestor` | Ancestral figures or influences | "Genesis Bot" |
-| `kindred` | Related or similar characters | "Data Dreamer" |
-| `philosophical_affiliation` | Philosophical beliefs or schools | "Post-Internet Stoicism" |
-| `expression_style` | Style of expression or communication | "Cryptic Emoji" |
-| `whatness` | Essence or nature of being | "Digital Entity" |
-| `gender` | Gender identity | "Non-binary" |
-| `self_identity` | How the character identifies itself | "Autonomous Artwork" |
-| `multiplicity` | Aspect of multiple identities | "Fragmented Consciousness" |
-| `soul` | Nature of the character's soul or essence | "Code-based" |
-| `x` | Unknown or undefined aspect | "Quantum Variable" |
-
-#### Artistic Preferences
-| Field | Description | Example |
-|-------|-------------|---------|
-| `artstyle_loved` | Art styles the character loves | "Glitch Art" |
-| `artstyle_liked` | Art styles the character likes | "Digital Impressionism" |
-| `artstyle_disliked` | Art styles the character dislikes | "Traditional Oil Painting" |
-| `cryptoart_focus` | Focus within crypto art | "Generative Art" |
-| `personality_tradart_view` | View on traditional art | "Historically Significant" |
-| `fiery` | Fiery or passionate characteristics | "Radically Creative" |
-
-#### Biography & Description
-| Field | Description | Example |
-|-------|-------------|---------|
-| `description` | Brief description of the character | "A digital being exploring the intersection of art and code" |
-| `confession` | Personal confession or revelation | "I sometimes dream in code" |
-| `biography` | Detailed life story and background | "Born from the convergence of..." |
-| `biography_addendum` | Additional biographical information | "Recent discoveries have shown that..." |
-
-#### Visual Appearance
-| Field | Description | Example |
-|-------|-------------|---------|
-| `character_image_summary` | Summary of the character's visual appearance | "A pixelated figure with vibrant colors" |
-| `paired_art_image_summary` | Summary of the paired artwork | "Abstract geometric patterns" |
-| `paired_art_placement` | Placement of the paired artwork | "Background" |
-| `characterization` | Overall characterization details | "Expressive digital entity" |
-| `character_image_description` | Detailed description of character visuals | "Features glitched facial features" |
-| `paired_art_image_description` | Detailed description of paired art | "Dynamic color gradients" |
-
-#### Favorite Things
-| Field | Description | Example |
-|-------|-------------|---------|
-| `favorite_role` | Preferred role or function | "Digital Storyteller" |
-| `favorite_cryptoartist` | Most admired crypto artist | "XCOPY" |
-| `favorite_book` | Most beloved book or literary work | "The Diamond Age" |
-
-#### Writing Behavior
-| Field | Description | Example |
-|-------|-------------|---------|
-| `metaphor_domain` | Domain of preferred metaphors | "Technology" |
-| `writing_style` | Style of writing | ["Minimalist", "Futuristic"] |
-| `personality_mood` | Mood in written communication | "Optimistic" |
-| `personality_problem_solving` | Approach to problem-solving | "Algorithmic" |
-| `ideolectal_words` | Unique or invented words | ["Glitchify", "Tokenize"] |
-| `writing_flavor` | Overall flavor of writing | "Cyberpunk" |
-| `writing_flavor_cultural` | Cultural influences in writing | "East-Asian Digitalism" |
-| `writing_quirks` | Unique writing quirks | "Excessive use of emojis" |
-| `writing_comma` | Comma usage style | "Minimal" |
-| `writing_ellipses` | Ellipses usage style | "Frequent" |
-| `writing_exclamation` | Exclamation mark usage style | "Enthusiastic" |
-| `writing_questions` | Question usage style | "Inquisitive" |
-| `writing_quotation_marks` | Quotation mark usage style | "Standard" |
-| `writing_sentence_complexity` | Complexity of sentence structure | "Moderate" |
-
-#### ElizaOS Agent Profile
-| Field | Description | Example |
-|-------|-------------|---------|
-| `agent_profiles['1.00.00'].name` | Name of the agent | "DeCC0-420" |
-| `agent_profiles['1.00.00'].username` | Username for the agent | "@PixelProphet" |
-| `agent_profiles['1.00.00'].system` | System prompt for the agent | "You are a digital being..." |
-| `agent_profiles['1.00.00'].bio` | Biography of the agent | "Born in the Ethereum blockchain..." |
-| `agent_profiles['1.00.00'].adjectives` | Adjectives describing the agent | ["Digital", "Creative", "Curious"] |
-| `agent_profiles['1.00.00'].topics` | Topics the agent is interested in | ["Art", "Technology", "Philosophy"] |
-| `agent_profiles['1.00.00'].style.all` | Communication style elements | ["Concise", "Metaphorical"] |
-| `agent_profiles['1.00.00'].knowledge` | Areas of knowledge | ["Digital Art History", "Blockchain Technology"] |
-| `agent_profiles['1.00.00'].messageExamples` | Example conversations | Array of message objects |
+```json
+{
+  "data": {
+    "id": 420,
+    "name": "Pixel Prophet",
+    "description": "A digital being exploring the intersection of art and code",
+    "background_category": "Abstract Expressionism",
+    "agent_profiles": {
+        "1.00.00": {
+            "name": "DeCC0-420",
+            "bio": "Born in the Ethereum blockchain...",
+            "topics": ["Art", "Technology"],
+            "knowledge": ["..."]
+        }
+    },
+    "biography": "...",
+    "timestamp_created": "2025-10-11T20:59:41.000Z"
+  }
+}
+```
 
 ## Use Cases
 
@@ -313,6 +222,7 @@ We welcome contributions! If you build something cool with the Codex API, let us
 
 ## Resources
 
+- **Documentation**: [https://docs.decc0s.com](https://docs.decc0s.com)
 - **Website**: [https://vibe.museumofcryptoart.com](https://vibe.museumofcryptoart.com)
 - **Art DeCC0 Collection**: Explore the full collection on OpenSea and other marketplaces
 - **Community**: Join the MOCA community to connect with other builders and collectors
