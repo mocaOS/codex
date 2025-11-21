@@ -11,6 +11,13 @@ info:
     the MOCA Codex knowledge base. This API provides structured access to curated information about 
     entities, their relationships, and metadata.
     
+    ## About This API
+    
+    This API is built on **Directus**, an open-source headless CMS. All filtering, querying, and 
+    data operations follow Directus conventions. For detailed information on how to use filters, 
+    query parameters, and advanced features, please refer to the 
+    [Directus API Documentation](https://docs.directus.io/reference/query.html).
+    
     ## Features
     
     - **Entity Management**: Retrieve and query codex items with rich metadata
@@ -21,7 +28,9 @@ info:
     ## Getting Started
     
     All endpoints return JSON responses and follow standard REST conventions. Use query parameters 
-    to filter, sort, and paginate results according to your needs.
+    to filter, sort, and paginate results according to your needs. For comprehensive documentation 
+    on query syntax, filters, and advanced features, see the 
+    [Directus API Documentation](https://directus.io/docs/api/fields#list-all-fields).
 
 servers:
   - url: http://localhost:8055
@@ -59,11 +68,13 @@ paths:
         
         ## Query Capabilities
         
-        - **Filter**: Apply complex filters using Directus filter syntax
+        - **Filter**: Apply complex filters using Directus filter syntax. See the [Directus Filter Documentation](https://directus.io/docs/api/fields#list-all-fields) for detailed filter syntax and examples.
         - **Search**: Full-text search across codex fields
         - **Sort**: Order results by any field in ascending or descending order
         - **Pagination**: Control result set size with `limit` and `offset`
         - **Field Selection**: Specify which fields to include in the response
+        
+        For comprehensive query documentation including all available parameters and examples, refer to the [Directus API Documentation](https://directus.io/docs/api/fields#list-all-fields).
         
         ## Response Structure
         
