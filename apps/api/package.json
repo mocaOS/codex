@@ -22,6 +22,7 @@
     "sharp": "^0.34.4"
   },
   "devDependencies": {
+    "dotenv": "^17.2.3",
     "directus-extension-codex": "workspace:*"
   }
 }

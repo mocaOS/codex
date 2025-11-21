@@ -28,6 +28,7 @@
       },
       "devDependencies": {
         "directus-extension-codex": "workspace:*",
+        "dotenv": "^17.2.3",
       },
     },
     "apps/api/extensions/directus-extension-codex": {
