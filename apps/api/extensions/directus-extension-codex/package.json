@@ -21,6 +21,11 @@
     "entries": [
       {
         "type": "hook",
+        "name": "init",
+        "source": "src/init/index.ts"
+      },
+      {
+        "type": "hook",
         "name": "codex-seed",
         "source": "src/seed/index.ts"
       },

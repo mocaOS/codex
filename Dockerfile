@@ -48,9 +48,6 @@ RUN NODE_OPTIONS="--max-old-space-size=4096" APP_ENV=production bun run build:ap
 # Ensure migrations directory exists for copying (even if empty)
 RUN mkdir -p /app/apps/api/migrations
 
-# Verify startup script exists and make it executable in builder stage
-RUN ls -la /app/apps/api/startup.sh && chmod +x /app/apps/api/startup.sh
-
 # Stage 2: Production stage for API (Directus)
 FROM node:20-alpine as third-party-ext
 RUN apk add --no-cache python3 g++ make
@@ -81,9 +78,6 @@ USER root
 
 # Install curl and postgresql-client for health checks and database connectivity tests (Alpine uses apk)
 RUN apk add --no-cache curl postgresql-client
-
-# Install directus-sync CLI tool (needed for runtime sync operations)
-RUN npm install -g directus-sync
 
 # Copy third-party extensions built in separate stage
 COPY --from=third-party-ext --chown=node:node /extensions/directus /directus/extensions
@@ -120,7 +114,7 @@ RUN ls -la /directus/extensions/directus-extension-codex/ && \
 COPY --from=builder --chown=node:node /app/apps/api/directus-config /directus/directus-config
 COPY --from=builder --chown=node:node /app/apps/api/directus-sync.config.js /directus/directus-sync.config.js
 
-# Install dotenv for directus-sync.config.js and @directus/update-check for Directus CLI
+# Install dotenv for directus-sync.config.js (used when npx directus-sync loads the config) and @directus/update-check for Directus CLI
 RUN mkdir -p /directus/node_modules && \
     cd /directus && \
     printf '{\n  "name": "directus-runtime-deps",\n  "version": "1.0.0",\n  "private": true\n}\n' > package.json && \
@@ -130,9 +124,6 @@ RUN mkdir -p /directus/node_modules && \
 
 # Copy migrations directory from builder stage
 COPY --from=builder --chown=node:node /app/apps/api/migrations/ /directus/migrations/
-
-# Copy startup script (already made executable in builder stage)
-COPY --from=builder --chown=node:node /app/apps/api/startup.sh /directus/startup.sh
 
 # Switch back to node user
 USER node
@@ -144,6 +135,6 @@ EXPOSE 8055
 HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=5 \
   CMD curl -f http://localhost:8055/server/health || exit 1
 
-# Start using our custom startup script
-CMD ["sh", "/directus/startup.sh"]
+# Use default Directus start command (init hook handles setup)
+CMD ["npx", "directus", "start"]
 
