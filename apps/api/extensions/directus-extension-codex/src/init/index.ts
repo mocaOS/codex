@@ -143,7 +143,23 @@ export default defineHook(({ action, init }, { env, logger }) => {
         logger.warn(migrationError);
       }
 
-      // Generate seed data from IPFS codex files
+      logger.info("Initial setup completed successfully");
+    } catch (error) {
+      logger.error("Initial setup failed:");
+      logger.error(error);
+      throw error;
+    }
+  });
+
+  action("server.start", async () => {
+    if (env.NODE_ENV !== "production") return;
+
+    try {
+      logger.info("Pushing Directus sync...");
+      await execAsync(`npx directus-sync push --force --directus-url ${env.PUBLIC_URL} --directus-token ${env.ADMIN_TOKEN}`);
+      logger.info("✅ Sync completed successfully");
+
+      // Generate seed data from IPFS codex files after sync completes
       try {
         const ipfsGateway = env.IPFS_GATEWAY || "http://127.0.0.1:8080";
         const ipfsCodexHash = env.IPFS_CODEX_HASH || "QmNdMnuJURo3sFkLR2WLSshPqycfjafbHoAcd2FTdBJ8S5";
@@ -161,22 +177,6 @@ export default defineHook(({ action, init }, { env, logger }) => {
         // Don't throw - seed generation failure is non-fatal
         logger.warn("Continuing startup despite seed generation failure");
       }
-
-      logger.info("Initial setup completed successfully");
-    } catch (error) {
-      logger.error("Initial setup failed:");
-      logger.error(error);
-      throw error;
-    }
-  });
-
-  action("server.start", async () => {
-    if (env.NODE_ENV !== "production") return;
-
-    try {
-      logger.info("Pushing Directus sync...");
-      await execAsync(`npx directus-sync push --force --directus-url ${env.PUBLIC_URL} --directus-token ${env.ADMIN_TOKEN}`);
-      logger.info("✅ Sync completed successfully");
     } catch (error) {
       logger.error("Sync failed:");
       logger.error(error);
