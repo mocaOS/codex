@@ -18,6 +18,7 @@ COPY package.json bun.lock turbo.json ./
 # Copy all workspace package.json files
 COPY apps/api/package.json ./apps/api/
 COPY apps/api/extensions/directus-extension-codex/package.json ./apps/api/extensions/directus-extension-codex/
+COPY apps/docs/package.json ./apps/docs/
 COPY packages/config/package.json ./packages/config/
 COPY packages/eslint-config-custom/package.json ./packages/eslint-config-custom/
 COPY packages/types/package.json ./packages/types/
