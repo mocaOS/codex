@@ -1,10 +1,5 @@
-import fs from "node:fs";
-import path from "node:path";
-import { fileURLToPath } from "node:url";
-import { createRequire } from "node:module";
-
-// Use createRequire to load CommonJS modules (like dotenv) in ESM context
-const require = createRequire(import.meta.url);
+const fs = require("node:fs");
+const path = require("node:path");
 
 // Load dotenv if available (useful for local development, not needed in Docker)
 // In Docker, environment variables are already set via docker-compose, so dotenv is optional
@@ -14,9 +9,6 @@ try {
   // dotenv not available (e.g., in Docker), use environment variables directly
   // This is fine since Docker sets env vars via docker-compose environment section
 }
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
 
 if (!process.env.ADMIN_TOKEN) {
   throw new Error("ADMIN_TOKEN is not set");
@@ -120,7 +112,7 @@ async function generateSeedData(gateway, hash, seedDir) {
   console.log(`   - Output directory: ${seedDir}`);
 }
 
-export default {
+module.exports = {
   debug: true,
   directusUrl: process.env.PUBLIC_URL || "http://localhost:8055",
   directusToken: process.env.ADMIN_TOKEN,

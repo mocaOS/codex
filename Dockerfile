@@ -53,7 +53,7 @@ FROM node:20-alpine as third-party-ext
 RUN apk add --no-cache python3 g++ make
 WORKDIR /extensions
 # Install third-party Directus extensions
-RUN printf '{\n  "name": "directus-extensions",\n  "private": true,\n  "dependencies": {\n    "directus-extension-api-docs": "^2.3.1",\n    "directus-extension-sync": "^3.0.5",\n    "@pnpm/find-workspace-dir": "^1.0.0"\n  }\n}\n' > package.json
+RUN printf '{\n  "name": "directus-extensions",\n  "private": true,\n  "dependencies": {\n    "directus-extension-api-docs": "^2.3.1",\n    "directus-extension-sync": "^3.0.5",\n    "@pnpm/find-workspace-dir": "^1.0.0",\n    "@pnpm/error": "^3.0.0"\n  }\n}\n' > package.json
 RUN npm install --no-audit --no-fund --legacy-peer-deps
 # Move all installed directus extensions into /extensions/directus
 RUN mkdir -p ./directus && \
@@ -70,6 +70,10 @@ RUN apk add --no-cache curl postgresql-client
 
 # Copy third-party extensions built in separate stage
 COPY --from=third-party-ext --chown=node:node /extensions/directus /directus/extensions
+
+# Install missing dependencies for directus-extension-api-docs in its node_modules
+RUN cd /directus/extensions/directus-extension-api-docs && \
+    npm install --no-audit --no-fund --legacy-peer-deps @pnpm/find-workspace-dir@^1.0.0 @pnpm/error@^3.0.0 || true
 
 # Copy built extensions from builder stage
 COPY --from=builder --chown=node:node /app/apps/api/extensions /directus/extensions
