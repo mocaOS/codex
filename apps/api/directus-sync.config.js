@@ -1,9 +1,17 @@
 import fs from "node:fs";
 import path, { dirname } from "node:path";
 import { fileURLToPath } from "node:url";
-import dotenv from "dotenv";
 
-dotenv.config();
+// Load dotenv if available (useful for local development, not needed in Docker)
+// In Docker, environment variables are already set via docker-compose, so dotenv is optional
+try {
+  // Use dynamic import to make dotenv optional
+  const dotenvModule = await import("dotenv");
+  dotenvModule.default.config();
+} catch {
+  // dotenv not available (e.g., in Docker), use environment variables directly
+  // This is fine since Docker sets env vars via docker-compose environment section
+}
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
