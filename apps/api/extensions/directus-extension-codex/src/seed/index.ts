@@ -18,6 +18,13 @@ export default defineHook(({ init }, { services, getSchema }) => {
       try {
         schema = await getSchema();
 
+        // Check if codex collection exists in schema
+        if (!schema.collections.codex) {
+          console.log("   ⏭️  Codex collection not found in schema yet. Skipping seed process.");
+          console.log("   ℹ️  Collection will be created by directus-sync. Seed will run on next startup.");
+          return;
+        }
+
         // Check if codex collection already has 10k items
         const { ItemsService } = services;
         const codexService = new ItemsService("codex", {
@@ -51,7 +58,15 @@ export default defineHook(({ init }, { services, getSchema }) => {
 
         console.log(`   Found ${seedFiles.length} seed files`);
       } catch (error) {
-        console.error("❌ Codex seed hook initialization failed:", error instanceof Error ? error.message : String(error));
+        // Check if error is due to collection not existing
+        const errorMessage = error instanceof Error ? error.message : String(error);
+        if (errorMessage.includes("primary") || errorMessage.includes("Cannot read properties")) {
+          console.log("   ⏭️  Codex collection not ready yet. Skipping seed process.");
+          console.log("   ℹ️  Collection will be created by directus-sync. Seed will run on next startup.");
+          return;
+        }
+
+        console.error("❌ Codex seed hook initialization failed:", errorMessage);
         if (error instanceof Error) console.error(error.stack);
         console.log("⏭️  Skipping seed process due to initialization error");
         return;
