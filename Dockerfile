@@ -85,6 +85,12 @@ RUN apk add --no-cache curl postgresql-client
 # Install directus-sync CLI tool (needed for runtime sync operations)
 RUN npm install -g directus-sync
 
+# Install dotenv locally for directus-sync.config.js (needed for ES module imports)
+RUN mkdir -p /directus/node_modules && \
+    cd /directus && \
+    npm install --no-audit --no-fund dotenv && \
+    chown -R node:node /directus/node_modules
+
 # Copy third-party extensions built in separate stage
 COPY --from=third-party-ext --chown=node:node /extensions/directus /directus/extensions
 
