@@ -56,16 +56,23 @@ FROM node:20-alpine as third-party-ext
 RUN apk add --no-cache python3 g++ make
 WORKDIR /extensions
 # Declare third-party Directus extensions to install
-# Include @pnpm/find-workspace-dir explicitly as it's required by directus-extension-api-docs
-RUN printf '{\n  "name": "directus-extensions",\n  "private": true,\n  "dependencies": {\n    "directus-extension-api-docs": "^2.3.1",\n    "directus-extension-sync": "^3.0.5",\n    "@pnpm/find-workspace-dir": "^2.0.0"\n  }\n}\n' > package.json
-RUN npm install --no-audit --no-fund
+# Include @pnpm packages explicitly as they're required by directus-extension-api-docs
+RUN printf '{\n  "name": "directus-extensions",\n  "private": true,\n  "dependencies": {\n    "directus-extension-api-docs": "^2.3.1",\n    "directus-extension-sync": "^3.0.5",\n    "@pnpm/find-workspace-dir": "^2.0.0",\n    "@pnpm/error": "^3.0.0",\n    "@pnpm/constants": "^7.0.0"\n  }\n}\n' > package.json
+RUN npm install --no-audit --no-fund --legacy-peer-deps
 # Move all installed directus extensions into /extensions/directus
 RUN mkdir -p ./directus && \
     cd node_modules && \
     find . -maxdepth 1 -type d -name "directus-extension-*" -exec mv {} ../directus \;
-# Copy node_modules to ensure dependencies are available at runtime
+# Copy @pnpm dependencies to ensure they're available at runtime
+# Copy to both the root and each extension's node_modules
 RUN mkdir -p ./directus/node_modules && \
-    cp -r node_modules/@pnpm ./directus/node_modules/ 2>/dev/null || true
+    cp -r node_modules/@pnpm ./directus/node_modules/ 2>/dev/null || true && \
+    for ext_dir in ./directus/directus-extension-*/node_modules; do \
+        if [ -d "$ext_dir" ] && [ -d "node_modules/@pnpm" ]; then \
+            mkdir -p "$ext_dir/@pnpm" && \
+            cp -r node_modules/@pnpm/* "$ext_dir/@pnpm/" 2>/dev/null || true; \
+        fi; \
+    done
 
 FROM directus/directus:latest AS api-production
 
@@ -84,12 +91,23 @@ COPY --from=third-party-ext --chown=node:node /extensions/directus /directus/ext
 # Copy built extensions from builder stage
 COPY --from=builder --chown=node:node /app/apps/api/extensions /directus/extensions
 
-# Install missing runtime dependency required by directus-extension-api-docs
-# Install in extensions directory so Node.js can resolve it when extensions require it
-RUN mkdir -p /directus/extensions/node_modules && \
-    npm install --no-audit --no-fund --prefix /directus/extensions @pnpm/find-workspace-dir@^2.0.0 && \
+# Install missing runtime dependencies required by directus-extension-api-docs
+# Install @pnpm packages in the extension's node_modules directory where they're needed
+RUN EXT_DIR="/directus/extensions/directus-extension-api-docs" && \
+    if [ -d "$EXT_DIR" ]; then \
+        mkdir -p "$EXT_DIR/node_modules/@pnpm" && \
+        cd "$EXT_DIR" && \
+        (npm install --no-audit --no-fund --save @pnpm/find-workspace-dir@^2.0.0 @pnpm/error@^3.0.0 @pnpm/constants@^7.0.0 2>/dev/null || \
+         npm install --no-audit --no-fund --prefix "$EXT_DIR" @pnpm/find-workspace-dir@^2.0.0 @pnpm/error@^3.0.0 @pnpm/constants@^7.0.0) && \
+        echo "✅ @pnpm dependencies installed in extension's node_modules"; \
+    fi && \
+    # Also install in extensions root for fallback resolution
+    mkdir -p /directus/extensions/node_modules && \
+    cd /directus/extensions && \
+    npm install --no-audit --no-fund --save @pnpm/find-workspace-dir@^2.0.0 @pnpm/error@^3.0.0 @pnpm/constants@^7.0.0 && \
     chown -R node:node /directus/extensions/node_modules && \
-    echo "✅ @pnpm/find-workspace-dir installed for directus-extension-api-docs"
+    chown -R node:node "$EXT_DIR/node_modules" 2>/dev/null || true && \
+    echo "✅ @pnpm dependencies installed for directus-extension-api-docs"
 
 # Verify all extensions are properly installed
 RUN ls -la /directus/extensions/ && \
