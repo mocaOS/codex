@@ -75,6 +75,7 @@ Geographic data for DeCC0s, including:
 }
 ```
 
+<<<<<<< HEAD
 ## Development
 
 This repository is a monorepo managed with [Turbo](https://turbo.build/) and uses [Bun](https://bun.sh/) as the package manager.
@@ -130,6 +131,8 @@ Directus CMS instance with a custom Codex extension that provides the API endpoi
 #### `apps/docs`
 Interactive API documentation site built with Vue and Scalar API Reference.
 
+=======
+>>>>>>> 098974d6a5ae1f4d74f48fba021955f8052d51b8
 ## Coming Soon
 
 - 🔗 **Subgraph API**: GraphQL endpoint for querying DeCC0 data with advanced filtering
