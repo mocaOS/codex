@@ -73,7 +73,7 @@ COPY --from=third-party-ext --chown=node:node /extensions/directus /directus/ext
 
 # Install missing dependencies for directus-extension-api-docs in its node_modules
 RUN cd /directus/extensions/directus-extension-api-docs && \
-    npm install --no-audit --no-fund --legacy-peer-deps @pnpm/find-workspace-dir@^1.0.0 @pnpm/error@^3.0.0 || true
+    npm install --no-audit --no-fund --legacy-peer-deps express@^4.18.0 @pnpm/find-workspace-dir@^1.0.0 @pnpm/error@^3.0.0 || true
 
 # Copy built extensions from builder stage
 COPY --from=builder --chown=node:node /app/apps/api/extensions /directus/extensions
