@@ -11,7 +11,13 @@ RUN bun install -g turbo
 
 # Install build dependencies for native modules (e.g., isolated-vm)
 # py3-setuptools provides distutils which is required by node-gyp (removed from Python 3.12+)
-RUN apk add --no-cache python3 py3-setuptools g++ make
+# nodejs is required for isolated-vm's build scripts which call node directly
+RUN apk add --no-cache python3 py3-setuptools g++ make nodejs npm
+
+# Ensure node-gyp and build scripts use the actual Node.js binary (not Bun's node compatibility)
+# Bun's node compatibility doesn't fully support process.config which isolated-vm needs
+ENV npm_config_node=/usr/bin/node
+ENV PATH=/usr/bin:$PATH
 
 # Set working directory
 WORKDIR /app
