@@ -48,6 +48,9 @@ RUN NODE_OPTIONS="--max-old-space-size=4096" APP_ENV=production bun run build:ap
 # Ensure migrations directory exists for copying (even if empty)
 RUN mkdir -p /app/apps/api/migrations
 
+# Ensure seed directory exists for copying (even if empty)
+RUN mkdir -p /app/apps/api/extensions/directus-extension-codex/seed
+
 # Stage 2: Production stage for API (Directus)
 FROM node:20-alpine as third-party-ext
 RUN apk add --no-cache python3 g++ make
@@ -76,11 +79,11 @@ RUN apk add --no-cache curl postgresql-client npm
 COPY --from=third-party-ext --chown=node:node /extensions/directus /directus/extensions
 
 # Copy built extensions from builder stage
+# This will include the seed folder if it exists in the source
 COPY --from=builder --chown=node:node /app/apps/api/extensions /directus/extensions
 
-# Ensure seed directory exists and copy seed folder for directus-extension-codex
+# Ensure seed directory exists (in case it wasn't in the source or was empty)
 RUN mkdir -p /directus/extensions/directus-extension-codex/seed
-COPY --from=builder --chown=node:node /app/apps/api/extensions/directus-extension-codex/seed /directus/extensions/directus-extension-codex/seed
 
 # Install devDependencies and peer dependencies for directus-extension-api-docs
 # Includes express (required by swagger-ui-express) and ajv (required by ajv-draft-04)
