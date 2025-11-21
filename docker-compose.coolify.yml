@@ -1,0 +1,162 @@
+services:
+  directus:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: api-production
+      args:
+        - TURBO_TOKEN=${TURBO_TOKEN}
+    environment:
+      # Coolify magic variables for FQDN and passwords
+      - SERVICE_FQDN_DIRECTUS
+      
+      # Core Directus configuration
+      - KEY=${SERVICE_PASSWORD_64_KEY}
+      - SECRET=${SERVICE_PASSWORD_64_SECRET}
+      - ADMIN_EMAIL=${ADMIN_EMAIL:-admin@moca-codex.com}
+      - ADMIN_PASSWORD=${ADMIN_PASSWORD}
+      
+      # Database configuration (PostgreSQL)
+      - DB_CLIENT=pg
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - DB_DATABASE=${POSTGRES_DB:-codex}
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_SSL__REJECT_UNAUTHORIZED=${DB_SSL_REJECT_UNAUTHORIZED:-false}
+      
+      # Cache configuration (Redis)
+      - CACHE_ENABLED=${CACHE_ENABLED:-true}
+      - CACHE_AUTO_PURGE=${CACHE_AUTO_PURGE:-true}
+      - CACHE_STORE=redis
+      
+      # Redis connection (using connection string for reliable auth)
+      - REDIS=redis://:${SERVICE_PASSWORD_REDIS}@redis:6379
+      
+      # Synchronization configuration (required for multi-container deployments)
+      - SYNCHRONIZATION_STORE=redis
+      - SYNCHRONIZATION_NAMESPACE=${SYNCHRONIZATION_NAMESPACE:-directus-sync}
+      
+      # Storage configuration
+      - STORAGE_LOCATIONS=${STORAGE_LOCATIONS:-local}
+      - STORAGE_LOCAL_ROOT=${STORAGE_LOCAL_ROOT:-/directus/uploads}
+      
+      # Email configuration
+      - EMAIL_FROM=${EMAIL_FROM:-noreply@moca-codex.com}
+      - EMAIL_TRANSPORT=${EMAIL_TRANSPORT:-smtp}
+      - EMAIL_SMTP_HOST=${EMAIL_SMTP_HOST}
+      - EMAIL_SMTP_PORT=${EMAIL_SMTP_PORT:-587}
+      - EMAIL_SMTP_USER=${EMAIL_SMTP_USER}
+      - EMAIL_SMTP_PASSWORD=${EMAIL_SMTP_PASSWORD}
+      - EMAIL_SMTP_SECURE=${EMAIL_SMTP_SECURE:-false}
+      
+      # Application configuration
+      - PUBLIC_URL="https://${SERVICE_FQDN_DIRECTUS}"
+      - WEBSOCKETS_ENABLED=${WEBSOCKETS_ENABLED:-true}
+      - WEBSOCKETS_HEARTBEAT_ENABLED=${WEBSOCKETS_HEARTBEAT_ENABLED:-true}
+      - EXTENSIONS_AUTO_RELOAD=${EXTENSIONS_AUTO_RELOAD:-false}
+      
+      # Rate limiting
+      - RATE_LIMITER_ENABLED=${RATE_LIMITER_ENABLED:-true}
+      - RATE_LIMITER_POINTS=${RATE_LIMITER_POINTS:-50}
+      - RATE_LIMITER_DURATION=${RATE_LIMITER_DURATION:-1}
+      
+      # File upload limits
+      - MAX_PAYLOAD_SIZE=${MAX_PAYLOAD_SIZE:-16mb}
+      - FILES_MAX_UPLOAD_SIZE=${FILES_MAX_UPLOAD_SIZE:-16mb}
+      
+      # CORS configuration
+      - CORS_ENABLED=${CORS_ENABLED:-true}
+      - CORS_ORIGIN=${CORS_ORIGIN:-true}
+      - CORS_CREDENTIALS=${CORS_CREDENTIALS:-true}
+            
+      # Telemetry
+      - TELEMETRY=${TELEMETRY:-false}
+      
+      # Environment
+      - NODE_ENV=${NODE_ENV:-production}
+      - LOG_LEVEL=${LOG_LEVEL:-info}
+      
+      # Migration configuration
+      - MIGRATIONS_PATH=${MIGRATIONS_PATH:-/directus/migrations}
+      
+      # IPFS configuration for seed data generation
+      - IPFS_GATEWAY=${IPFS_GATEWAY:-http://127.0.0.1:8080}
+      - IPFS_CODEX_HASH=${IPFS_CODEX_HASH:-QmNdMnuJURo3sFkLR2WLSshPqycfjafbHoAcd2FTdBJ8S5}
+      
+      # Admin token for directus-sync
+      - ADMIN_TOKEN=${ADMIN_TOKEN}
+    volumes:
+      - directus-uploads:/directus/uploads
+      - directus-database:/directus/database
+    
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8055/server/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_interval: 5s
+      start_period: 40s
+    
+    command: ["sh", "/directus/startup.sh"]
+    
+    restart: unless-stopped
+
+  postgres:
+    image: postgis/postgis:16-3.4
+    environment:
+      - POSTGRES_DB=${POSTGRES_DB:-codex}
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - POSTGRES_INITDB_ARGS=--encoding=UTF8 --lc-collate=C --lc-ctype=C
+    
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    
+    healthcheck:
+      test: ["CMD", "pg_isready", "--host=localhost", "--username=${DB_USER}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_interval: 5s
+      start_period: 30s
+    
+    restart: unless-stopped
+
+  redis:
+    image: redis:7-alpine
+    command: >
+      redis-server 
+      --requirepass ${SERVICE_PASSWORD_REDIS}
+      --maxmemory 256mb 
+      --maxmemory-policy allkeys-lru 
+      --maxmemory-samples 5
+    
+    ports:
+      - 6379:6379
+
+    volumes:
+      - redis-data:/data
+    
+    healthcheck:
+      test: ["CMD-SHELL", "[ $$(redis-cli --no-auth-warning -a ${SERVICE_PASSWORD_REDIS} ping) = 'PONG' ]"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_interval: 5s
+      start_period: 15s
+    
+    restart: unless-stopped
+
+volumes:
+  directus-uploads:
+  directus-database:
+  postgres-data:
+  redis-data:
+
