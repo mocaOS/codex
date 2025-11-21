@@ -59,9 +59,10 @@ RUN npm install --no-audit --no-fund --legacy-peer-deps
 RUN mkdir -p ./directus && \
     cd node_modules && \
     find . -maxdepth 1 -type d -name "directus-extension-*" -exec mv {} ../directus \;
-# Install devDependencies for directus-extension-api-docs (includes express required by swagger-ui-express)
+# Install devDependencies and peer dependencies for directus-extension-api-docs
+# Includes express (required by swagger-ui-express) and ajv (required by ajv-draft-04)
 RUN cd ./directus/directus-extension-api-docs && \
-    npm install --no-audit --no-fund --legacy-peer-deps --include=dev || true
+    npm install --no-audit --no-fund --legacy-peer-deps --include=dev ajv || true
 
 FROM directus/directus:latest AS api-production
 
@@ -77,10 +78,12 @@ COPY --from=third-party-ext --chown=node:node /extensions/directus /directus/ext
 # Copy built extensions from builder stage
 COPY --from=builder --chown=node:node /app/apps/api/extensions /directus/extensions
 
-# Install devDependencies for directus-extension-api-docs (includes express required by swagger-ui-express)
+# Install devDependencies and peer dependencies for directus-extension-api-docs
+# Includes express (required by swagger-ui-express) and ajv (required by ajv-draft-04)
 RUN cd /directus/extensions/directus-extension-api-docs && \
-    npm install --no-audit --no-fund --legacy-peer-deps --include=dev && \
-    test -d node_modules/express && echo "✅ express installed successfully" || echo "❌ express installation failed"
+    npm install --no-audit --no-fund --legacy-peer-deps --include=dev ajv && \
+    test -d node_modules/express && echo "✅ express installed successfully" || echo "❌ express installation failed" && \
+    test -d node_modules/ajv && echo "✅ ajv installed successfully" || echo "❌ ajv installation failed"
 
 # Verify all extensions are properly installed
 RUN ls -la /directus/extensions/ && \
