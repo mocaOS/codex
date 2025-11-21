@@ -101,7 +101,6 @@ RUN ls -la /directus/extensions/directus-extension-codex/ && \
 
 # Copy Directus configuration
 COPY --from=builder --chown=node:node /app/apps/api/directus-config /directus/directus-config
-COPY --from=builder --chown=node:node /app/apps/api/directus-sync.config.js /directus/directus-sync.config.js
 
 # Copy migrations directory from builder stage
 COPY --from=builder --chown=node:node /app/apps/api/migrations/ /directus/migrations/
