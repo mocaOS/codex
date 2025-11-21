@@ -1,20 +1,14 @@
-import fs from "node:fs";
-import path, { dirname } from "node:path";
-import { fileURLToPath } from "node:url";
+const fs = require("node:fs");
+const path = require("node:path");
 
 // Load dotenv if available (useful for local development, not needed in Docker)
 // In Docker, environment variables are already set via docker-compose, so dotenv is optional
 try {
-  // Use dynamic import to make dotenv optional
-  const dotenvModule = await import("dotenv");
-  dotenvModule.default.config();
+  require("dotenv").config();
 } catch {
   // dotenv not available (e.g., in Docker), use environment variables directly
   // This is fine since Docker sets env vars via docker-compose environment section
 }
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
 
 if (!process.env.ADMIN_TOKEN) {
   throw new Error("ADMIN_TOKEN is not set");
@@ -118,7 +112,7 @@ async function generateSeedData(gateway, hash, seedDir) {
   console.log(`   - Output directory: ${seedDir}`);
 }
 
-export default {
+module.exports = {
   debug: true,
   directusUrl: process.env.PUBLIC_URL || "http://localhost:8055",
   directusToken: process.env.ADMIN_TOKEN,

@@ -53,7 +53,7 @@ FROM node:20-alpine as third-party-ext
 RUN apk add --no-cache python3 g++ make
 WORKDIR /extensions
 # Install third-party Directus extensions
-RUN printf '{\n  "name": "directus-extensions",\n  "private": true,\n  "dependencies": {\n    "directus-extension-api-docs": "^2.3.1",\n    "directus-extension-sync": "^3.0.5"\n  }\n}\n' > package.json
+RUN printf '{\n  "name": "directus-extensions",\n  "private": true,\n  "dependencies": {\n    "directus-extension-api-docs": "^2.3.1",\n    "directus-extension-sync": "^3.0.5",\n    "@pnpm/find-workspace-dir": "^1.0.0"\n  }\n}\n' > package.json
 RUN npm install --no-audit --no-fund --legacy-peer-deps
 # Move all installed directus extensions into /extensions/directus
 RUN mkdir -p ./directus && \
