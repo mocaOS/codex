@@ -59,24 +59,28 @@ RUN npm install --no-audit --no-fund --legacy-peer-deps
 RUN mkdir -p ./directus && \
     cd node_modules && \
     find . -maxdepth 1 -type d -name "directus-extension-*" -exec mv {} ../directus \;
+# Install devDependencies for directus-extension-api-docs (includes express required by swagger-ui-express)
+RUN cd ./directus/directus-extension-api-docs && \
+    npm install --no-audit --no-fund --legacy-peer-deps --include=dev || true
 
 FROM directus/directus:latest AS api-production
 
 # Switch to root to install dependencies and copy files
 USER root
 
-# Install curl and postgresql-client for health checks and database connectivity tests (Alpine uses apk)
-RUN apk add --no-cache curl postgresql-client
+# Install curl, postgresql-client, and npm for health checks and dependency installation (Alpine uses apk)
+RUN apk add --no-cache curl postgresql-client npm
 
 # Copy third-party extensions built in separate stage
 COPY --from=third-party-ext --chown=node:node /extensions/directus /directus/extensions
 
-# Install missing dependencies for directus-extension-api-docs in its node_modules
-RUN cd /directus/extensions/directus-extension-api-docs && \
-    npm install --no-audit --no-fund --legacy-peer-deps express@^4.18.0 @pnpm/find-workspace-dir@^1.0.0 @pnpm/error@^3.0.0 || true
-
 # Copy built extensions from builder stage
 COPY --from=builder --chown=node:node /app/apps/api/extensions /directus/extensions
+
+# Install devDependencies for directus-extension-api-docs (includes express required by swagger-ui-express)
+RUN cd /directus/extensions/directus-extension-api-docs && \
+    npm install --no-audit --no-fund --legacy-peer-deps --include=dev && \
+    test -d node_modules/express && echo "✅ express installed successfully" || echo "❌ express installation failed"
 
 # Verify all extensions are properly installed
 RUN ls -la /directus/extensions/ && \
