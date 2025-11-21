@@ -78,6 +78,10 @@ COPY --from=third-party-ext --chown=node:node /extensions/directus /directus/ext
 # Copy built extensions from builder stage
 COPY --from=builder --chown=node:node /app/apps/api/extensions /directus/extensions
 
+# Ensure seed directory exists and copy seed folder for directus-extension-codex
+RUN mkdir -p /directus/extensions/directus-extension-codex/seed
+COPY --from=builder --chown=node:node /app/apps/api/extensions/directus-extension-codex/seed /directus/extensions/directus-extension-codex/seed
+
 # Install devDependencies and peer dependencies for directus-extension-api-docs
 # Includes express (required by swagger-ui-express) and ajv (required by ajv-draft-04)
 RUN cd /directus/extensions/directus-extension-api-docs && \

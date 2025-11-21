@@ -81,6 +81,7 @@ services:
     volumes:
       - directus-uploads:/directus/uploads
       - directus-database:/directus/database
+      - directus-codex-seed:/directus/extensions/directus-extension-codex/seed
     
     depends_on:
       postgres:
@@ -147,6 +148,7 @@ services:
 volumes:
   directus-uploads:
   directus-database:
+  directus-codex-seed:
   postgres-data:
   redis-data:
 

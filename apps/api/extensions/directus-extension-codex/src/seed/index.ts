@@ -1,4 +1,5 @@
 import { readFile, readdir } from "node:fs/promises";
+import { existsSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { defineHook } from "@directus/extensions-sdk";
@@ -52,9 +53,21 @@ export default defineHook(({ init }, { services, getSchema }) => {
         const __dirname = dirname(__filename);
         seedDir = join(__dirname, "..", "seed");
 
+        // Check if seed directory exists
+        if (!existsSync(seedDir)) {
+          console.log(`   ⏭️  Seed directory not found at ${seedDir}. Skipping seed process.`);
+          console.log("   ℹ️  Seed directory will be created on next deployment.");
+          return;
+        }
+
         // Read all seed files
         const files = await readdir(seedDir);
         seedFiles = files.filter(file => file.endsWith(".json"));
+
+        if (seedFiles.length === 0) {
+          console.log("   ℹ️  No seed files found in seed directory. Skipping seed process.");
+          return;
+        }
 
         console.log(`   Found ${seedFiles.length} seed files`);
       } catch (error) {
@@ -63,6 +76,13 @@ export default defineHook(({ init }, { services, getSchema }) => {
         if (errorMessage.includes("primary") || errorMessage.includes("Cannot read properties")) {
           console.log("   ⏭️  Codex collection not ready yet. Skipping seed process.");
           console.log("   ℹ️  Collection will be created by directus-sync. Seed will run on next startup.");
+          return;
+        }
+
+        // Check if error is due to directory not existing (ENOENT)
+        if (errorMessage.includes("ENOENT") || errorMessage.includes("no such file or directory")) {
+          console.log("   ⏭️  Seed directory not found. Skipping seed process.");
+          console.log("   ℹ️  Seed directory will be created on next deployment.");
           return;
         }
 
