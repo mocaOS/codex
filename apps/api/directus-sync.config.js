@@ -1,8 +1,12 @@
-const fs = require("node:fs");
-const path = require("node:path");
-const dotenv = require("dotenv");
+import fs from "node:fs";
+import path, { dirname } from "node:path";
+import { fileURLToPath } from "node:url";
+import dotenv from "dotenv";
 
 dotenv.config();
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 if (!process.env.ADMIN_TOKEN) {
   throw new Error("ADMIN_TOKEN is not set");
@@ -106,7 +110,7 @@ async function generateSeedData(gateway, hash, seedDir) {
   console.log(`   - Output directory: ${seedDir}`);
 }
 
-module.exports = {
+export default {
   debug: true,
   directusUrl: process.env.PUBLIC_URL || "http://localhost:8055",
   directusToken: process.env.ADMIN_TOKEN,
