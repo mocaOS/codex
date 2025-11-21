@@ -9,7 +9,7 @@ const execAsync = promisify(exec);
 export default defineHook(({ action, init }, { env, logger }) => {
   init("app.before", async () => {
     logger.info(`App is running in ${env.NODE_ENV ?? "development"} mode. Initializing...`);
-    
+
     // Only run setup in production
     if (env.NODE_ENV !== "production") return;
 
@@ -22,13 +22,13 @@ export default defineHook(({ action, init }, { env, logger }) => {
       // Run custom migrations if they exist
       const migrationsPath = process.env.MIGRATIONS_PATH || "/directus/migrations";
       logger.info(`Checking for custom migrations in ${migrationsPath}...`);
-      
+
       try {
         if (existsSync(migrationsPath)) {
           const files = await readdir(migrationsPath);
-          
+
           if (files.length > 0) {
-            logger.info(`Found custom migrations, running them...`);
+            logger.info("Found custom migrations, running them...");
             process.env.MIGRATIONS_PATH = migrationsPath;
             await execAsync("npx directus database migrate:latest");
             logger.info("✅ Custom migrations completed");
@@ -56,8 +56,7 @@ export default defineHook(({ action, init }, { env, logger }) => {
 
     try {
       logger.info("Pushing Directus sync...");
-      const publicUrl = process.env.PUBLIC_URL || "http://localhost:8055";
-      await execAsync(`PUBLIC_URL=${publicUrl} npx directus-sync push --force`);
+      await execAsync(`npx directus-sync push --force --directus-url ${env.PUBLIC_URL} --directus-token ${env.ADMIN_TOKEN}`);
       logger.info("✅ Sync completed successfully");
     } catch (error) {
       logger.error("Sync failed:");
@@ -67,4 +66,3 @@ export default defineHook(({ action, init }, { env, logger }) => {
     }
   });
 });
-
