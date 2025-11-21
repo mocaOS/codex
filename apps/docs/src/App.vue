@@ -13,7 +13,7 @@ import "@scalar/api-reference/style.css";
 // Environment-based API configuration
 const isProduction = import.meta.env.PROD;
 const apiBaseUrl = isProduction
-  ? "https://api.codex.decc0s.com"
+  ? "https://api-codex.decc0s.com"
   : "http://localhost:8055";
 const apiDocsUrl = `${apiBaseUrl}/api-docs/oas`;
 

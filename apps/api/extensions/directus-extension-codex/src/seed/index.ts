@@ -99,6 +99,21 @@ export default defineHook(({ init }, { services, getSchema }) => {
         let errorCount = 0;
         const totalFiles = seedFiles.length;
 
+        // Calculate total items across all files for accurate progress
+        let totalItemsAcrossAllFiles = 0;
+        for (const file of seedFiles) {
+          try {
+            const filePath = join(seedDir!, file);
+            const fileContent = await readFile(filePath, "utf-8");
+            const seedData = JSON.parse(fileContent);
+            if (seedData.data && Array.isArray(seedData.data)) {
+              totalItemsAcrossAllFiles += seedData.data.length;
+            }
+          } catch {
+            // Skip files that can't be read for counting
+          }
+        }
+
         // Create multi-bar container
         const multibar = new cliProgress.MultiBar({
           clearOnComplete: false,
@@ -107,7 +122,10 @@ export default defineHook(({ init }, { services, getSchema }) => {
         }, cliProgress.Presets.shades_classic);
 
         // Create file progress bar
-        const filesBar = multibar.create(totalFiles, 0, { filename: "Files" });
+        const filesBar = multibar.create(totalFiles, 0, { filename: `Files (${totalFiles} total)` });
+
+        // Create overall items progress bar
+        const overallItemsBar = multibar.create(totalItemsAcrossAllFiles, 0, { filename: "All Items" });
 
         // Process each seed file
         for (let fileIndex = 0; fileIndex < seedFiles.length; fileIndex++) {
@@ -128,7 +146,7 @@ export default defineHook(({ init }, { services, getSchema }) => {
             const totalItems = seedData.data.length;
 
             // Create item progress bar for this file
-            const itemsBar = multibar.create(totalItems, 0, { filename: file });
+            const itemsBar = multibar.create(totalItems, 0, { filename: `File: ${file}` });
 
             // Process each item in the seed file
             for (let itemIndex = 0; itemIndex < seedData.data.length; itemIndex++) {
@@ -162,6 +180,7 @@ export default defineHook(({ init }, { services, getSchema }) => {
                 if (existing && existing.length > 0) {
                   skippedCount++;
                   itemsBar.increment();
+                  overallItemsBar.increment();
                   continue;
                 }
               }
@@ -170,6 +189,7 @@ export default defineHook(({ init }, { services, getSchema }) => {
               await codexService.createOne(itemData);
               insertedCount++;
               itemsBar.increment();
+              overallItemsBar.increment();
             }
 
             // Remove item progress bar and update file progress
