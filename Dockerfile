@@ -9,6 +9,9 @@ ENV TURBO_TOKEN=$TURBO_TOKEN
 # Install turbo globally
 RUN bun install -g turbo
 
+# Install build dependencies for native modules (e.g., isolated-vm)
+RUN apk add --no-cache python3 g++ make
+
 # Set working directory
 WORKDIR /app
 
