@@ -76,6 +76,9 @@ services:
       - IPFS_GATEWAY=${IPFS_GATEWAY:-http://127.0.0.1:8080}
       - IPFS_CODEX_HASH=${IPFS_CODEX_HASH:-QmNdMnuJURo3sFkLR2WLSshPqycfjafbHoAcd2FTdBJ8S5}
       
+      # The Graph API configuration
+      - THE_GRAPH_API_KEY=${THE_GRAPH_API_KEY}
+      
       # Admin token for directus-sync
       - ADMIN_TOKEN=${ADMIN_TOKEN}
     volumes:
