@@ -8,7 +8,7 @@
     "storage_asset_transform": "presets",
     "storage_asset_presets": [
       {
-        "key": "transformation-128",
+        "key": "s128",
         "fit": "cover",
         "width": 128,
         "height": 128,
@@ -18,7 +18,7 @@
         "transforms": []
       },
       {
-        "key": "transformation-256",
+        "key": "s256",
         "fit": "cover",
         "width": 256,
         "height": 256,
@@ -28,7 +28,7 @@
         "transforms": []
       },
       {
-        "key": "transformation-512",
+        "key": "s512",
         "fit": "cover",
         "width": 512,
         "height": 512,
@@ -38,7 +38,7 @@
         "transforms": []
       },
       {
-        "key": "transformation-1024",
+        "key": "s1024",
         "fit": "cover",
         "width": 1024,
         "height": 1024,

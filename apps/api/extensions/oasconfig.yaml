@@ -474,12 +474,12 @@ paths:
         - **key**: Name of a configured transformation preset
         
         Available presets:
-        - `transformation-128`: Resizes image to 128px width (maintains aspect ratio)
-        - `transformation-256`: Resizes image to 256px width (maintains aspect ratio)
-        - `transformation-512`: Resizes image to 512px width (maintains aspect ratio)
-        - `transformation-1024`: Resizes image to 1024px width (maintains aspect ratio)
+        - `s128`: Resizes image to 128px width (maintains aspect ratio)
+        - `s256`: Resizes image to 256px width (maintains aspect ratio)
+        - `s512`: Resizes image to 512px width (maintains aspect ratio)
+        - `s1024`: Resizes image to 1024px width (maintains aspect ratio)
         
-        Example: `GET /assets/{id}?key=transformation-512`
+        Example: `GET /assets/{id}?key=s512`
         
         ## Response
         
@@ -555,14 +555,14 @@ paths:
           required: false
           description: |
             Name of a configured transformation preset. Available presets:
-            - `transformation-128` (128px width)
-            - `transformation-256` (256px width)
-            - `transformation-512` (512px width)
-            - `transformation-1024` (1024px width)
+            - `s128` (128px width)
+            - `s256` (256px width)
+            - `s512` (512px width)
+            - `s1024` (1024px width)
           schema:
             type: string
-            enum: [transformation-128, transformation-256, transformation-512, transformation-1024]
-            example: "transformation-512"
+            enum: [s128, s256, s512, s1024]
+            example: "s512"
         - name: transforms
           in: query
           required: false
