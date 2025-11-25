@@ -21,6 +21,8 @@ info:
     ## Features
     
     - **Entity Management**: Retrieve and query codex items with rich metadata
+    - **File Management**: Upload, retrieve, update, and delete files with comprehensive metadata
+    - **Asset Retrieval**: Access file content with optional image transformations
     - **Flexible Filtering**: Advanced query capabilities with filtering, sorting, and search
     - **RESTful Design**: Standard HTTP methods and status codes
     - **Structured Responses**: Consistent JSON responses with metadata and pagination support
@@ -48,6 +50,17 @@ tags:
       - **Temporal Data**: Creation timestamps and historical context
       
       Use these endpoints to explore the rich interconnected data within the Codex.
+  - name: Files
+    description: |
+      Operations for retrieving **files and assets** from Directus. 
+      
+      The Files API provides read-only access to file information and content:
+      - **File Retrieval**: List and retrieve file metadata
+      - **Metadata Access**: Access file properties, dimensions, and extracted metadata
+      - **Asset Retrieval**: Get file content with optional image transformations
+      - **File Information**: View file organization details including folders, tags, and descriptions
+      
+      Use these endpoints to access and display media assets, documents, and other file types stored in Directus.
 
 # HIDE ENDPOINTS: Use publishedTags to show only specific tagged endpoints
 # Only endpoints with at least one of these tags will appear in the docs
@@ -56,6 +69,7 @@ tags:
 # Scalar should automatically hide schemas not referenced by visible endpoints.
 publishedTags:
   - Codex
+  - Files
 
 # Override codex endpoints to use "Codex" tag and only show GET operations
 paths:
@@ -232,6 +246,386 @@ paths:
                       - message: "Item not found"
                         extensions:
                           code: "NOT_FOUND"
+
+  "/files":
+    get:
+      summary: List Files
+      description: |
+        Retrieve a paginated list of all files stored in Directus. This endpoint supports advanced 
+        querying capabilities including filtering, sorting, searching, and field selection.
+        
+        ## Query Capabilities
+        
+        - **Filter**: Apply complex filters using Directus filter syntax. See the [Directus Filter Documentation](https://directus.io/docs/api/fields#list-all-fields) for detailed filter syntax and examples.
+        - **Search**: Full-text search across file metadata fields (title, description, filename, etc.)
+        - **Sort**: Order results by any field in ascending or descending order
+        - **Pagination**: Control result set size with `limit` and `offset`
+        - **Field Selection**: Specify which fields to include in the response
+        
+        ## File Properties
+        
+        Each file object includes:
+        - **Identification**: Unique ID, storage location, filenames
+        - **Metadata**: Title, description, MIME type, file size
+        - **Media Properties**: Dimensions (for images), duration (for audio/video)
+        - **Organization**: Folder path, tags, location data
+        - **Extracted Data**: IPTC, Exif, and ICC metadata
+        - **Focal Point**: X/Y coordinates for image focal points
+        
+        For comprehensive query documentation including all available parameters and examples, refer to the [Directus API Documentation](https://directus.io/docs/api/files).
+      tags:
+        - Files
+      parameters:
+        - $ref: '#/components/parameters/Fields'
+        - $ref: '#/components/parameters/Limit'
+        - $ref: '#/components/parameters/Meta'
+        - $ref: '#/components/parameters/Offset'
+        - $ref: '#/components/parameters/Sort'
+        - $ref: '#/components/parameters/Filter'
+        - $ref: '#/components/parameters/Search'
+      responses:
+        '200':
+          description: |
+            **Success** — Returns a paginated list of files.
+            
+            The response includes an array of file objects in the `data` property, along with 
+            metadata about the query results (total count, filter count, etc.) in the `meta` property.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/DirectusFiles'
+                  meta:
+                    $ref: '#/components/schemas/x-metadata'
+              examples:
+                default:
+                  summary: List of files
+                  value:
+                    data:
+                      - id: "a1b2c3d4-e5f6-7890-1234-abcdef123456"
+                        storage: "local"
+                        filename_disk: "image-1234567890.jpg"
+                        filename_download: "profile-photo.jpg"
+                        title: "Profile Photo"
+                        type: "image/jpeg"
+                        folder: null
+                        uploaded_by: "admin-user-id"
+                        created_on: "2025-01-15T10:30:00Z"
+                        filesize: 245678
+                        width: 1920
+                        height: 1080
+                        description: "User profile photo"
+                        tags: []
+                    meta:
+                      filter_count: 1
+                      total_count: 1
+
+  "/files/{id}":
+    get:
+      summary: Get File by ID
+      description: |
+        Retrieve a single file's metadata by its unique identifier. This endpoint returns detailed 
+        information about a specific file, including all available fields and metadata.
+        
+        ## Path Parameters
+        
+        - **id** (required): The unique identifier of the file (UUID string)
+        
+        ## Query Parameters
+        
+        - **fields**: Specify which fields to include in the response (comma-separated)
+        - **meta**: Include additional metadata in the response
+        
+        ## Use Cases
+        
+        - Fetching complete file metadata
+        - Accessing extracted metadata (Exif, IPTC, ICC)
+        - Retrieving file properties for display or processing
+        - Getting file organization information (folder, tags)
+      tags:
+        - Files
+      parameters:
+        - $ref: '#/components/parameters/Fields'
+        - $ref: '#/components/parameters/Meta'
+        - name: id
+          in: path
+          required: true
+          description: |
+            The unique identifier of the file. This is a UUID string that uniquely identifies 
+            each file in Directus.
+          schema:
+            type: string
+            format: uuid
+            example: "a1b2c3d4-e5f6-7890-1234-abcdef123456"
+      responses:
+        '200':
+          description: |
+            **Success** — Returns the requested file metadata.
+            
+            The response contains a single file object in the `data` property, including 
+            all available fields such as storage location, filenames, dimensions, metadata, 
+            and organization information.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/DirectusFiles'
+              examples:
+                default:
+                  summary: File metadata response
+                  value:
+                    data:
+                      id: "a1b2c3d4-e5f6-7890-1234-abcdef123456"
+                      storage: "local"
+                      filename_disk: "image-1234567890.jpg"
+                      filename_download: "profile-photo.jpg"
+                      title: "Profile Photo"
+                      type: "image/jpeg"
+                      folder: null
+                      uploaded_by: "admin-user-id"
+                      created_on: "2025-01-15T10:30:00Z"
+                      filesize: 245678
+                      width: 1920
+                      height: 1080
+                      description: "User profile photo"
+                      tags: []
+                      metadata:
+                        exif:
+                          Make: "Canon"
+                          Model: "EOS 5D Mark IV"
+        '404':
+          description: |
+            **Not Found** — The requested file does not exist.
+            
+            This error occurs when:
+            - The provided `id` does not match any existing file
+            - The file has been deleted
+            - The `id` is invalid or malformed
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        message:
+                          type: string
+                        extensions:
+                          type: object
+                          properties:
+                            code:
+                              type: string
+                              example: "NOT_FOUND"
+
+  "/assets/{id}":
+    get:
+      summary: Get Asset
+      description: |
+        Retrieve the actual file content (asset) by its unique identifier. This endpoint returns 
+        the raw file data, making it ideal for displaying images, serving documents, or streaming 
+        media files.
+        
+        ## Path Parameters
+        
+        - **id** (required): The unique identifier of the file (UUID string)
+        
+        ## Image Transformations
+        
+        For image files, you can apply transformations using query parameters:
+        
+        ### Basic Transformations
+        
+        - **width**: Desired width in pixels (integer)
+        - **height**: Desired height in pixels (integer)
+        - **quality**: Compression quality (0-100, integer). Lower values = smaller file size
+        - **fit**: How the image should fit within dimensions:
+          - `cover`: Crop to fill dimensions (default)
+          - `contain`: Fit within dimensions, maintaining aspect ratio
+          - `inside`: Fit within dimensions, no upscaling
+          - `outside`: Fill dimensions, may exceed if needed
+        - **format**: Output format (`jpeg`, `png`, `webp`, `tiff`, `avif`)
+        
+        ### Advanced Transformations
+        
+        Use the `transforms` parameter to apply Sharp API transformations. This accepts a JSON 
+        array of transformation operations:
+        
+        ```json
+        [["rotate", 90], ["blur", 10], ["tint", "rgb(255, 0, 255)"]]
+        ```
+        
+        Available Sharp operations include: `rotate`, `resize`, `blur`, `sharpen`, `tint`, 
+        `greyscale`, `negate`, `normalize`, and many more.
+        
+        ### Transformation Presets
+        
+        Pre-configured transformation presets are available for quick image resizing. Use the `key` 
+        parameter to apply a preset transformation:
+        
+        - **key**: Name of a configured transformation preset
+        
+        Available presets:
+        - `transformation-128`: Resizes image to 128px width (maintains aspect ratio)
+        - `transformation-256`: Resizes image to 256px width (maintains aspect ratio)
+        - `transformation-512`: Resizes image to 512px width (maintains aspect ratio)
+        - `transformation-1024`: Resizes image to 1024px width (maintains aspect ratio)
+        
+        Example: `GET /assets/{id}?key=transformation-512`
+        
+        ## Response
+        
+        The response returns the file content directly with appropriate `Content-Type` headers. 
+        For images with transformations, the transformed image is returned. For other file types, 
+        the original file is returned.
+        
+        ## Use Cases
+        
+        - Displaying images in web applications
+        - Serving optimized images with automatic transformations
+        - Downloading documents or media files
+        - Streaming audio/video content
+        
+        For more information on transformations, see the [Directus File Transformation Guide](https://directus.io/docs/guides/files/transform).
+      tags:
+        - Files
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: |
+            The unique identifier of the file. This is a UUID string that uniquely identifies 
+            each file in Directus.
+          schema:
+            type: string
+            format: uuid
+            example: "a1b2c3d4-e5f6-7890-1234-abcdef123456"
+        - name: width
+          in: query
+          required: false
+          description: Desired width in pixels (for images)
+          schema:
+            type: integer
+            minimum: 1
+            example: 800
+        - name: height
+          in: query
+          required: false
+          description: Desired height in pixels (for images)
+          schema:
+            type: integer
+            minimum: 1
+            example: 600
+        - name: quality
+          in: query
+          required: false
+          description: Compression quality (0-100, for images)
+          schema:
+            type: integer
+            minimum: 0
+            maximum: 100
+            example: 80
+        - name: fit
+          in: query
+          required: false
+          description: How the image should fit within dimensions
+          schema:
+            type: string
+            enum: [cover, contain, inside, outside]
+            default: cover
+            example: contain
+        - name: format
+          in: query
+          required: false
+          description: Output image format
+          schema:
+            type: string
+            enum: [jpeg, png, webp, tiff, avif]
+            example: webp
+        - name: key
+          in: query
+          required: false
+          description: |
+            Name of a configured transformation preset. Available presets:
+            - `transformation-128` (128px width)
+            - `transformation-256` (256px width)
+            - `transformation-512` (512px width)
+            - `transformation-1024` (1024px width)
+          schema:
+            type: string
+            enum: [transformation-128, transformation-256, transformation-512, transformation-1024]
+            example: "transformation-512"
+        - name: transforms
+          in: query
+          required: false
+          description: |
+            JSON array of Sharp API transformation operations. Example: 
+            `[["rotate", 90], ["blur", 10], ["tint", "rgb(255, 0, 255)"]]`
+          schema:
+            type: string
+            example: '[["rotate", 90], ["blur", 10]]'
+      responses:
+        '200':
+          description: |
+            **Success** — Returns the file content.
+            
+            The response contains the raw file data with appropriate `Content-Type` headers. 
+            For images with transformations applied, the transformed image is returned. For 
+            other file types, the original file content is returned.
+          content:
+            image/jpeg:
+              schema:
+                type: string
+                format: binary
+            image/png:
+              schema:
+                type: string
+                format: binary
+            image/webp:
+              schema:
+                type: string
+                format: binary
+            application/pdf:
+              schema:
+                type: string
+                format: binary
+            video/mp4:
+              schema:
+                type: string
+                format: binary
+            '*/*':
+              schema:
+                type: string
+                format: binary
+        '404':
+          description: |
+            **Not Found** — The requested file does not exist.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        message:
+                          type: string
+                        extensions:
+                          type: object
+                          properties:
+                            code:
+                              type: string
+                              example: "NOT_FOUND"
 
 # Custom components (schemas, securitySchemes, etc.) can be added here
 # To hide specific schemas from Scalar's Models section, use x-scalar-ignore: true

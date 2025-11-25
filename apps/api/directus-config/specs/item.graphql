@@ -164,8 +164,6 @@ type codex {
   philosophical_affiliation: String
   self_identity: String
   soul: Int
-  thumbnail: String
-  thumbnail_background: String
   timestamp_created: Date
   timestamp_created_func: datetime_functions
 
@@ -186,6 +184,9 @@ type codex {
   writing_style: JSON
   writing_style_func: count_functions
   x: Int
+  thumbnail_character(filter: directus_files_filter, sort: [String], limit: Int, offset: Int, page: Int, search: String): directus_files
+  thumbnail_background(filter: directus_files_filter, sort: [String], limit: Int, offset: Int, page: Int, search: String): directus_files
+  thumbnail(filter: directus_files_filter, sort: [String], limit: Int, offset: Int, page: Int, search: String): directus_files
 }
 
 type codex_aggregated {
@@ -263,8 +264,6 @@ type codex_aggregated_count {
   philosophical_affiliation: Int
   self_identity: Int
   soul: Int
-  thumbnail: Int
-  thumbnail_background: Int
   timestamp_created: Int
 
   """Array of what this character is (JSON)"""
@@ -282,6 +281,9 @@ type codex_aggregated_count {
   """Array of writing style characteristics (JSON)"""
   writing_style: Int
   x: Int
+  thumbnail_character: Int
+  thumbnail_background: Int
+  thumbnail: Int
 }
 
 type codex_aggregated_fields {
@@ -959,8 +961,6 @@ type version_codex {
   philosophical_affiliation: String
   self_identity: String
   soul: Int
-  thumbnail: String
-  thumbnail_background: String
   timestamp_created: Date
 
   """Array of what this character is (JSON)"""
@@ -978,6 +978,9 @@ type version_codex {
   """Array of writing style characteristics (JSON)"""
   writing_style: JSON
   x: Int
+  thumbnail_character: JSON
+  thumbnail_background: JSON
+  thumbnail: JSON
 }
 
 """"""
@@ -1063,8 +1066,6 @@ input codex_filter {
   philosophical_affiliation: string_filter_operators
   self_identity: string_filter_operators
   soul: number_filter_operators
-  thumbnail: string_filter_operators
-  thumbnail_background: string_filter_operators
   timestamp_created: date_filter_operators
   timestamp_created_func: datetime_function_filter_operators
   whatness: string_filter_operators
@@ -1081,6 +1082,9 @@ input codex_filter {
   writing_style: string_filter_operators
   writing_style_func: count_function_filter_operators
   x: number_filter_operators
+  thumbnail_character: directus_files_filter
+  thumbnail_background: directus_files_filter
+  thumbnail: directus_files_filter
   _and: [codex_filter]
   _or: [codex_filter]
 }
@@ -1151,8 +1155,6 @@ input create_codex_input {
   philosophical_affiliation: String
   self_identity: String
   soul: Int
-  thumbnail: String
-  thumbnail_background: String
   timestamp_created: Date
 
   """Array of what this character is (JSON)"""
@@ -1170,6 +1172,90 @@ input create_codex_input {
   """Array of writing style characteristics (JSON)"""
   writing_style: JSON
   x: Int
+  thumbnail_character: create_directus_files_input
+  thumbnail_background: create_directus_files_input
+  thumbnail: create_directus_files_input
+}
+
+input create_directus_access_input {
+  id: ID
+  role: create_directus_roles_input
+  user: create_directus_users_input
+  policy: create_directus_policies_input
+  sort: Int
+}
+
+input create_directus_files_input {
+  id: ID
+  storage: String!
+  filename_disk: String
+  filename_download: String!
+  title: String
+  type: String
+  folder: create_directus_folders_input
+  uploaded_by: create_directus_users_input
+  created_on: Date
+  modified_by: create_directus_users_input
+  modified_on: Date
+  charset: String
+  filesize: GraphQLBigInt
+  width: Int
+  height: Int
+  duration: Int
+  embed: String
+  description: String
+  location: String
+  tags: JSON
+  metadata: JSON
+  focal_point_x: Int
+  focal_point_y: Int
+  tus_id: String
+  tus_data: JSON
+  uploaded_on: Date
+}
+
+input create_directus_folders_input {
+  id: ID
+  name: String!
+  parent: create_directus_folders_input
+}
+
+input create_directus_permissions_input {
+  id: ID
+  collection: String!
+  action: String!
+  permissions: JSON
+  validation: JSON
+  presets: JSON
+  fields: [String]
+  policy: create_directus_policies_input
+}
+
+input create_directus_policies_input {
+  id: ID
+  name: String!
+  icon: String
+  description: String
+  ip_access: [String]
+
+  """$t:field_options.directus_policies.enforce_tfa"""
+  enforce_tfa: Boolean!
+  admin_access: Boolean!
+  app_access: Boolean!
+  permissions: [create_directus_permissions_input]
+  users: [create_directus_access_input]
+  roles: [create_directus_access_input]
+}
+
+input create_directus_roles_input {
+  id: ID
+  name: String!
+  icon: String
+  description: String
+  parent: create_directus_roles_input
+  children: [create_directus_roles_input]
+  policies: [create_directus_access_input]
+  users: [create_directus_users_input]
 }
 
 input create_directus_sync_id_map_input {
@@ -1178,6 +1264,37 @@ input create_directus_sync_id_map_input {
   sync_id: String!
   local_id: String!
   created_at: Date
+}
+
+input create_directus_users_input {
+  id: ID
+  first_name: String
+  last_name: String
+  email: String
+  password: Hash
+  location: String
+  title: String
+  description: String
+  tags: JSON
+  avatar: create_directus_files_input
+  language: String
+  tfa_secret: Hash
+  status: String
+  role: create_directus_roles_input
+  token: Hash
+  last_access: Date
+  last_page: String
+  provider: String
+  external_identifier: String
+  auth_data: JSON
+  email_notifications: Boolean
+  appearance: String
+  theme_dark: String
+  theme_light: String
+  theme_light_overrides: JSON
+  theme_dark_overrides: JSON
+  text_direction: String
+  policies: [create_directus_access_input]
 }
 
 input date_filter_operators {
@@ -1776,8 +1893,6 @@ input update_codex_input {
   philosophical_affiliation: String
   self_identity: String
   soul: Int
-  thumbnail: String
-  thumbnail_background: String
   timestamp_created: Date
 
   """Array of what this character is (JSON)"""
@@ -1795,6 +1910,90 @@ input update_codex_input {
   """Array of writing style characteristics (JSON)"""
   writing_style: JSON
   x: Int
+  thumbnail_character: update_directus_files_input
+  thumbnail_background: update_directus_files_input
+  thumbnail: update_directus_files_input
+}
+
+input update_directus_access_input {
+  id: ID
+  role: update_directus_roles_input
+  user: update_directus_users_input
+  policy: update_directus_policies_input
+  sort: Int
+}
+
+input update_directus_files_input {
+  id: ID
+  storage: String
+  filename_disk: String
+  filename_download: String
+  title: String
+  type: String
+  folder: update_directus_folders_input
+  uploaded_by: update_directus_users_input
+  created_on: Date
+  modified_by: update_directus_users_input
+  modified_on: Date
+  charset: String
+  filesize: GraphQLBigInt
+  width: Int
+  height: Int
+  duration: Int
+  embed: String
+  description: String
+  location: String
+  tags: JSON
+  metadata: JSON
+  focal_point_x: Int
+  focal_point_y: Int
+  tus_id: String
+  tus_data: JSON
+  uploaded_on: Date
+}
+
+input update_directus_folders_input {
+  id: ID
+  name: String
+  parent: update_directus_folders_input
+}
+
+input update_directus_permissions_input {
+  id: ID
+  collection: String
+  action: String
+  permissions: JSON
+  validation: JSON
+  presets: JSON
+  fields: [String]
+  policy: update_directus_policies_input
+}
+
+input update_directus_policies_input {
+  id: ID
+  name: String
+  icon: String
+  description: String
+  ip_access: [String]
+
+  """$t:field_options.directus_policies.enforce_tfa"""
+  enforce_tfa: Boolean
+  admin_access: Boolean
+  app_access: Boolean
+  permissions: [update_directus_permissions_input]
+  users: [update_directus_access_input]
+  roles: [update_directus_access_input]
+}
+
+input update_directus_roles_input {
+  id: ID
+  name: String
+  icon: String
+  description: String
+  parent: update_directus_roles_input
+  children: [update_directus_roles_input]
+  policies: [update_directus_access_input]
+  users: [update_directus_users_input]
 }
 
 input update_directus_sync_id_map_input {
@@ -1803,4 +2002,35 @@ input update_directus_sync_id_map_input {
   sync_id: String
   local_id: String
   created_at: Date
+}
+
+input update_directus_users_input {
+  id: ID
+  first_name: String
+  last_name: String
+  email: String
+  password: Hash
+  location: String
+  title: String
+  description: String
+  tags: JSON
+  avatar: update_directus_files_input
+  language: String
+  tfa_secret: Hash
+  status: String
+  role: update_directus_roles_input
+  token: Hash
+  last_access: Date
+  last_page: String
+  provider: String
+  external_identifier: String
+  auth_data: JSON
+  email_notifications: Boolean
+  appearance: String
+  theme_dark: String
+  theme_light: String
+  theme_light_overrides: JSON
+  theme_dark_overrides: JSON
+  text_direction: String
+  policies: [update_directus_access_input]
 }

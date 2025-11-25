@@ -5,10 +5,51 @@
     "public_note": null,
     "auth_login_attempts": 25,
     "auth_password_policy": null,
-    "storage_asset_transform": "all",
-    "storage_asset_presets": null,
+    "storage_asset_transform": "presets",
+    "storage_asset_presets": [
+      {
+        "key": "transformation-128",
+        "fit": "cover",
+        "width": 128,
+        "height": 128,
+        "quality": 80,
+        "withoutEnlargement": false,
+        "format": "auto",
+        "transforms": []
+      },
+      {
+        "key": "transformation-256",
+        "fit": "cover",
+        "width": 256,
+        "height": 256,
+        "quality": 80,
+        "withoutEnlargement": false,
+        "format": "auto",
+        "transforms": []
+      },
+      {
+        "key": "transformation-512",
+        "fit": "cover",
+        "width": 512,
+        "height": 512,
+        "quality": 80,
+        "withoutEnlargement": false,
+        "format": "auto",
+        "transforms": []
+      },
+      {
+        "key": "transformation-1024",
+        "fit": "cover",
+        "width": 1024,
+        "height": 1024,
+        "quality": 80,
+        "withoutEnlargement": false,
+        "format": "auto",
+        "transforms": []
+      }
+    ],
     "custom_css": null,
-    "storage_default_folder": null,
+    "storage_default_folder": "1acb867e-58ea-4ead-81aa-7036e5b7cf79",
     "basemaps": null,
     "mapbox_key": null,
     "module_bar": [

@@ -19,7 +19,7 @@
     },
     "readonly": false,
     "required": false,
-    "sort": 51,
+    "sort": 52,
     "special": [
       "cast-json"
     ],

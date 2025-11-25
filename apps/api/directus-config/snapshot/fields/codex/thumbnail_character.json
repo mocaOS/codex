@@ -1,31 +1,36 @@
 {
   "collection": "codex",
-  "field": "writing_sentence_complexity",
-  "type": "text",
+  "field": "thumbnail_character",
+  "type": "uuid",
   "meta": {
     "collection": "codex",
     "conditions": null,
     "display": null,
     "display_options": null,
-    "field": "writing_sentence_complexity",
+    "field": "thumbnail_character",
     "group": null,
     "hidden": false,
-    "interface": "input-multiline",
+    "interface": "file-image",
     "note": null,
-    "options": null,
+    "options": {
+      "enableCreate": false,
+      "folder": "c23e482d-3903-4ca6-a8ba-8e6c242332b4"
+    },
     "readonly": false,
     "required": false,
-    "sort": 61,
-    "special": null,
+    "sort": 50,
+    "special": [
+      "file"
+    ],
     "translations": null,
     "validation": null,
     "validation_message": null,
     "width": "full"
   },
   "schema": {
-    "name": "writing_sentence_complexity",
+    "name": "thumbnail_character",
     "table": "codex",
-    "data_type": "text",
+    "data_type": "uuid",
     "default_value": null,
     "max_length": null,
     "numeric_precision": null,
@@ -37,7 +42,7 @@
     "is_generated": false,
     "generation_expression": null,
     "has_auto_increment": false,
-    "foreign_key_table": null,
-    "foreign_key_column": null
+    "foreign_key_table": "directus_files",
+    "foreign_key_column": "id"
   }
 }

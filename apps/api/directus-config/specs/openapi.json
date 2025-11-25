@@ -3,7 +3,7 @@
   "info": {
     "title": "Dynamic API Specification",
     "description": "This is a dynamically generated API specification for all endpoints existing on the current project.",
-    "version": "3ad2450c2b29d7f9855a08ca19cf5663364ef5cf"
+    "version": "36980b4744a441f906a6a20663f9e61e9a8dec4f"
   },
   "servers": [
     {
@@ -10574,14 +10574,6 @@
             "nullable": true,
             "type": "integer"
           },
-          "thumbnail": {
-            "nullable": true,
-            "type": "string"
-          },
-          "thumbnail_background": {
-            "nullable": true,
-            "type": "string"
-          },
           "timestamp_created": {
             "nullable": true,
             "type": "string",
@@ -10634,6 +10626,42 @@
           "x": {
             "nullable": true,
             "type": "integer"
+          },
+          "thumbnail_character": {
+            "nullable": true,
+            "oneOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "$ref": "#/components/schemas/Files"
+              }
+            ]
+          },
+          "thumbnail_background": {
+            "nullable": true,
+            "oneOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "$ref": "#/components/schemas/Files"
+              }
+            ]
+          },
+          "thumbnail": {
+            "nullable": true,
+            "oneOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "$ref": "#/components/schemas/Files"
+              }
+            ]
           }
         },
         "x-collection": "codex"
