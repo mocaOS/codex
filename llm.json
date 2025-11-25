@@ -1,0 +1,3143 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "MOCA Codex API Documentation",
+    "description": "# MOCA Codex API\n\nWelcome to the **MOCA Codex API** — a comprehensive RESTful interface for accessing and managing \nthe MOCA Codex knowledge base. This API provides structured access to curated information about \nentities, their relationships, and metadata.\n\n## About This API\n\nThis API is built on **Directus**, an open-source headless CMS. All filtering, querying, and \ndata operations follow Directus conventions. For detailed information on how to use filters, \nquery parameters, and advanced features, please refer to the \n[Directus API Documentation](https://docs.directus.io/reference/query.html).\n\n## Features\n\n- **Entity Management**: Retrieve and query codex items with rich metadata\n- **File Management**: Upload, retrieve, update, and delete files with comprehensive metadata\n- **Asset Retrieval**: Access file content with optional image transformations\n- **Flexible Filtering**: Advanced query capabilities with filtering, sorting, and search\n- **RESTful Design**: Standard HTTP methods and status codes\n- **Structured Responses**: Consistent JSON responses with metadata and pagination support\n\n## Getting Started\n\nAll endpoints return JSON responses and follow standard REST conventions. Use query parameters \nto filter, sort, and paginate results according to your needs. For comprehensive documentation \non query syntax, filters, and advanced features, see the \n[Directus API Documentation](https://directus.io/docs/api/fields#list-all-fields).\n",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://api.decc0s.com",
+      "description": "Your current Directus instance."
+    }
+  ],
+  "paths": {
+    "/assets/{id}": {
+      "get": {
+        "summary": "Get Asset",
+        "description": "Retrieve the actual file content (asset) by its unique identifier. This endpoint returns \nthe raw file data, making it ideal for displaying images, serving documents, or streaming \nmedia files.\n\n## Path Parameters\n\n- **id** (required): The unique identifier of the file (UUID string)\n\n## Image Transformations\n\nFor image files, you can apply transformations using query parameters:\n\n### Basic Transformations\n\n- **width**: Desired width in pixels (integer)\n- **height**: Desired height in pixels (integer)\n- **quality**: Compression quality (0-100, integer). Lower values = smaller file size\n- **fit**: How the image should fit within dimensions:\n  - `cover`: Crop to fill dimensions (default)\n  - `contain`: Fit within dimensions, maintaining aspect ratio\n  - `inside`: Fit within dimensions, no upscaling\n  - `outside`: Fill dimensions, may exceed if needed\n- **format**: Output format (`jpeg`, `png`, `webp`, `tiff`, `avif`)\n\n### Advanced Transformations\n\nUse the `transforms` parameter to apply Sharp API transformations. This accepts a JSON \narray of transformation operations:\n\n```json\n[[\"rotate\", 90], [\"blur\", 10], [\"tint\", \"rgb(255, 0, 255)\"]]\n```\n\nAvailable Sharp operations include: `rotate`, `resize`, `blur`, `sharpen`, `tint`, \n`greyscale`, `negate`, `normalize`, and many more.\n\n### Transformation Presets\n\nPre-configured transformation presets are available for quick image resizing. Use the `key` \nparameter to apply a preset transformation:\n\n- **key**: Name of a configured transformation preset\n\nAvailable presets:\n- `s128`: Resizes image to 128px width (maintains aspect ratio)\n- `s256`: Resizes image to 256px width (maintains aspect ratio)\n- `s512`: Resizes image to 512px width (maintains aspect ratio)\n- `s1024`: Resizes image to 1024px width (maintains aspect ratio)\n\nExample: `GET /assets/{id}?key=s512`\n\n## Response\n\nThe response returns the file content directly with appropriate `Content-Type` headers. \nFor images with transformations, the transformed image is returned. For other file types, \nthe original file is returned.\n\n## Use Cases\n\n- Displaying images in web applications\n- Serving optimized images with automatic transformations\n- Downloading documents or media files\n- Streaming audio/video content\n\nFor more information on transformations, see the [Directus File Transformation Guide](https://directus.io/docs/guides/files/transform).\n",
+        "tags": [
+          "Files"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "The unique identifier of the file. This is a UUID string that uniquely identifies \neach file in Directus.\n",
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "example": "a1b2c3d4-e5f6-7890-1234-abcdef123456"
+            }
+          },
+          {
+            "name": "width",
+            "in": "query",
+            "required": false,
+            "description": "Desired width in pixels (for images)",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "example": 800
+            }
+          },
+          {
+            "name": "height",
+            "in": "query",
+            "required": false,
+            "description": "Desired height in pixels (for images)",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "example": 600
+            }
+          },
+          {
+            "name": "quality",
+            "in": "query",
+            "required": false,
+            "description": "Compression quality (0-100, for images)",
+            "schema": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 100,
+              "example": 80
+            }
+          },
+          {
+            "name": "fit",
+            "in": "query",
+            "required": false,
+            "description": "How the image should fit within dimensions",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "cover",
+                "contain",
+                "inside",
+                "outside"
+              ],
+              "default": "cover",
+              "example": "contain"
+            }
+          },
+          {
+            "name": "format",
+            "in": "query",
+            "required": false,
+            "description": "Output image format",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "jpeg",
+                "png",
+                "webp",
+                "tiff",
+                "avif"
+              ],
+              "example": "webp"
+            }
+          },
+          {
+            "name": "key",
+            "in": "query",
+            "required": false,
+            "description": "Name of a configured transformation preset. Available presets:\n- `s128` (128px width)\n- `s256` (256px width)\n- `s512` (512px width)\n- `s1024` (1024px width)\n",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "s128",
+                "s256",
+                "s512",
+                "s1024"
+              ],
+              "example": "s512"
+            }
+          },
+          {
+            "name": "transforms",
+            "in": "query",
+            "required": false,
+            "description": "JSON array of Sharp API transformation operations. Example: \n`[[\"rotate\", 90], [\"blur\", 10], [\"tint\", \"rgb(255, 0, 255)\"]]`\n",
+            "schema": {
+              "type": "string",
+              "example": "[[\"rotate\", 90], [\"blur\", 10]]"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "**Success** — Returns the file content.\n\nThe response contains the raw file data with appropriate `Content-Type` headers. \nFor images with transformations applied, the transformed image is returned. For \nother file types, the original file content is returned.\n",
+            "content": {
+              "image/jpeg": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              },
+              "image/png": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              },
+              "image/webp": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              },
+              "application/pdf": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              },
+              "video/mp4": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              },
+              "*/*": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "**Not Found** — The requested file does not exist.\n",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "errors": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "message": {
+                            "type": "string"
+                          },
+                          "extensions": {
+                            "type": "object",
+                            "properties": {
+                              "code": {
+                                "type": "string",
+                                "example": "NOT_FOUND"
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/login": {},
+    "/auth/refresh": {},
+    "/auth/logout": {},
+    "/auth/password/request": {},
+    "/auth/password/reset": {},
+    "/auth/oauth": {},
+    "/auth/oauth/{provider}": {},
+    "/schema/snapshot": {},
+    "/schema/apply": {},
+    "/schema/diff": {},
+    "/server/info": {},
+    "/server/ping": {},
+    "/roles": {},
+    "/roles/{id}": {},
+    "/files": {
+      "get": {
+        "summary": "List Files",
+        "description": "Retrieve a paginated list of all files stored in Directus. This endpoint supports advanced \nquerying capabilities including filtering, sorting, searching, and field selection.\n\n## Query Capabilities\n\n- **Filter**: Apply complex filters using Directus filter syntax. See the [Directus Filter Documentation](https://directus.io/docs/api/fields#list-all-fields) for detailed filter syntax and examples.\n- **Search**: Full-text search across file metadata fields (title, description, filename, etc.)\n- **Sort**: Order results by any field in ascending or descending order\n- **Pagination**: Control result set size with `limit` and `offset`\n- **Field Selection**: Specify which fields to include in the response\n\n## File Properties\n\nEach file object includes:\n- **Identification**: Unique ID, storage location, filenames\n- **Metadata**: Title, description, MIME type, file size\n- **Media Properties**: Dimensions (for images), duration (for audio/video)\n- **Organization**: Folder path, tags, location data\n- **Extracted Data**: IPTC, Exif, and ICC metadata\n- **Focal Point**: X/Y coordinates for image focal points\n\nFor comprehensive query documentation including all available parameters and examples, refer to the [Directus API Documentation](https://directus.io/docs/api/files).\n",
+        "tags": [
+          "Files"
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Fields"
+          },
+          {
+            "$ref": "#/components/parameters/Limit"
+          },
+          {
+            "$ref": "#/components/parameters/Meta"
+          },
+          {
+            "$ref": "#/components/parameters/Offset"
+          },
+          {
+            "$ref": "#/components/parameters/Sort"
+          },
+          {
+            "$ref": "#/components/parameters/Filter"
+          },
+          {
+            "$ref": "#/components/parameters/Search"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "**Success** — Returns a paginated list of files.\n\nThe response includes an array of file objects in the `data` property, along with \nmetadata about the query results (total count, filter count, etc.) in the `meta` property.\n",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/DirectusFiles"
+                      }
+                    },
+                    "meta": {
+                      "$ref": "#/components/schemas/x-metadata"
+                    }
+                  }
+                },
+                "examples": {
+                  "default": {
+                    "summary": "List of files",
+                    "value": {
+                      "data": [
+                        {
+                          "id": "a1b2c3d4-e5f6-7890-1234-abcdef123456",
+                          "storage": "local",
+                          "filename_disk": "image-1234567890.jpg",
+                          "filename_download": "profile-photo.jpg",
+                          "title": "Profile Photo",
+                          "type": "image/jpeg",
+                          "folder": null,
+                          "uploaded_by": "admin-user-id",
+                          "created_on": "2025-01-15T10:30:00Z",
+                          "filesize": 245678,
+                          "width": 1920,
+                          "height": 1080,
+                          "description": "User profile photo",
+                          "tags": []
+                        }
+                      ],
+                      "meta": {
+                        "filter_count": 1,
+                        "total_count": 1
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/files/{id}": {
+      "get": {
+        "summary": "Get File by ID",
+        "description": "Retrieve a single file's metadata by its unique identifier. This endpoint returns detailed \ninformation about a specific file, including all available fields and metadata.\n\n## Path Parameters\n\n- **id** (required): The unique identifier of the file (UUID string)\n\n## Query Parameters\n\n- **fields**: Specify which fields to include in the response (comma-separated)\n- **meta**: Include additional metadata in the response\n\n## Use Cases\n\n- Fetching complete file metadata\n- Accessing extracted metadata (Exif, IPTC, ICC)\n- Retrieving file properties for display or processing\n- Getting file organization information (folder, tags)\n",
+        "tags": [
+          "Files"
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Fields"
+          },
+          {
+            "$ref": "#/components/parameters/Meta"
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "The unique identifier of the file. This is a UUID string that uniquely identifies \neach file in Directus.\n",
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "example": "a1b2c3d4-e5f6-7890-1234-abcdef123456"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "**Success** — Returns the requested file metadata.\n\nThe response contains a single file object in the `data` property, including \nall available fields such as storage location, filenames, dimensions, metadata, \nand organization information.\n",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "$ref": "#/components/schemas/DirectusFiles"
+                    }
+                  }
+                },
+                "examples": {
+                  "default": {
+                    "summary": "File metadata response",
+                    "value": {
+                      "data": {
+                        "id": "a1b2c3d4-e5f6-7890-1234-abcdef123456",
+                        "storage": "local",
+                        "filename_disk": "image-1234567890.jpg",
+                        "filename_download": "profile-photo.jpg",
+                        "title": "Profile Photo",
+                        "type": "image/jpeg",
+                        "folder": null,
+                        "uploaded_by": "admin-user-id",
+                        "created_on": "2025-01-15T10:30:00Z",
+                        "filesize": 245678,
+                        "width": 1920,
+                        "height": 1080,
+                        "description": "User profile photo",
+                        "tags": [],
+                        "metadata": {
+                          "exif": {
+                            "Make": "Canon",
+                            "Model": "EOS 5D Mark IV"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "**Not Found** — The requested file does not exist.\n\nThis error occurs when:\n- The provided `id` does not match any existing file\n- The file has been deleted\n- The `id` is invalid or malformed\n",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "errors": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "message": {
+                            "type": "string"
+                          },
+                          "extensions": {
+                            "type": "object",
+                            "properties": {
+                              "code": {
+                                "type": "string",
+                                "example": "NOT_FOUND"
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/folders": {},
+    "/folders/{id}": {},
+    "/fields": {},
+    "/fields/{collection}": {},
+    "/fields/{collection}/{id}": {},
+    "/relations": {},
+    "/relations/{id}": {},
+    "/revisions": {},
+    "/revisions/{id}": {},
+    "/permissions": {},
+    "/permissions/me": {},
+    "/permissions/{id}": {},
+    "/activity": {},
+    "/activity/{id}": {},
+    "/presets": {},
+    "/presets/{id}": {},
+    "/flows": {},
+    "/flows/{id}": {},
+    "/operations": {},
+    "/operations/{id}": {},
+    "/collections": {},
+    "/collections/{id}": {},
+    "/comments": {},
+    "/comments/{id}": {},
+    "/versions": {},
+    "/versions/{id}": {},
+    "/versions/{id}/save": {},
+    "/versions/{id}/compare": {},
+    "/versions/{id}/promote": {},
+    "/users": {},
+    "/users/{id}": {},
+    "/users/invite": {},
+    "/users/invite/accept": {},
+    "/users/me": {},
+    "/users/me/track/page": {},
+    "/users/me/tfa/enable": {},
+    "/users/me/tfa/disable": {},
+    "/extensions": {},
+    "/extensions/{name}": {},
+    "/extensions/{bundle}/{name}": {},
+    "/webhooks": {},
+    "/webhooks/{id}": {},
+    "/items/directus_sync_id_map": {},
+    "/items/directus_sync_id_map/{id}": {},
+    "/settings": {},
+    "/items/codex": {
+      "get": {
+        "summary": "List Codex Items",
+        "description": "Retrieve a paginated list of all codex items. This endpoint supports advanced querying \ncapabilities including filtering, sorting, searching, and field selection.\n\n## Query Capabilities\n\n- **Filter**: Apply complex filters using Directus filter syntax. See the [Directus Filter Documentation](https://directus.io/docs/api/fields#list-all-fields) for detailed filter syntax and examples.\n- **Search**: Full-text search across codex fields\n- **Sort**: Order results by any field in ascending or descending order\n- **Pagination**: Control result set size with `limit` and `offset`\n- **Field Selection**: Specify which fields to include in the response\n\nFor comprehensive query documentation including all available parameters and examples, refer to the [Directus API Documentation](https://directus.io/docs/api/fields#list-all-fields).\n\n## Response Structure\n\nThe response includes:\n- `data`: Array of codex items matching the query\n- `meta`: Metadata about the query results (total count, filter count, etc.)\n",
+        "tags": [
+          "Codex"
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Fields"
+          },
+          {
+            "$ref": "#/components/parameters/Limit"
+          },
+          {
+            "$ref": "#/components/parameters/Meta"
+          },
+          {
+            "$ref": "#/components/parameters/Offset"
+          },
+          {
+            "$ref": "#/components/parameters/Sort"
+          },
+          {
+            "$ref": "#/components/parameters/Filter"
+          },
+          {
+            "$ref": "#/components/parameters/Search"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "**Success** — Returns a paginated list of codex items.\n\nThe response includes an array of codex items in the `data` property, along with \nmetadata about the query results (total count, filter count, etc.) in the `meta` property.\n",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/ItemsCodex"
+                      }
+                    },
+                    "meta": {
+                      "$ref": "#/components/schemas/x-metadata"
+                    }
+                  }
+                },
+                "examples": {
+                  "default": {
+                    "summary": "List of codex items",
+                    "value": {
+                      "data": [
+                        {
+                          "id": 1,
+                          "name": "Korka",
+                          "ancestor": "Slovenian king",
+                          "description": "A contemplative curator with deep roots in Eastern Orthodox hesychasm",
+                          "artstyle_disliked": "overly commercial",
+                          "timestamp_created": "2025-01-15T10:30:00Z"
+                        },
+                        {
+                          "id": 2,
+                          "name": "Aria",
+                          "ancestor": null,
+                          "description": "An artist exploring digital boundaries",
+                          "artstyle_disliked": null,
+                          "timestamp_created": "2025-01-16T14:20:00Z"
+                        }
+                      ],
+                      "meta": {
+                        "filter_count": 2,
+                        "total_count": 2
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/items/codex/{id}": {
+      "get": {
+        "summary": "Get Codex Item by ID",
+        "description": "Retrieve a single codex item by its unique identifier. This endpoint returns detailed \ninformation about a specific entity in the Codex, including all available fields and metadata.\n\n## Path Parameters\n\n- **id** (required): The unique incremental identifier of the codex item\n\n## Query Parameters\n\n- **fields**: Specify which fields to include in the response (comma-separated)\n- **meta**: Include additional metadata in the response\n\n## Use Cases\n\n- Fetching complete details for a specific entity\n- Retrieving full biographical information\n- Accessing relationship data and attributes\n",
+        "tags": [
+          "Codex"
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Fields"
+          },
+          {
+            "$ref": "#/components/parameters/Meta"
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "The unique incremental identifier of the codex item. This is a sequential integer \nthat uniquely identifies each entity in the Codex.\n",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "example": 1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "**Success** — Returns the requested codex item.\n\nThe response contains a single codex item object in the `data` property, including \nall available fields such as name, description, ancestor, biographical information, \nand metadata.\n",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "$ref": "#/components/schemas/ItemsCodex"
+                    }
+                  }
+                },
+                "examples": {
+                  "default": {
+                    "summary": "Single codex item with complete details",
+                    "value": {
+                      "data": {
+                        "id": 1,
+                        "name": "Korka",
+                        "ancestor": "Slovenian king",
+                        "description": "A contemplative curator with deep roots in Eastern Orthodox hesychasm, interpreting inner stillness as deeper attention to the world's beautiful chaos.",
+                        "artstyle_disliked": "overly commercial",
+                        "timestamp_created": "2025-01-15T10:30:00Z",
+                        "biography": "Her psychology is built on Eastern Orthodox hesychasm...",
+                        "whatness": [
+                          "curator",
+                          "philosopher",
+                          "guardian"
+                        ]
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "**Not Found** — The requested codex item does not exist.\n\nThis error occurs when:\n- The provided `id` does not match any existing codex item\n- The item has been deleted or removed\n- The `id` is invalid or out of range\n\nThe response includes an error object with details about what went wrong.\n",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "errors": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "message": {
+                            "type": "string",
+                            "description": "Human-readable error message"
+                          },
+                          "extensions": {
+                            "type": "object",
+                            "description": "Additional error context and metadata",
+                            "properties": {
+                              "code": {
+                                "type": "string",
+                                "description": "Machine-readable error code",
+                                "example": "NOT_FOUND"
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "examples": {
+                  "default": {
+                    "summary": "Item not found error response",
+                    "value": {
+                      "errors": [
+                        {
+                          "message": "Item not found",
+                          "extensions": {
+                            "code": "NOT_FOUND"
+                          }
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "tags": [
+    {
+      "name": "Files",
+      "description": "Files can be saved in any given location. Directus has a powerful assets endpoint that can be used to generate thumbnails for images on the fly.",
+      "x-collection": "directus_files"
+    },
+    {
+      "name": "Codex",
+      "description": "Operations for accessing and querying the **MOCA Codex** knowledge base. \n\nThe Codex contains curated information about entities, including their:\n- **Identity**: Names, descriptions, and biographical information\n- **Relationships**: Ancestral connections and associations\n- **Attributes**: Characteristics, preferences, and metadata\n- **Temporal Data**: Creation timestamps and historical context\n\nUse these endpoints to explore the rich interconnected data within the Codex.\n"
+    },
+    {
+      "name": "Files",
+      "description": "Operations for retrieving **files and assets** from Directus. \n\nThe Files API provides read-only access to file information and content:\n- **File Retrieval**: List and retrieve file metadata\n- **Metadata Access**: Access file properties, dimensions, and extracted metadata\n- **Asset Retrieval**: Get file content with optional image transformations\n- **File Information**: View file organization details including folders, tags, and descriptions\n\nUse these endpoints to access and display media assets, documents, and other file types stored in Directus.\n"
+    }
+  ],
+  "components": {
+    "schemas": {
+      "Diff": {
+        "type": "object",
+        "properties": {
+          "hash": {
+            "type": "string"
+          },
+          "diff": {
+            "type": "object",
+            "properties": {
+              "collections": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "collection": {
+                      "type": "string"
+                    },
+                    "diff": {
+                      "type": "array",
+                      "items": {
+                        "type": "object"
+                      }
+                    }
+                  }
+                }
+              },
+              "fields": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "collection": {
+                      "type": "string"
+                    },
+                    "field": {
+                      "type": "string"
+                    },
+                    "diff": {
+                      "type": "array",
+                      "items": {
+                        "type": "object"
+                      }
+                    }
+                  }
+                }
+              },
+              "relations": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "collection": {
+                      "type": "string"
+                    },
+                    "field": {
+                      "type": "string"
+                    },
+                    "related_collection": {
+                      "type": "string"
+                    },
+                    "diff": {
+                      "type": "array",
+                      "items": {
+                        "type": "object"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "Schema": {
+        "type": "object",
+        "properties": {
+          "version": {
+            "type": "integer",
+            "example": 1
+          },
+          "directus": {
+            "type": "string"
+          },
+          "vendor": {
+            "type": "string"
+          },
+          "collections": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Collections"
+            }
+          },
+          "fields": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Fields"
+            }
+          },
+          "relations": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Relations"
+            }
+          }
+        }
+      },
+      "Query": {
+        "type": "object",
+        "properties": {
+          "fields": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Control what fields are being returned in the object.",
+            "example": [
+              "*",
+              "*.*"
+            ]
+          },
+          "filter": {
+            "type": "object",
+            "example": {
+              "<field>": {
+                "<operator>": "<value>"
+              }
+            }
+          },
+          "search": {
+            "description": "Filter by items that contain the given search query in one of their fields.",
+            "type": "string"
+          },
+          "sort": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "How to sort the returned items.",
+            "example": [
+              "-date_created"
+            ]
+          },
+          "limit": {
+            "type": "number",
+            "description": "Set the maximum number of items that will be returned"
+          },
+          "offset": {
+            "type": "number",
+            "description": "How many items to skip when fetching data."
+          },
+          "page": {
+            "type": "number",
+            "description": "Cursor for use in pagination. Often used in combination with limit."
+          },
+          "deep": {
+            "type": "object",
+            "description": "Deep allows you to set any of the other query parameters on a nested relational dataset.",
+            "example": {
+              "related_articles": {
+                "_limit": 3
+              }
+            }
+          }
+        }
+      },
+      "x-metadata": {
+        "type": "object",
+        "properties": {
+          "total_count": {
+            "description": "Returns the total item count of the collection you're querying.",
+            "type": "integer"
+          },
+          "filter_count": {
+            "description": "Returns the item count of the collection you're querying, taking the current filter/search parameters into account.",
+            "type": "integer"
+          }
+        }
+      },
+      "Roles": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "description": "Unique identifier for the role.",
+            "example": "2f24211d-d928-469a-aea3-3c8f53d4e426",
+            "type": "string"
+          },
+          "name": {
+            "description": "Name of the role.",
+            "example": "Administrator",
+            "type": "string"
+          },
+          "icon": {
+            "description": "The role's icon.",
+            "example": "verified_user",
+            "type": "string"
+          },
+          "description": {
+            "description": "Description of the role.",
+            "example": "Admins have access to all managed data within the system by default",
+            "type": "string",
+            "nullable": true
+          },
+          "parent": {
+            "nullable": true,
+            "description": "$t:field_options.directus_roles.parent_note",
+            "oneOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "$ref": "#/components/schemas/Roles"
+              }
+            ]
+          },
+          "children": {
+            "nullable": true,
+            "description": "$t:field_options.directus_roles.children_note",
+            "type": "array",
+            "items": {
+              "oneOf": [
+                {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                {
+                  "$ref": "#/components/schemas/Roles"
+                }
+              ]
+            }
+          },
+          "policies": {
+            "nullable": true
+          },
+          "users": {
+            "nullable": true,
+            "type": "array",
+            "items": {
+              "oneOf": [
+                {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                {
+                  "$ref": "#/components/schemas/Users"
+                }
+              ]
+            }
+          }
+        },
+        "x-collection": "directus_roles"
+      },
+      "Files": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "description": "Unique identifier for the file.",
+            "example": "8cbb43fe-4cdf-4991-8352-c461779cec02",
+            "type": "string"
+          },
+          "storage": {
+            "description": "Where the file is stored. Either `local` for the local filesystem or the name of the storage adapter (for example `s3`).",
+            "example": "local",
+            "type": "string"
+          },
+          "filename_disk": {
+            "description": "Name of the file on disk. By default, Directus uses a random hash for the filename.",
+            "example": "a88c3b72-ac58-5436-a4ec-b2858531333a.jpg",
+            "type": "string"
+          },
+          "filename_download": {
+            "description": "How you want to the file to be named when it's being downloaded.",
+            "example": "avatar.jpg",
+            "type": "string"
+          },
+          "title": {
+            "description": "Title for the file. Is extracted from the filename on upload, but can be edited by the user.",
+            "example": "User Avatar",
+            "type": "string"
+          },
+          "type": {
+            "description": "MIME type of the file.",
+            "example": "image/jpeg",
+            "type": "string"
+          },
+          "folder": {
+            "description": "Virtual folder where this file resides in.",
+            "example": null,
+            "oneOf": [
+              {
+                "type": "string"
+              },
+              {
+                "$ref": "#/components/schemas/Folders"
+              }
+            ],
+            "nullable": true
+          },
+          "uploaded_by": {
+            "description": "Who uploaded the file.",
+            "example": "63716273-0f29-4648-8a2a-2af2948f6f78",
+            "oneOf": [
+              {
+                "type": "string"
+              },
+              {
+                "$ref": "#/components/schemas/Users"
+              }
+            ]
+          },
+          "created_on": {
+            "description": "When the file was created.",
+            "example": "2019-12-03T00:10:15+00:00",
+            "type": "string",
+            "format": "date-time"
+          },
+          "modified_by": {
+            "nullable": true,
+            "oneOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "$ref": "#/components/schemas/Users"
+              }
+            ]
+          },
+          "modified_on": {
+            "nullable": false,
+            "type": "string",
+            "format": "timestamp"
+          },
+          "charset": {
+            "description": "Character set of the file.",
+            "example": "binary",
+            "type": "string",
+            "nullable": true
+          },
+          "filesize": {
+            "description": "Size of the file in bytes.",
+            "example": 137862,
+            "type": "integer"
+          },
+          "width": {
+            "description": "Width of the file in pixels. Only applies to images.",
+            "example": 800,
+            "type": "integer",
+            "nullable": true
+          },
+          "height": {
+            "description": "Height of the file in pixels. Only applies to images.",
+            "example": 838,
+            "type": "integer",
+            "nullable": true
+          },
+          "duration": {
+            "description": "Duration of the file in seconds. Only applies to audio and video.",
+            "example": 0,
+            "type": "integer",
+            "nullable": true
+          },
+          "embed": {
+            "description": "Where the file was embedded from.",
+            "example": null,
+            "type": "string",
+            "nullable": true
+          },
+          "description": {
+            "description": "Description for the file.",
+            "type": "string",
+            "nullable": true
+          },
+          "location": {
+            "description": "Where the file was created. Is automatically populated based on Exif data for images.",
+            "type": "string",
+            "nullable": true
+          },
+          "tags": {
+            "description": "Tags for the file. Is automatically populated based on Exif data for images.",
+            "type": "array",
+            "nullable": true,
+            "items": {
+              "type": "string"
+            }
+          },
+          "metadata": {
+            "description": "IPTC, Exif, and ICC metadata extracted from file",
+            "type": "object",
+            "nullable": true
+          },
+          "focal_point_x": {
+            "nullable": true,
+            "type": "integer"
+          },
+          "focal_point_y": {
+            "nullable": true,
+            "type": "integer"
+          },
+          "tus_id": {
+            "nullable": true,
+            "type": "string"
+          },
+          "tus_data": {
+            "nullable": true
+          },
+          "uploaded_on": {
+            "description": "When the file was last uploaded/replaced.",
+            "example": "2019-12-03T00:10:15+00:00",
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "x-collection": "directus_files"
+      },
+      "Folders": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "description": "Unique identifier for the folder.",
+            "example": "0cf0e03d-4364-45df-b77b-ca61f61869d2",
+            "type": "string"
+          },
+          "name": {
+            "description": "Name of the folder.",
+            "example": "New York",
+            "type": "string"
+          },
+          "parent": {
+            "description": "Unique identifier of the parent folder. This allows for nested folders.",
+            "example": null,
+            "oneOf": [
+              {
+                "type": "string"
+              },
+              {
+                "$ref": "#/components/schemas/Folders"
+              }
+            ],
+            "nullable": true
+          }
+        },
+        "x-collection": "directus_folders"
+      },
+      "Fields": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "nullable": false,
+            "type": "integer"
+          },
+          "collection": {
+            "description": "Unique name of the collection this field is in.",
+            "example": "about_us",
+            "type": "string"
+          },
+          "field": {
+            "description": "Unique name of the field. Field name is unique within the collection.",
+            "example": "id",
+            "type": "string"
+          },
+          "special": {
+            "nullable": true,
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "interface": {
+            "nullable": true,
+            "type": "string"
+          },
+          "options": {
+            "nullable": true
+          },
+          "display": {
+            "nullable": true,
+            "type": "string"
+          },
+          "display_options": {
+            "nullable": true
+          },
+          "readonly": {
+            "nullable": false,
+            "type": "boolean"
+          },
+          "hidden": {
+            "nullable": false,
+            "type": "boolean"
+          },
+          "sort": {
+            "nullable": true,
+            "type": "integer"
+          },
+          "width": {
+            "nullable": true,
+            "type": "string"
+          },
+          "translations": {
+            "nullable": true
+          },
+          "note": {
+            "nullable": true,
+            "type": "string"
+          },
+          "conditions": {
+            "nullable": true
+          },
+          "required": {
+            "nullable": true,
+            "type": "boolean"
+          },
+          "group": {
+            "nullable": true,
+            "oneOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "$ref": "#/components/schemas/Fields"
+              }
+            ]
+          },
+          "validation": {
+            "nullable": true
+          },
+          "validation_message": {
+            "nullable": true,
+            "type": "string"
+          },
+          "searchable": {
+            "nullable": false,
+            "type": "boolean"
+          }
+        },
+        "x-collection": "directus_fields"
+      },
+      "Relations": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "description": "Unique identifier for the relation.",
+            "example": 1,
+            "type": "integer"
+          },
+          "many_collection": {
+            "description": "Collection that has the field that holds the foreign key.",
+            "example": "directus_activity",
+            "type": "string"
+          },
+          "many_field": {
+            "description": "Foreign key. Field that holds the primary key of the related collection.",
+            "example": "user",
+            "type": "string"
+          },
+          "one_collection": {
+            "description": "Collection on the _one_ side of the relationship.",
+            "example": "directus_users",
+            "type": "string"
+          },
+          "one_field": {
+            "description": "Alias column that serves as the _one_ side of the relationship.",
+            "example": null,
+            "type": "string",
+            "nullable": true
+          },
+          "one_collection_field": {
+            "nullable": true,
+            "type": "string"
+          },
+          "one_allowed_collections": {
+            "nullable": true,
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "junction_field": {
+            "description": "Field on the junction table that holds the many field of the related relation.",
+            "example": null,
+            "type": "string",
+            "nullable": true
+          },
+          "sort_field": {
+            "nullable": true,
+            "type": "string"
+          },
+          "one_deselect_action": {
+            "nullable": false,
+            "type": "string"
+          }
+        },
+        "x-collection": "directus_relations"
+      },
+      "Revisions": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "description": "Unique identifier for the revision.",
+            "example": 1,
+            "type": "integer"
+          },
+          "activity": {
+            "description": "Unique identifier for the activity record.",
+            "example": 2,
+            "oneOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "$ref": "#/components/schemas/Activity"
+              }
+            ]
+          },
+          "collection": {
+            "description": "Collection of the updated item.",
+            "example": "articles",
+            "oneOf": [
+              {
+                "type": "string"
+              },
+              {
+                "$ref": "#/components/schemas/Collections"
+              }
+            ]
+          },
+          "item": {
+            "description": "Primary key of updated item.",
+            "example": "168",
+            "type": "string"
+          },
+          "data": {
+            "description": "Copy of item state at time of update.",
+            "example": {
+              "author": 1,
+              "body": "This is my first post",
+              "featured_image": 15,
+              "id": "168",
+              "title": "Hello, World!"
+            },
+            "type": "object",
+            "nullable": true
+          },
+          "delta": {
+            "description": "Changes between the previous and the current revision.",
+            "example": {
+              "title": "Hello, World!"
+            },
+            "type": "object"
+          },
+          "parent": {
+            "description": "If the current item was updated relationally, this is the id of the parent revision record",
+            "example": null,
+            "type": "integer",
+            "nullable": true
+          },
+          "version": {
+            "description": "Associated version of this revision.",
+            "example": "draft",
+            "oneOf": [
+              {
+                "type": "string"
+              },
+              {
+                "$ref": "#/components/schemas/Versions"
+              }
+            ]
+          }
+        },
+        "x-collection": "directus_revisions"
+      },
+      "Permissions": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "description": "Unique identifier for the permission.",
+            "example": 1,
+            "type": "integer"
+          },
+          "collection": {
+            "description": "What collection this permission applies to.",
+            "example": "customers",
+            "type": "string"
+          },
+          "action": {
+            "description": "What action this permission applies to.",
+            "example": "create",
+            "type": "string",
+            "enum": [
+              "create",
+              "read",
+              "update",
+              "delete"
+            ]
+          },
+          "permissions": {
+            "description": "JSON structure containing the permissions checks for this permission.",
+            "type": "object",
+            "nullable": true
+          },
+          "validation": {
+            "description": "JSON structure containing the validation checks for this permission.",
+            "type": "object",
+            "nullable": true
+          },
+          "presets": {
+            "description": "JSON structure containing the preset value for created/updated items.",
+            "type": "object",
+            "nullable": true
+          },
+          "fields": {
+            "description": "CSV of fields that the user is allowed to interact with.",
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          },
+          "policy": {
+            "nullable": false
+          }
+        },
+        "x-collection": "directus_permissions"
+      },
+      "Activity": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "description": "Unique identifier for the object.",
+            "example": 2,
+            "type": "integer"
+          },
+          "action": {
+            "description": "Action that was performed.",
+            "example": "update",
+            "type": "string",
+            "enum": [
+              "create",
+              "update",
+              "delete",
+              "login"
+            ]
+          },
+          "user": {
+            "description": "The user who performed this action.",
+            "oneOf": [
+              {
+                "type": "string"
+              },
+              {
+                "$ref": "#/components/schemas/Users"
+              }
+            ],
+            "nullable": true
+          },
+          "timestamp": {
+            "description": "When the action happened.",
+            "example": "2019-12-05T22:52:09Z",
+            "type": "string",
+            "format": "date-time"
+          },
+          "ip": {
+            "description": "The IP address of the user at the time the action took place.",
+            "example": "127.0.0.1",
+            "oneOf": [
+              {
+                "type": "string",
+                "format": "ipv4"
+              }
+            ]
+          },
+          "user_agent": {
+            "description": "User agent string of the browser the user used when the action took place.",
+            "example": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_1) AppleWebKit/537.36 (KHTML,like Gecko) Chrome/78.0.3904.108 Safari/537.36",
+            "type": "string"
+          },
+          "collection": {
+            "description": "Collection identifier in which the item resides.",
+            "oneOf": [
+              {
+                "type": "string"
+              },
+              {
+                "$ref": "#/components/schemas/Collections"
+              }
+            ]
+          },
+          "item": {
+            "description": "Unique identifier for the item the action applied to. This is always a string, even for integer primary keys.",
+            "example": "328",
+            "type": "string"
+          },
+          "origin": {
+            "description": "Origin of the request when the action took place.",
+            "example": "https://directus.io",
+            "type": "string"
+          },
+          "revisions": {
+            "nullable": true,
+            "type": "array",
+            "items": {
+              "oneOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "$ref": "#/components/schemas/Revisions"
+                }
+              ]
+            }
+          }
+        },
+        "x-collection": "directus_activity"
+      },
+      "Presets": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "description": "Unique identifier for this single collection preset.",
+            "example": 155,
+            "type": "integer"
+          },
+          "bookmark": {
+            "description": "Name for the bookmark. If this is set, the preset will be considered a bookmark.",
+            "nullable": true,
+            "type": "string"
+          },
+          "user": {
+            "description": "The unique identifier of the user to whom this collection preset applies.",
+            "example": "63716273-0f29-4648-8a2a-2af2948f6f78",
+            "nullable": true,
+            "oneOf": [
+              {
+                "type": "string"
+              },
+              {
+                "$ref": "#/components/schemas/Users"
+              }
+            ]
+          },
+          "role": {
+            "description": "The unique identifier of a role in the platform. If `user` is null, this will be used to apply the collection preset or bookmark for all users in the role.",
+            "example": "50419801-0f30-8644-2b3c-9bc2d980d0a0",
+            "nullable": true,
+            "oneOf": [
+              {
+                "type": "string"
+              },
+              {
+                "$ref": "#/components/schemas/Roles"
+              }
+            ]
+          },
+          "collection": {
+            "description": "What collection this collection preset is used for.",
+            "example": "articles",
+            "oneOf": [
+              {
+                "type": "string"
+              },
+              {
+                "$ref": "#/components/schemas/Collections"
+              }
+            ]
+          },
+          "search": {
+            "description": "Search query.",
+            "type": "string",
+            "nullable": true
+          },
+          "layout": {
+            "description": "Key of the layout that is used.",
+            "type": "string",
+            "example": null
+          },
+          "layout_query": {
+            "description": "Layout query that's saved per layout type. Controls what data is fetched on load. These follow the same format as the JS SDK parameters.",
+            "example": {
+              "cards": {
+                "sort": "-published_on"
+              }
+            },
+            "nullable": true
+          },
+          "layout_options": {
+            "description": "Options of the views. The properties in here are controlled by the layout.",
+            "example": {
+              "cards": {
+                "icon": "account_circle",
+                "title": "{{ first_name }} {{ last_name }}",
+                "subtitle": "{{ title }}",
+                "size": 3
+              }
+            },
+            "nullable": true
+          },
+          "refresh_interval": {
+            "nullable": true,
+            "type": "integer"
+          },
+          "filter": {
+            "nullable": true
+          },
+          "icon": {
+            "nullable": true,
+            "type": "string"
+          },
+          "color": {
+            "nullable": true,
+            "type": "string"
+          }
+        },
+        "x-collection": "directus_presets"
+      },
+      "Flows": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "description": "Unique identifier for the flow.",
+            "type": "string",
+            "example": "2f24211d-d928-469a-aea3-3c8f53d4e426"
+          },
+          "name": {
+            "description": "The name of the flow.",
+            "type": "string",
+            "example": "Update Articles Flow"
+          },
+          "icon": {
+            "description": "Icon displayed in the Admin App for the flow.",
+            "type": "string",
+            "example": "bolt"
+          },
+          "color": {
+            "description": "Color of the icon displayed in the Admin App for the flow.",
+            "type": "string",
+            "example": "#112233",
+            "nullable": true
+          },
+          "description": {
+            "nullable": true,
+            "type": "string"
+          },
+          "status": {
+            "description": "Current status of the flow.",
+            "type": "string",
+            "example": "active",
+            "default": "active",
+            "enum": [
+              "active",
+              "inactive"
+            ]
+          },
+          "trigger": {
+            "description": "Type of trigger for the flow. One of `hook`, `webhook`, `operation`, `schedule`, `manual`.",
+            "type": "string",
+            "example": "manual"
+          },
+          "accountability": {
+            "description": "The permission used during the flow. One of `$public`, `$trigger`, `$full`, or UUID of a role.",
+            "type": "string",
+            "example": "$trigger"
+          },
+          "options": {
+            "description": "Options of the selected trigger for the flow.",
+            "type": "object",
+            "example": null,
+            "nullable": true
+          },
+          "operation": {
+            "description": "UUID of the operation connected to the trigger in the flow.",
+            "example": "92e82998-e421-412f-a513-13701e83e4ce",
+            "oneOf": [
+              {
+                "type": "string"
+              },
+              {
+                "$ref": "#/components/schemas/Operations"
+              }
+            ]
+          },
+          "date_created": {
+            "description": "Timestamp in ISO8601 when the flow was created.",
+            "type": "string",
+            "example": "2022-05-11T13:14:52Z",
+            "format": "date-time",
+            "nullable": true
+          },
+          "user_created": {
+            "description": "The user who created the flow.",
+            "example": "63716273-0f29-4648-8a2a-2af2948f6f78",
+            "oneOf": [
+              {
+                "type": "string"
+              },
+              {
+                "$ref": "#/components/schemas/Users"
+              }
+            ]
+          },
+          "operations": {
+            "nullable": true,
+            "type": "array",
+            "items": {
+              "oneOf": [
+                {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                {
+                  "$ref": "#/components/schemas/Operations"
+                }
+              ]
+            }
+          }
+        },
+        "x-collection": "directus_flows"
+      },
+      "Operations": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "description": "Unique identifier for the operation.",
+            "type": "string",
+            "example": "2f24211d-d928-469a-aea3-3c8f53d4e426"
+          },
+          "name": {
+            "description": "The name of the operation.",
+            "type": "string",
+            "example": "Log to Console"
+          },
+          "key": {
+            "description": "Key for the operation. Must be unique within a given flow.",
+            "type": "string",
+            "example": "log_console"
+          },
+          "type": {
+            "description": "Type of operation. One of `log`, `mail`, `notification`, `create`, `read`, `request`, `sleep`, `transform`, `trigger`, `condition`, or any type of custom operation extensions.",
+            "type": "string",
+            "example": "log"
+          },
+          "position_x": {
+            "description": "Position of the operation on the X axis within the flow workspace.",
+            "type": "integer",
+            "example": 12
+          },
+          "position_y": {
+            "description": "Position of the operation on the Y axis within the flow workspace.",
+            "type": "integer",
+            "example": 12
+          },
+          "options": {
+            "description": "Options depending on the type of the operation.",
+            "type": "object",
+            "example": null,
+            "nullable": true
+          },
+          "resolve": {
+            "description": "The operation triggered when the current operation succeeds (or `then` logic of a condition operation).",
+            "example": "63716273-0f29-4648-8a2a-2af2948f6f78",
+            "oneOf": [
+              {
+                "type": "string"
+              },
+              {
+                "$ref": "#/components/schemas/Operations"
+              }
+            ]
+          },
+          "reject": {
+            "description": "The operation triggered when the current operation fails (or `otherwise` logic of a condition operation).",
+            "example": "63716273-0f29-4648-8a2a-2af2948f6f78",
+            "oneOf": [
+              {
+                "type": "string"
+              },
+              {
+                "$ref": "#/components/schemas/Operations"
+              }
+            ]
+          },
+          "flow": {
+            "nullable": false,
+            "oneOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "$ref": "#/components/schemas/Flows"
+              }
+            ]
+          },
+          "date_created": {
+            "description": "Timestamp in ISO8601 when the operation was created.",
+            "type": "string",
+            "example": "2022-05-11T13:14:52Z",
+            "format": "date-time",
+            "nullable": true
+          },
+          "user_created": {
+            "description": "The user who created the operation.",
+            "example": "63716273-0f29-4648-8a2a-2af2948f6f78",
+            "oneOf": [
+              {
+                "type": "string"
+              },
+              {
+                "$ref": "#/components/schemas/Users"
+              }
+            ]
+          }
+        },
+        "x-collection": "directus_operations"
+      },
+      "Collections": {
+        "type": "object",
+        "properties": {
+          "collection": {
+            "description": "The collection key.",
+            "example": "customers",
+            "type": "string"
+          },
+          "icon": {
+            "nullable": true,
+            "type": "string"
+          },
+          "note": {
+            "nullable": true,
+            "type": "string"
+          },
+          "display_template": {
+            "nullable": true,
+            "type": "string"
+          },
+          "hidden": {
+            "nullable": false,
+            "type": "boolean"
+          },
+          "singleton": {
+            "nullable": false,
+            "type": "boolean"
+          },
+          "translations": {
+            "nullable": true
+          },
+          "archive_field": {
+            "nullable": true,
+            "type": "string"
+          },
+          "archive_app_filter": {
+            "nullable": false,
+            "type": "boolean"
+          },
+          "archive_value": {
+            "nullable": true,
+            "type": "string"
+          },
+          "unarchive_value": {
+            "nullable": true,
+            "type": "string"
+          },
+          "sort_field": {
+            "nullable": true,
+            "type": "string"
+          },
+          "accountability": {
+            "nullable": true,
+            "type": "string"
+          },
+          "color": {
+            "nullable": true,
+            "type": "string"
+          },
+          "item_duplication_fields": {
+            "nullable": true
+          },
+          "sort": {
+            "nullable": true,
+            "type": "integer"
+          },
+          "group": {
+            "nullable": true,
+            "oneOf": [
+              {
+                "type": "string"
+              },
+              {
+                "$ref": "#/components/schemas/Collections"
+              }
+            ]
+          },
+          "collapse": {
+            "nullable": false,
+            "type": "string"
+          },
+          "preview_url": {
+            "nullable": true,
+            "type": "string"
+          },
+          "versioning": {
+            "nullable": false,
+            "type": "boolean"
+          }
+        },
+        "x-collection": "directus_collections"
+      },
+      "Comments": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "description": "Unique identifier for this single collection preset.",
+            "example": "81dfa7e0-56d2-471f-b96a-1cf8a62bdf28",
+            "type": "string"
+          },
+          "collection": {
+            "description": "The collection of the item the Comment is created for.",
+            "example": "articles",
+            "oneOf": [
+              {
+                "type": "string"
+              },
+              {
+                "$ref": "#/components/schemas/Collections"
+              }
+            ]
+          },
+          "item": {
+            "description": "The item the Comment is created for.",
+            "example": "123",
+            "type": "string"
+          },
+          "comment": {
+            "description": "User comment. This will store the comments that show up in the right sidebar of the item edit page in the admin app.",
+            "example": "This is a comment",
+            "type": "string"
+          },
+          "date_created": {
+            "description": "When the Comment was created.",
+            "type": "string",
+            "example": "2024-01-23T12:34:56Z",
+            "format": "date-time",
+            "nullable": true
+          },
+          "date_updated": {
+            "description": "When the Comment was updated.",
+            "type": "string",
+            "example": "2024-01-23T12:34:56Z",
+            "format": "date-time",
+            "nullable": true
+          },
+          "user_created": {
+            "description": "User that created the Comment.",
+            "example": "81dfa7e0-56d2-471f-b96a-1cf8a62bdf28",
+            "oneOf": [
+              {
+                "type": "string"
+              },
+              {
+                "$ref": "#/components/schemas/Users"
+              }
+            ]
+          },
+          "user_updated": {
+            "description": "User that updated the Comment.",
+            "example": "81dfa7e0-56d2-471f-b96a-1cf8a62bdf28",
+            "oneOf": [
+              {
+                "type": "string"
+              },
+              {
+                "$ref": "#/components/schemas/Users"
+              }
+            ]
+          }
+        },
+        "x-collection": "directus_comments"
+      },
+      "Versions": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "description": "Primary key of the Content Version.",
+            "example": "63716273-0f29-4648-8a2a-2af2948f6f78",
+            "type": "string"
+          },
+          "key": {
+            "description": "Key of the Content Version, used as the value for the \"version\" query parameter.",
+            "example": "draft",
+            "type": "string"
+          },
+          "name": {
+            "description": "Descriptive name of the Content Version.",
+            "example": "My Draft",
+            "type": "string"
+          },
+          "collection": {
+            "description": "Name of the collection the Content Version is created on.",
+            "example": "articles",
+            "oneOf": [
+              {
+                "type": "string"
+              },
+              {
+                "$ref": "#/components/schemas/Collections"
+              }
+            ]
+          },
+          "item": {
+            "description": "The item the Content Version is created on.",
+            "example": "168",
+            "type": "string"
+          },
+          "hash": {
+            "nullable": true,
+            "type": "string"
+          },
+          "date_created": {
+            "description": "When the Content Version was created.",
+            "type": "string",
+            "example": "2022-05-11T13:14:52Z",
+            "format": "date-time",
+            "nullable": true
+          },
+          "date_updated": {
+            "description": "When the Content Version was last updated.",
+            "type": "string",
+            "example": "2022-05-11T13:14:53Z",
+            "format": "date-time",
+            "nullable": true
+          },
+          "user_created": {
+            "description": "User that created the Content Version.",
+            "example": "63716273-0f29-4648-8a2a-2af2948f6f78",
+            "oneOf": [
+              {
+                "type": "string"
+              },
+              {
+                "$ref": "#/components/schemas/Users"
+              }
+            ]
+          },
+          "user_updated": {
+            "description": "User that last updated the Content Version.",
+            "example": "63716273-0f29-4648-8a2a-2af2948f6f78",
+            "oneOf": [
+              {
+                "type": "string"
+              },
+              {
+                "$ref": "#/components/schemas/Users"
+              }
+            ]
+          },
+          "delta": {
+            "description": "The current changes compared to the main version of the item.",
+            "example": {
+              "my_field": "Updated Value"
+            },
+            "type": "object"
+          }
+        },
+        "x-collection": "directus_versions"
+      },
+      "Users": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "description": "Unique identifier for the user.",
+            "example": "63716273-0f29-4648-8a2a-2af2948f6f78",
+            "type": "string"
+          },
+          "first_name": {
+            "description": "First name of the user.",
+            "example": "Admin",
+            "type": "string"
+          },
+          "last_name": {
+            "description": "Last name of the user.",
+            "example": "User",
+            "type": "string"
+          },
+          "email": {
+            "description": "Unique email address for the user.",
+            "example": "admin@example.com",
+            "type": "string",
+            "format": "email"
+          },
+          "password": {
+            "description": "Password of the user.",
+            "type": "string"
+          },
+          "location": {
+            "description": "The user's location.",
+            "example": null,
+            "type": "string",
+            "nullable": true
+          },
+          "title": {
+            "description": "The user's title.",
+            "example": null,
+            "type": "string",
+            "nullable": true
+          },
+          "description": {
+            "description": "The user's description.",
+            "example": null,
+            "type": "string",
+            "nullable": true
+          },
+          "tags": {
+            "description": "The user's tags.",
+            "example": null,
+            "type": "array",
+            "nullable": true,
+            "items": {
+              "type": "string"
+            }
+          },
+          "avatar": {
+            "description": "The user's avatar.",
+            "example": null,
+            "oneOf": [
+              {
+                "type": "string"
+              },
+              {
+                "$ref": "#/components/schemas/Files"
+              }
+            ],
+            "nullable": true
+          },
+          "language": {
+            "description": "The user's language used in Directus.",
+            "example": "en-US",
+            "type": "string"
+          },
+          "tfa_secret": {
+            "description": "The 2FA secret string that's used to generate one time passwords.",
+            "example": null,
+            "type": "string",
+            "nullable": true
+          },
+          "status": {
+            "description": "Status of the user.",
+            "example": "active",
+            "type": "string",
+            "enum": [
+              "active",
+              "invited",
+              "draft",
+              "suspended",
+              "deleted"
+            ]
+          },
+          "role": {
+            "description": "Unique identifier of the role of this user.",
+            "example": "2f24211d-d928-469a-aea3-3c8f53d4e426",
+            "oneOf": [
+              {
+                "type": "string"
+              },
+              {
+                "$ref": "#/components/schemas/Roles"
+              }
+            ]
+          },
+          "token": {
+            "description": "Static token for the user.",
+            "type": "string",
+            "nullable": true
+          },
+          "last_access": {
+            "description": "When this user used the API last.",
+            "example": "2020-05-31T14:32:37Z",
+            "type": "string",
+            "nullable": true,
+            "format": "date-time"
+          },
+          "last_page": {
+            "description": "Last page that the user was on.",
+            "example": "/my-project/settings/collections/a",
+            "type": "string",
+            "nullable": true
+          },
+          "provider": {
+            "nullable": false,
+            "type": "string"
+          },
+          "external_identifier": {
+            "nullable": true,
+            "type": "string"
+          },
+          "auth_data": {
+            "nullable": true
+          },
+          "email_notifications": {
+            "nullable": true,
+            "type": "boolean"
+          },
+          "appearance": {
+            "nullable": true,
+            "type": "string"
+          },
+          "theme_dark": {
+            "nullable": true,
+            "type": "string"
+          },
+          "theme_light": {
+            "nullable": true,
+            "type": "string"
+          },
+          "theme_light_overrides": {
+            "nullable": true
+          },
+          "theme_dark_overrides": {
+            "nullable": true
+          },
+          "text_direction": {
+            "nullable": false,
+            "type": "string"
+          },
+          "policies": {
+            "nullable": true
+          }
+        },
+        "x-collection": "directus_users"
+      },
+      "Extensions": {
+        "type": "object",
+        "properties": {
+          "enabled": {
+            "nullable": false,
+            "type": "boolean"
+          },
+          "id": {
+            "nullable": false,
+            "type": "string",
+            "format": "uuid"
+          },
+          "folder": {
+            "nullable": false,
+            "type": "string"
+          },
+          "source": {
+            "nullable": false,
+            "type": "string"
+          },
+          "bundle": {
+            "description": "Name of the bundle the extension is in.",
+            "example": "directus-extension-my-bundle",
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "x-collection": "directus_extensions"
+      },
+      "Webhooks": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "description": "The index of the webhook.",
+            "type": "integer",
+            "example": 1
+          },
+          "name": {
+            "description": "The name of the webhook.",
+            "type": "string",
+            "example": "create articles"
+          },
+          "method": {
+            "description": "Method used in the webhook.",
+            "type": "string",
+            "example": "POST"
+          },
+          "url": {
+            "description": "The url of the webhook.",
+            "type": "string",
+            "example": null,
+            "nullable": true
+          },
+          "status": {
+            "description": "The status of the webhook.",
+            "type": "string",
+            "example": "inactive"
+          },
+          "data": {
+            "description": "If yes, send the content of what was done",
+            "type": "boolean",
+            "example": true
+          },
+          "actions": {
+            "description": "The actions that triggers this webhook.",
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "example": null,
+            "nullable": true
+          },
+          "collections": {
+            "nullable": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "headers": {
+            "nullable": true
+          },
+          "was_active_before_deprecation": {
+            "nullable": false,
+            "type": "boolean"
+          },
+          "migrated_flow": {
+            "nullable": true,
+            "oneOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "$ref": "#/components/schemas/Flows"
+              }
+            ]
+          }
+        },
+        "x-collection": "directus_webhooks"
+      },
+      "ItemsDirectusSyncIDMap": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "nullable": false,
+            "type": "integer"
+          },
+          "table": {
+            "nullable": false,
+            "type": "string"
+          },
+          "sync_id": {
+            "nullable": false,
+            "type": "string"
+          },
+          "local_id": {
+            "nullable": false,
+            "type": "string"
+          },
+          "created_at": {
+            "nullable": true,
+            "type": "string",
+            "format": "timestamp"
+          }
+        },
+        "x-collection": "directus_sync_id_map",
+        "required": [
+          "table",
+          "sync_id",
+          "local_id"
+        ]
+      },
+      "Settings": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "description": "Unique identifier for the setting.",
+            "type": "integer",
+            "example": 1
+          },
+          "project_name": {
+            "description": "The name of the project.",
+            "type": "string",
+            "example": "Directus"
+          },
+          "project_url": {
+            "description": "The url of the project.",
+            "type": "string",
+            "example": null,
+            "nullable": true
+          },
+          "project_color": {
+            "description": "The brand color of the project.",
+            "type": "string",
+            "example": null,
+            "nullable": true
+          },
+          "project_logo": {
+            "description": "The logo of the project.",
+            "type": "string",
+            "example": null,
+            "nullable": true
+          },
+          "public_foreground": {
+            "description": "The foreground of the project.",
+            "type": "string",
+            "example": null,
+            "nullable": true
+          },
+          "public_background": {
+            "description": "The background of the project.",
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "type": {
+                "type": "string"
+              }
+            },
+            "example": null,
+            "nullable": true
+          },
+          "public_note": {
+            "description": "Note rendered on the public pages of the app.",
+            "type": "string",
+            "example": null,
+            "nullable": true
+          },
+          "auth_login_attempts": {
+            "description": "Allowed authentication login attempts before the user's status is set to blocked.",
+            "type": "integer",
+            "example": 25
+          },
+          "auth_password_policy": {
+            "description": "Authentication password policy.",
+            "type": "string",
+            "nullable": true
+          },
+          "storage_asset_transform": {
+            "description": "What transformations are allowed in the assets endpoint.",
+            "type": "string",
+            "enum": [
+              "all",
+              "none",
+              "presets"
+            ],
+            "example": "all",
+            "nullable": true
+          },
+          "storage_asset_presets": {
+            "description": "Array of allowed",
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "key": {
+                  "description": "Key for the asset. Used in the assets endpoint.",
+                  "type": "string"
+                },
+                "fit": {
+                  "description": "Whether to crop the thumbnail to match the size, or maintain the aspect ratio.",
+                  "type": "string",
+                  "enum": [
+                    "cover",
+                    "contain",
+                    "inside",
+                    "outside"
+                  ]
+                },
+                "width": {
+                  "description": "Width of the thumbnail.",
+                  "type": "integer"
+                },
+                "height": {
+                  "description": "Height of the thumbnail.",
+                  "type": "integer"
+                },
+                "withoutEnlargement": {
+                  "description": "No image upscale",
+                  "type": "boolean"
+                },
+                "quality": {
+                  "description": "Quality of the compression used.",
+                  "type": "integer"
+                },
+                "format": {
+                  "description": "Reformat output image",
+                  "type": "string",
+                  "enum": [
+                    "",
+                    "jpeg",
+                    "png",
+                    "webp",
+                    "tiff",
+                    "avif"
+                  ]
+                },
+                "transforms": {
+                  "description": "Additional transformations to apply",
+                  "type": "array",
+                  "nullable": true,
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "method": {
+                        "description": "The Sharp method name",
+                        "type": "string"
+                      },
+                      "arguments": {
+                        "description": "A list of arguments to pass to the Sharp method",
+                        "type": "array",
+                        "nullable": true,
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "argument": {
+                              "description": "A JSON representation of the argument value",
+                              "type": "string"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "example": null,
+            "nullable": true
+          },
+          "custom_css": {
+            "nullable": true,
+            "type": "string"
+          },
+          "storage_default_folder": {
+            "description": "Default folder to place files",
+            "type": "string",
+            "format": "uuid"
+          },
+          "basemaps": {
+            "nullable": true
+          },
+          "mapbox_key": {
+            "nullable": true,
+            "type": "string"
+          },
+          "module_bar": {
+            "nullable": true
+          },
+          "project_descriptor": {
+            "nullable": true,
+            "type": "string"
+          },
+          "default_language": {
+            "nullable": false,
+            "type": "string"
+          },
+          "custom_aspect_ratios": {
+            "nullable": true
+          },
+          "public_favicon": {
+            "nullable": true,
+            "description": "$t:field_options.directus_settings.project_favicon_note",
+            "oneOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "$ref": "#/components/schemas/Files"
+              }
+            ]
+          },
+          "default_appearance": {
+            "nullable": false,
+            "type": "string"
+          },
+          "default_theme_light": {
+            "nullable": true,
+            "type": "string"
+          },
+          "theme_light_overrides": {
+            "nullable": true
+          },
+          "default_theme_dark": {
+            "nullable": true,
+            "type": "string"
+          },
+          "theme_dark_overrides": {
+            "nullable": true
+          },
+          "report_error_url": {
+            "nullable": true,
+            "type": "string"
+          },
+          "report_bug_url": {
+            "nullable": true,
+            "type": "string"
+          },
+          "report_feature_url": {
+            "nullable": true,
+            "type": "string"
+          },
+          "public_registration": {
+            "nullable": false,
+            "description": "$t:fields.directus_settings.public_registration_note",
+            "type": "boolean"
+          },
+          "public_registration_verify_email": {
+            "nullable": false,
+            "description": "$t:fields.directus_settings.public_registration_verify_email_note",
+            "type": "boolean"
+          },
+          "public_registration_role": {
+            "nullable": true,
+            "description": "$t:fields.directus_settings.public_registration_role_note",
+            "oneOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "$ref": "#/components/schemas/Roles"
+              }
+            ]
+          },
+          "public_registration_email_filter": {
+            "nullable": true,
+            "description": "$t:fields.directus_settings.public_registration_email_filter_note"
+          },
+          "visual_editor_urls": {
+            "nullable": true
+          },
+          "project_id": {
+            "nullable": true,
+            "type": "string",
+            "format": "uuid"
+          },
+          "mcp_enabled": {
+            "nullable": false,
+            "description": "$t:fields.directus_settings.mcp_enabled_note",
+            "type": "boolean"
+          },
+          "mcp_allow_deletes": {
+            "nullable": false,
+            "description": "$t:fields.directus_settings.mcp_allow_deletes_note",
+            "type": "boolean"
+          },
+          "mcp_prompts_collection": {
+            "nullable": true,
+            "description": "$t:fields.directus_settings.mcp_prompts_collection_note",
+            "type": "string"
+          },
+          "mcp_system_prompt_enabled": {
+            "nullable": false,
+            "description": "$t:fields.directus_settings.mcp_system_prompt_enabled_note",
+            "type": "boolean"
+          },
+          "mcp_system_prompt": {
+            "nullable": true,
+            "description": "$t:fields.directus_settings.mcp_system_prompt_note",
+            "type": "string"
+          },
+          "project_owner": {
+            "nullable": true,
+            "type": "string"
+          },
+          "project_usage": {
+            "nullable": true,
+            "type": "string"
+          },
+          "org_name": {
+            "nullable": true,
+            "type": "string"
+          },
+          "product_updates": {
+            "nullable": true,
+            "type": "boolean"
+          },
+          "project_status": {
+            "nullable": true,
+            "type": "string"
+          }
+        },
+        "x-collection": "directus_settings"
+      },
+      "ItemsCodex": {
+        "type": "object",
+        "properties": {
+          "ancestor": {
+            "nullable": true,
+            "type": "string"
+          },
+          "artstyle_disliked": {
+            "nullable": true,
+            "type": "string"
+          },
+          "artstyle_liked": {
+            "nullable": true,
+            "type": "string"
+          },
+          "artstyle_loved": {
+            "nullable": true,
+            "type": "string"
+          },
+          "background_category": {
+            "nullable": true,
+            "type": "string"
+          },
+          "background_texture": {
+            "nullable": true,
+            "type": "string"
+          },
+          "biography": {
+            "nullable": true,
+            "description": "Array of biography text segments (JSON)"
+          },
+          "biography_addendum": {
+            "nullable": true,
+            "type": "string"
+          },
+          "character_image_description": {
+            "nullable": true,
+            "type": "string"
+          },
+          "character_image_summary": {
+            "nullable": true,
+            "type": "string"
+          },
+          "characterization": {
+            "nullable": true,
+            "type": "string"
+          },
+          "citation": {
+            "nullable": true,
+            "type": "string"
+          },
+          "confession": {
+            "nullable": true,
+            "type": "string"
+          },
+          "cryptoart_focus": {
+            "nullable": true,
+            "type": "string"
+          },
+          "cultural_affiliation": {
+            "nullable": true,
+            "type": "string"
+          },
+          "decc0_type": {
+            "nullable": true,
+            "type": "string"
+          },
+          "description": {
+            "nullable": true,
+            "type": "string"
+          },
+          "dna1": {
+            "nullable": true,
+            "type": "string"
+          },
+          "dna2": {
+            "nullable": true,
+            "type": "string"
+          },
+          "dna3": {
+            "nullable": true,
+            "type": "string"
+          },
+          "dna4": {
+            "nullable": true,
+            "type": "string"
+          },
+          "expression_style": {
+            "nullable": true,
+            "type": "string"
+          },
+          "favorite_book": {
+            "nullable": true,
+            "type": "string"
+          },
+          "favorite_cryptoartist": {
+            "nullable": true,
+            "type": "string"
+          },
+          "favorite_role": {
+            "nullable": true,
+            "type": "string"
+          },
+          "fiery": {
+            "nullable": true,
+            "type": "string"
+          },
+          "gender": {
+            "nullable": true,
+            "description": "Array of gender identities (JSON)"
+          },
+          "id": {
+            "nullable": false,
+            "type": "integer"
+          },
+          "ideolectal_words": {
+            "nullable": true,
+            "description": "Array of characteristic words used by the character (JSON)"
+          },
+          "ipfs_background": {
+            "nullable": true,
+            "description": "IPFS hash for background image",
+            "type": "string"
+          },
+          "ipfs_character": {
+            "nullable": true,
+            "description": "IPFS hash for character image",
+            "type": "string"
+          },
+          "ipfs_final": {
+            "nullable": true,
+            "description": "IPFS hash for final composite image",
+            "type": "string"
+          },
+          "kindred": {
+            "nullable": true,
+            "type": "string"
+          },
+          "metaphor_domain": {
+            "nullable": true,
+            "type": "string"
+          },
+          "mood": {
+            "nullable": true,
+            "type": "string"
+          },
+          "multiplicity": {
+            "nullable": true,
+            "type": "integer"
+          },
+          "municipality_significant": {
+            "nullable": true,
+            "type": "string"
+          },
+          "name": {
+            "nullable": true,
+            "description": "Array of names (JSON)"
+          },
+          "paired_art_image_description": {
+            "nullable": true,
+            "type": "string"
+          },
+          "paired_art_image_summary": {
+            "nullable": true,
+            "type": "string"
+          },
+          "paired_art_placement": {
+            "nullable": true,
+            "type": "string"
+          },
+          "personality_mood": {
+            "nullable": true,
+            "type": "string"
+          },
+          "personality_problem_solving": {
+            "nullable": true,
+            "type": "string"
+          },
+          "personality_tradart_view": {
+            "nullable": true,
+            "type": "string"
+          },
+          "philosophical_affiliation": {
+            "nullable": true,
+            "type": "string"
+          },
+          "self_identity": {
+            "nullable": true,
+            "type": "string"
+          },
+          "soul": {
+            "nullable": true,
+            "type": "integer"
+          },
+          "thumbnail": {
+            "nullable": true,
+            "oneOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "$ref": "#/components/schemas/Files"
+              }
+            ]
+          },
+          "thumbnail_background": {
+            "nullable": true,
+            "oneOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "$ref": "#/components/schemas/Files"
+              }
+            ]
+          },
+          "thumbnail_character": {
+            "nullable": true,
+            "oneOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "$ref": "#/components/schemas/Files"
+              }
+            ]
+          },
+          "timestamp_created": {
+            "nullable": true,
+            "type": "string",
+            "format": "timestamp"
+          },
+          "whatness": {
+            "nullable": true,
+            "description": "Array of what this character is (JSON)"
+          },
+          "writing_comma": {
+            "nullable": true,
+            "type": "string"
+          },
+          "writing_ellipses": {
+            "nullable": true,
+            "type": "string"
+          },
+          "writing_exclamation": {
+            "nullable": true,
+            "type": "string"
+          },
+          "writing_flavor": {
+            "nullable": true,
+            "type": "string"
+          },
+          "writing_flavor_cultural": {
+            "nullable": true,
+            "type": "string"
+          },
+          "writing_questions": {
+            "nullable": true,
+            "type": "string"
+          },
+          "writing_quirks": {
+            "nullable": true,
+            "type": "string"
+          },
+          "writing_quotation_marks": {
+            "nullable": true,
+            "type": "string"
+          },
+          "writing_sentence_complexity": {
+            "nullable": true,
+            "type": "string"
+          },
+          "writing_style": {
+            "nullable": true,
+            "description": "Array of writing style characteristics (JSON)"
+          },
+          "x": {
+            "nullable": true,
+            "type": "integer"
+          }
+        },
+        "x-collection": "codex"
+      }
+    },
+    "parameters": {
+      "Id": {
+        "description": "Index",
+        "name": "id",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "integer"
+        }
+      },
+      "UUId": {
+        "description": "Unique identifier for the object.",
+        "name": "id",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "example": "8cbb43fe-4cdf-4991-8352-c461779cec02",
+          "type": "string"
+        }
+      },
+      "Collection": {
+        "description": "Collection of which you want to retrieve the items from.",
+        "name": "collection",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      },
+      "Search": {
+        "description": "Filter by items that contain the given search query in one of their fields.",
+        "in": "query",
+        "name": "search",
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
+      },
+      "Page": {
+        "description": "Cursor for use in pagination. Often used in combination with limit.",
+        "in": "query",
+        "name": "page",
+        "required": false,
+        "schema": {
+          "type": "integer"
+        }
+      },
+      "Offset": {
+        "description": "How many items to skip when fetching data.",
+        "in": "query",
+        "name": "offset",
+        "required": false,
+        "schema": {
+          "type": "integer"
+        }
+      },
+      "Sort": {
+        "description": "How to sort the returned items. `sort` is a CSV of fields used to sort the fetched items. Sorting defaults to ascending (ASC) order but a minus sign (` - `) can be used to reverse this to descending (DESC) order. Fields are prioritized by their order in the CSV. You can also use a ` ? ` to sort randomly.\n",
+        "in": "query",
+        "name": "sort",
+        "required": false,
+        "explode": false,
+        "schema": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "Meta": {
+        "description": "What metadata to return in the response.",
+        "in": "query",
+        "name": "meta",
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
+      },
+      "Limit": {
+        "description": "A limit on the number of objects that are returned.",
+        "in": "query",
+        "name": "limit",
+        "required": false,
+        "schema": {
+          "type": "integer"
+        }
+      },
+      "Filter": {
+        "description": "Select items in collection by given conditions.",
+        "in": "query",
+        "name": "filter",
+        "required": false,
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "example": {
+                "<field>": {
+                  "<operator>": "<value>"
+                }
+              }
+            }
+          }
+        }
+      },
+      "Fields": {
+        "description": "Control what fields are being returned in the object.",
+        "in": "query",
+        "name": "fields",
+        "required": false,
+        "explode": false,
+        "schema": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "Export": {
+        "name": "export",
+        "description": "Saves the API response to a file. Accepts one of \"csv\", \"csv_utf8\", \"json\", \"xml\", \"yaml\".",
+        "in": "query",
+        "required": false,
+        "schema": {
+          "type": "string",
+          "enum": [
+            "csv",
+            "csv_utf8",
+            "json",
+            "xml",
+            "yaml"
+          ]
+        }
+      },
+      "Version": {
+        "name": "version",
+        "description": "Retrieve an item's state from a specific Content Version. The value corresponds to the \"key\" of the Content Version.\n",
+        "in": "query",
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
+      }
+    },
+    "responses": {
+      "NotFoundError": {
+        "description": "Error: Not found.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "integer",
+                      "format": "int64"
+                    },
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "UnauthorizedError": {
+        "description": "Error: Unauthorized request",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "integer",
+                      "format": "int64"
+                    },
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "KeyAuth": {
+        "type": "apiKey",
+        "in": "query",
+        "name": "access_token"
+      },
+      "Auth": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "Authorization"
+      }
+    }
+  }
+}
