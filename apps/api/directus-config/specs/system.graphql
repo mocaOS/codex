@@ -400,6 +400,9 @@ type codex {
   philosophical_affiliation: String
   self_identity: String
   soul: Int
+  thumbnail(filter: directus_files_filter, sort: [String], limit: Int, offset: Int, page: Int, search: String): directus_files
+  thumbnail_background(filter: directus_files_filter, sort: [String], limit: Int, offset: Int, page: Int, search: String): directus_files
+  thumbnail_character(filter: directus_files_filter, sort: [String], limit: Int, offset: Int, page: Int, search: String): directus_files
   timestamp_created: Date
   timestamp_created_func: datetime_functions
 
@@ -420,9 +423,6 @@ type codex {
   writing_style: JSON
   writing_style_func: count_functions
   x: Int
-  thumbnail_character(filter: directus_files_filter, sort: [String], limit: Int, offset: Int, page: Int, search: String): directus_files
-  thumbnail_background(filter: directus_files_filter, sort: [String], limit: Int, offset: Int, page: Int, search: String): directus_files
-  thumbnail(filter: directus_files_filter, sort: [String], limit: Int, offset: Int, page: Int, search: String): directus_files
 }
 
 type codex_mutated {

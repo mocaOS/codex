@@ -164,6 +164,9 @@ type codex {
   philosophical_affiliation: String
   self_identity: String
   soul: Int
+  thumbnail(filter: directus_files_filter, sort: [String], limit: Int, offset: Int, page: Int, search: String): directus_files
+  thumbnail_background(filter: directus_files_filter, sort: [String], limit: Int, offset: Int, page: Int, search: String): directus_files
+  thumbnail_character(filter: directus_files_filter, sort: [String], limit: Int, offset: Int, page: Int, search: String): directus_files
   timestamp_created: Date
   timestamp_created_func: datetime_functions
 
@@ -184,9 +187,6 @@ type codex {
   writing_style: JSON
   writing_style_func: count_functions
   x: Int
-  thumbnail_character(filter: directus_files_filter, sort: [String], limit: Int, offset: Int, page: Int, search: String): directus_files
-  thumbnail_background(filter: directus_files_filter, sort: [String], limit: Int, offset: Int, page: Int, search: String): directus_files
-  thumbnail(filter: directus_files_filter, sort: [String], limit: Int, offset: Int, page: Int, search: String): directus_files
 }
 
 type codex_aggregated {
@@ -264,6 +264,9 @@ type codex_aggregated_count {
   philosophical_affiliation: Int
   self_identity: Int
   soul: Int
+  thumbnail: Int
+  thumbnail_background: Int
+  thumbnail_character: Int
   timestamp_created: Int
 
   """Array of what this character is (JSON)"""
@@ -281,9 +284,6 @@ type codex_aggregated_count {
   """Array of writing style characteristics (JSON)"""
   writing_style: Int
   x: Int
-  thumbnail_character: Int
-  thumbnail_background: Int
-  thumbnail: Int
 }
 
 type codex_aggregated_fields {
@@ -961,6 +961,9 @@ type version_codex {
   philosophical_affiliation: String
   self_identity: String
   soul: Int
+  thumbnail: JSON
+  thumbnail_background: JSON
+  thumbnail_character: JSON
   timestamp_created: Date
 
   """Array of what this character is (JSON)"""
@@ -978,9 +981,6 @@ type version_codex {
   """Array of writing style characteristics (JSON)"""
   writing_style: JSON
   x: Int
-  thumbnail_character: JSON
-  thumbnail_background: JSON
-  thumbnail: JSON
 }
 
 """"""
@@ -1066,6 +1066,9 @@ input codex_filter {
   philosophical_affiliation: string_filter_operators
   self_identity: string_filter_operators
   soul: number_filter_operators
+  thumbnail: directus_files_filter
+  thumbnail_background: directus_files_filter
+  thumbnail_character: directus_files_filter
   timestamp_created: date_filter_operators
   timestamp_created_func: datetime_function_filter_operators
   whatness: string_filter_operators
@@ -1082,9 +1085,6 @@ input codex_filter {
   writing_style: string_filter_operators
   writing_style_func: count_function_filter_operators
   x: number_filter_operators
-  thumbnail_character: directus_files_filter
-  thumbnail_background: directus_files_filter
-  thumbnail: directus_files_filter
   _and: [codex_filter]
   _or: [codex_filter]
 }
@@ -1155,6 +1155,9 @@ input create_codex_input {
   philosophical_affiliation: String
   self_identity: String
   soul: Int
+  thumbnail: create_directus_files_input
+  thumbnail_background: create_directus_files_input
+  thumbnail_character: create_directus_files_input
   timestamp_created: Date
 
   """Array of what this character is (JSON)"""
@@ -1172,9 +1175,6 @@ input create_codex_input {
   """Array of writing style characteristics (JSON)"""
   writing_style: JSON
   x: Int
-  thumbnail_character: create_directus_files_input
-  thumbnail_background: create_directus_files_input
-  thumbnail: create_directus_files_input
 }
 
 input create_directus_access_input {
@@ -1893,6 +1893,9 @@ input update_codex_input {
   philosophical_affiliation: String
   self_identity: String
   soul: Int
+  thumbnail: update_directus_files_input
+  thumbnail_background: update_directus_files_input
+  thumbnail_character: update_directus_files_input
   timestamp_created: Date
 
   """Array of what this character is (JSON)"""
@@ -1910,9 +1913,6 @@ input update_codex_input {
   """Array of writing style characteristics (JSON)"""
   writing_style: JSON
   x: Int
-  thumbnail_character: update_directus_files_input
-  thumbnail_background: update_directus_files_input
-  thumbnail: update_directus_files_input
 }
 
 input update_directus_access_input {

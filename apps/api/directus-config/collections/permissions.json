@@ -10,5 +10,17 @@
     ],
     "policy": "_sync_default_public_policy",
     "_syncId": "56153b62-6ff9-42cc-8580-c9f6c7560d9d"
+  },
+  {
+    "collection": "directus_files",
+    "action": "read",
+    "permissions": null,
+    "validation": null,
+    "presets": null,
+    "fields": [
+      "*"
+    ],
+    "policy": "_sync_default_public_policy",
+    "_syncId": "89a2871f-87f7-4a3b-bf93-0d116c72b7f1"
   }
 ]
