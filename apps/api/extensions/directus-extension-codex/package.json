@@ -33,6 +33,11 @@
         "type": "hook",
         "name": "filter-codex-fields",
         "source": "src/hooks/filter-codex-fields.ts"
+      },
+      {
+        "type": "hook",
+        "name": "update-codex-owners",
+        "source": "src/hooks/update-codex-owners.ts"
       }
     ],
     "host": "^10.10.0"

@@ -423,6 +423,7 @@ type codex {
   writing_style: JSON
   writing_style_func: count_functions
   x: Int
+  owner: String
 }
 
 type codex_mutated {

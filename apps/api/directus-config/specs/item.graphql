@@ -187,6 +187,7 @@ type codex {
   writing_style: JSON
   writing_style_func: count_functions
   x: Int
+  owner: String
 }
 
 type codex_aggregated {
@@ -284,6 +285,7 @@ type codex_aggregated_count {
   """Array of writing style characteristics (JSON)"""
   writing_style: Int
   x: Int
+  owner: Int
 }
 
 type codex_aggregated_fields {
@@ -981,6 +983,7 @@ type version_codex {
   """Array of writing style characteristics (JSON)"""
   writing_style: JSON
   x: Int
+  owner: String
 }
 
 """"""
@@ -1085,6 +1088,7 @@ input codex_filter {
   writing_style: string_filter_operators
   writing_style_func: count_function_filter_operators
   x: number_filter_operators
+  owner: string_filter_operators
   _and: [codex_filter]
   _or: [codex_filter]
 }
@@ -1175,6 +1179,7 @@ input create_codex_input {
   """Array of writing style characteristics (JSON)"""
   writing_style: JSON
   x: Int
+  owner: String
 }
 
 input create_directus_access_input {
@@ -1913,6 +1918,7 @@ input update_codex_input {
   """Array of writing style characteristics (JSON)"""
   writing_style: JSON
   x: Int
+  owner: String
 }
 
 input update_directus_access_input {

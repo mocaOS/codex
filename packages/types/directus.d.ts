@@ -1,3 +1,70 @@
+export type Codex = {
+  ancestor?: string | null;
+  artstyle_disliked?: string | null;
+  artstyle_liked?: string | null;
+  artstyle_loved?: string | null;
+  background_category?: string | null;
+  background_texture?: string | null;
+  biography?: unknown | null;
+  biography_addendum?: string | null;
+  character_image_description?: string | null;
+  character_image_summary?: string | null;
+  characterization?: string | null;
+  citation?: string | null;
+  confession?: string | null;
+  cryptoart_focus?: string | null;
+  cultural_affiliation?: string | null;
+  decc0_type?: string | null;
+  description?: string | null;
+  dna1?: string | null;
+  dna2?: string | null;
+  dna3?: string | null;
+  dna4?: string | null;
+  expression_style?: string | null;
+  favorite_book?: string | null;
+  favorite_cryptoartist?: string | null;
+  favorite_role?: string | null;
+  fiery?: string | null;
+  gender?: unknown | null;
+  id: number;
+  ideolectal_words?: unknown | null;
+  ipfs_background?: string | null;
+  ipfs_character?: string | null;
+  ipfs_final?: string | null;
+  kindred?: string | null;
+  metaphor_domain?: string | null;
+  mood?: string | null;
+  multiplicity?: number | null;
+  municipality_significant?: string | null;
+  name?: unknown | null;
+  owner?: string | null;
+  paired_art_image_description?: string | null;
+  paired_art_image_summary?: string | null;
+  paired_art_placement?: string | null;
+  personality_mood?: string | null;
+  personality_problem_solving?: string | null;
+  personality_tradart_view?: string | null;
+  philosophical_affiliation?: string | null;
+  self_identity?: string | null;
+  soul?: number | null;
+  thumbnail?: string | DirectusFiles | null;
+  thumbnail_background?: string | DirectusFiles | null;
+  thumbnail_character?: string | DirectusFiles | null;
+  timestamp_created?: string | null;
+  whatness?: unknown | null;
+  writing_comma?: string | null;
+  writing_ellipses?: string | null;
+  writing_exclamation?: string | null;
+  writing_flavor?: string | null;
+  writing_flavor_cultural?: string | null;
+  writing_questions?: string | null;
+  writing_quirks?: string | null;
+  writing_quotation_marks?: string | null;
+  writing_sentence_complexity?: string | null;
+  writing_style?: unknown | null;
+  x?: number | null;
+};
+
 export type DirectusAccess = {
   id: string;
   policy: string | DirectusPolicies;
@@ -346,6 +413,14 @@ export type DirectusShares = {
   user_created?: string | DirectusUsers | null;
 };
 
+export type DirectusSyncIdMap = {
+  created_at?: string | null;
+  id: number;
+  local_id: string;
+  sync_id: string;
+  table: string;
+};
+
 export type DirectusTranslations = {
   id: string;
   key: string;
@@ -413,6 +488,7 @@ export type DirectusWebhooks = {
 };
 
 export type CustomDirectusTypes = {
+  codex: Codex[];
   directus_access: DirectusAccess[];
   directus_activity: DirectusActivity[];
   directus_collections: DirectusCollections[];
@@ -436,6 +512,7 @@ export type CustomDirectusTypes = {
   directus_sessions: DirectusSessions[];
   directus_settings: DirectusSettings;
   directus_shares: DirectusShares[];
+  directus_sync_id_map: DirectusSyncIdMap[];
   directus_translations: DirectusTranslations[];
   directus_users: DirectusUsers[];
   directus_versions: DirectusVersions[];
