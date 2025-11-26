@@ -424,6 +424,13 @@ type codex {
   writing_style_func: count_functions
   x: Int
   owner: String
+  municipality_residence: String
+  latlon_residence: String
+  latlon_significant: String
+  favourite_color: String
+  favourite_animal: String
+  agent_profiles: JSON
+  agent_profiles_func: count_functions
 }
 
 type codex_mutated {

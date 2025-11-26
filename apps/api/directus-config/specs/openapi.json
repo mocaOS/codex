@@ -3,7 +3,7 @@
   "info": {
     "title": "Dynamic API Specification",
     "description": "This is a dynamically generated API specification for all endpoints existing on the current project.",
-    "version": "9f34d47c3fb3c463c2fbe61464e4737c2c7a03c5"
+    "version": "b1b9adf69c3b7ef6ebe24a941b54529ddbae8e82"
   },
   "servers": [
     {
@@ -10666,6 +10666,29 @@
           "owner": {
             "nullable": true,
             "type": "string"
+          },
+          "municipality_residence": {
+            "nullable": true,
+            "type": "string"
+          },
+          "latlon_residence": {
+            "nullable": true,
+            "type": "string"
+          },
+          "latlon_significant": {
+            "nullable": true,
+            "type": "string"
+          },
+          "favourite_color": {
+            "nullable": true,
+            "type": "string"
+          },
+          "favourite_animal": {
+            "nullable": true,
+            "type": "string"
+          },
+          "agent_profiles": {
+            "nullable": true
           }
         },
         "x-collection": "codex"

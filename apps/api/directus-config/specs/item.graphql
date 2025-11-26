@@ -188,6 +188,13 @@ type codex {
   writing_style_func: count_functions
   x: Int
   owner: String
+  municipality_residence: String
+  latlon_residence: String
+  latlon_significant: String
+  favourite_color: String
+  favourite_animal: String
+  agent_profiles: JSON
+  agent_profiles_func: count_functions
 }
 
 type codex_aggregated {
@@ -286,6 +293,12 @@ type codex_aggregated_count {
   writing_style: Int
   x: Int
   owner: Int
+  municipality_residence: Int
+  latlon_residence: Int
+  latlon_significant: Int
+  favourite_color: Int
+  favourite_animal: Int
+  agent_profiles: Int
 }
 
 type codex_aggregated_fields {
@@ -984,6 +997,12 @@ type version_codex {
   writing_style: JSON
   x: Int
   owner: String
+  municipality_residence: String
+  latlon_residence: String
+  latlon_significant: String
+  favourite_color: String
+  favourite_animal: String
+  agent_profiles: JSON
 }
 
 """"""
@@ -1089,6 +1108,13 @@ input codex_filter {
   writing_style_func: count_function_filter_operators
   x: number_filter_operators
   owner: string_filter_operators
+  municipality_residence: string_filter_operators
+  latlon_residence: string_filter_operators
+  latlon_significant: string_filter_operators
+  favourite_color: string_filter_operators
+  favourite_animal: string_filter_operators
+  agent_profiles: string_filter_operators
+  agent_profiles_func: count_function_filter_operators
   _and: [codex_filter]
   _or: [codex_filter]
 }
@@ -1180,6 +1206,12 @@ input create_codex_input {
   writing_style: JSON
   x: Int
   owner: String
+  municipality_residence: String
+  latlon_residence: String
+  latlon_significant: String
+  favourite_color: String
+  favourite_animal: String
+  agent_profiles: JSON
 }
 
 input create_directus_access_input {
@@ -1919,6 +1951,12 @@ input update_codex_input {
   writing_style: JSON
   x: Int
   owner: String
+  municipality_residence: String
+  latlon_residence: String
+  latlon_significant: String
+  favourite_color: String
+  favourite_animal: String
+  agent_profiles: JSON
 }
 
 input update_directus_access_input {

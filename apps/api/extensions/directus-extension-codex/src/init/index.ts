@@ -5,6 +5,7 @@ import { readdir } from "node:fs/promises";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { defineHook } from "@directus/extensions-sdk";
+import config from "@local/config";
 
 const execAsync = promisify(exec);
 
@@ -111,7 +112,7 @@ export default defineHook(({ action, init }, { env, logger }) => {
     logger.info(`App is running in ${env.NODE_ENV ?? "development"} mode. Initializing...`);
 
     // Only run setup in production
-    if (env.NODE_ENV !== "production") return;
+    // if (env.NODE_ENV !== "production") return;
 
     try {
       // Run Directus bootstrap (includes database install + official migrations)
@@ -152,7 +153,7 @@ export default defineHook(({ action, init }, { env, logger }) => {
   });
 
   action("server.start", async () => {
-    if (env.NODE_ENV !== "production") return;
+    // if (env.NODE_ENV !== "production") return;
 
     try {
       logger.info("Pushing Directus sync...");
@@ -161,8 +162,8 @@ export default defineHook(({ action, init }, { env, logger }) => {
 
       // Generate seed data from IPFS codex files after sync completes
       try {
-        const ipfsGateway = env.IPFS_GATEWAY || "http://127.0.0.1:8080";
-        const ipfsCodexHash = env.IPFS_CODEX_HASH || "QmNdMnuJURo3sFkLR2WLSshPqycfjafbHoAcd2FTdBJ8S5";
+        const ipfsGateway = env.IPFS_GATEWAY || config.ipfs.gateway || "http://127.0.0.1:8080";
+        const ipfsCodexHash = env.IPFS_CODEX_HASH || config.ipfs.codex_files_hash || "QmNdMnuJURo3sFkLR2WLSshPqycfjafbHoAcd2FTdBJ8S5";
 
         const __filename = fileURLToPath(import.meta.url);
         const __dirname = dirname(__filename);

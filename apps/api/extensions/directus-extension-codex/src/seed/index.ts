@@ -232,7 +232,7 @@ export default defineHook(({ init }, { services, getSchema }) => {
             for (let itemIndex = 0; itemIndex < seedData.data.length; itemIndex++) {
               const item = seedData.data[itemIndex];
 
-              const { _sync_id, timestamp_created, agent_profiles: _agent_profiles, ...itemData } = item;
+              const { _sync_id, timestamp_created, ...itemData } = item;
 
               // Convert timestamp_created to PostgreSQL-compatible format
               if (timestamp_created) {
