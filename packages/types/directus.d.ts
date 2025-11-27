@@ -1,4 +1,5 @@
 export type Codex = {
+  agent_profiles?: unknown | null;
   ancestor?: string | null;
   artstyle_disliked?: string | null;
   artstyle_liked?: string | null;
@@ -24,6 +25,8 @@ export type Codex = {
   favorite_book?: string | null;
   favorite_cryptoartist?: string | null;
   favorite_role?: string | null;
+  favourite_animal?: string | null;
+  favourite_color?: string | null;
   fiery?: string | null;
   gender?: unknown | null;
   id: number;
@@ -32,9 +35,12 @@ export type Codex = {
   ipfs_character?: string | null;
   ipfs_final?: string | null;
   kindred?: string | null;
+  latlon_residence?: string | null;
+  latlon_significant?: string | null;
   metaphor_domain?: string | null;
   mood?: string | null;
   multiplicity?: number | null;
+  municipality_residence?: string | null;
   municipality_significant?: string | null;
   name?: unknown | null;
   owner?: string | null;
@@ -45,6 +51,7 @@ export type Codex = {
   personality_problem_solving?: string | null;
   personality_tradart_view?: string | null;
   philosophical_affiliation?: string | null;
+  price?: string | null;
   self_identity?: string | null;
   soul?: number | null;
   thumbnail?: string | DirectusFiles | null;

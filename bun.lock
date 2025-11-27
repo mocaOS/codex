@@ -21,6 +21,7 @@
         "ajv": "^8.12.0",
         "directus": "^11.12.0",
         "directus-extension-api-docs": "^2.3.1",
+        "directus-extension-raw-query": "^1.0.2",
         "directus-extension-sync": "^3.0.5",
         "dotenv": "^17.2.3",
         "pg": "^8.13.1",
@@ -1421,6 +1422,8 @@
 
     "directus-extension-codex": ["directus-extension-codex@workspace:apps/api/extensions/directus-extension-codex"],
 
+    "directus-extension-raw-query": ["directus-extension-raw-query@1.0.2", "", { "dependencies": { "monaco-editor": "^0.52.2" } }, "sha512-hlGGB+KAqCBt+cFEfjNsF5VbUn3lpj6aC5XFL0bi2bzXU2/EkOlkz09CvjdCw6UgDYcKStVv896ZLFKmXOGUlw=="],
+
     "directus-extension-sync": ["directus-extension-sync@3.0.5", "", {}, "sha512-56QXPBykJM/nO4IXts9I1eOc54jujqHi5AUpDcurlo6GUicaLwOu+3l5b6RhQSH/Ti2yUayP3rawKuGzza8hdA=="],
 
     "docs": ["docs@workspace:apps/docs"],
@@ -2200,6 +2203,8 @@
     "mnemonist": ["mnemonist@0.40.3", "", { "dependencies": { "obliterator": "^2.0.4" } }, "sha512-Vjyr90sJ23CKKH/qPAgUKicw/v6pRoamxIEDFOF8uSgFME7DqPRpHgRTejWVjkdGg5dXj0/NyxZHZ9bcjH+2uQ=="],
 
     "module-details-from-path": ["module-details-from-path@1.0.4", "", {}, "sha512-EGWKgxALGMgzvxYF1UyGTy0HXX/2vHLkw6+NvDKW2jypWbHpjQuj4UMcqQWXHERJhVGKikolT06G3bcKe4fi7w=="],
+
+    "monaco-editor": ["monaco-editor@0.52.2", "", {}, "sha512-GEQWEZmfkOGLdd3XK8ryrfWz3AIP8YymVXiPHEdewrUq7mh0qrKrfHLNCXcbB6sTnMLnOZ3ztSiKcciFUkIJwQ=="],
 
     "mri": ["mri@1.1.4", "", {}, "sha512-6y7IjGPm8AzlvoUrwAaw1tLnUBudaS3752vcd8JtrpGGQn+rXIe63LFVHm/YMwtqAuh+LJPCFdlLYPWM1nYn6w=="],
 

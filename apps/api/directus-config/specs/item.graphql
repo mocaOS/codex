@@ -99,6 +99,8 @@ enum EventEnum {
 }
 
 type codex {
+  agent_profiles: JSON
+  agent_profiles_func: count_functions
   ancestor: String
   artstyle_disliked: String
   artstyle_liked: String
@@ -127,6 +129,8 @@ type codex {
   favorite_book: String
   favorite_cryptoartist: String
   favorite_role: String
+  favourite_animal: String
+  favourite_color: String
   fiery: String
 
   """Array of gender identities (JSON)"""
@@ -147,14 +151,18 @@ type codex {
   """IPFS hash for final composite image"""
   ipfs_final: String
   kindred: String
+  latlon_residence: String
+  latlon_significant: String
   metaphor_domain: String
   mood: String
   multiplicity: Int
+  municipality_residence: String
   municipality_significant: String
 
   """Array of names (JSON)"""
   name: JSON
   name_func: count_functions
+  owner: String
   paired_art_image_description: String
   paired_art_image_summary: String
   paired_art_placement: String
@@ -187,14 +195,7 @@ type codex {
   writing_style: JSON
   writing_style_func: count_functions
   x: Int
-  owner: String
-  municipality_residence: String
-  latlon_residence: String
-  latlon_significant: String
-  favourite_color: String
-  favourite_animal: String
-  agent_profiles: JSON
-  agent_profiles_func: count_functions
+  price: String
 }
 
 type codex_aggregated {
@@ -211,6 +212,7 @@ type codex_aggregated {
 }
 
 type codex_aggregated_count {
+  agent_profiles: Int
   ancestor: Int
   artstyle_disliked: Int
   artstyle_liked: Int
@@ -238,6 +240,8 @@ type codex_aggregated_count {
   favorite_book: Int
   favorite_cryptoartist: Int
   favorite_role: Int
+  favourite_animal: Int
+  favourite_color: Int
   fiery: Int
 
   """Array of gender identities (JSON)"""
@@ -256,13 +260,17 @@ type codex_aggregated_count {
   """IPFS hash for final composite image"""
   ipfs_final: Int
   kindred: Int
+  latlon_residence: Int
+  latlon_significant: Int
   metaphor_domain: Int
   mood: Int
   multiplicity: Int
+  municipality_residence: Int
   municipality_significant: Int
 
   """Array of names (JSON)"""
   name: Int
+  owner: Int
   paired_art_image_description: Int
   paired_art_image_summary: Int
   paired_art_placement: Int
@@ -292,13 +300,7 @@ type codex_aggregated_count {
   """Array of writing style characteristics (JSON)"""
   writing_style: Int
   x: Int
-  owner: Int
-  municipality_residence: Int
-  latlon_residence: Int
-  latlon_significant: Int
-  favourite_color: Int
-  favourite_animal: Int
-  agent_profiles: Int
+  price: Int
 }
 
 type codex_aggregated_fields {
@@ -915,6 +917,7 @@ type directus_webhooks_mutated {
 
 """"""
 type version_codex {
+  agent_profiles: JSON
   ancestor: String
   artstyle_disliked: String
   artstyle_liked: String
@@ -942,6 +945,8 @@ type version_codex {
   favorite_book: String
   favorite_cryptoartist: String
   favorite_role: String
+  favourite_animal: String
+  favourite_color: String
   fiery: String
 
   """Array of gender identities (JSON)"""
@@ -960,13 +965,17 @@ type version_codex {
   """IPFS hash for final composite image"""
   ipfs_final: String
   kindred: String
+  latlon_residence: String
+  latlon_significant: String
   metaphor_domain: String
   mood: String
   multiplicity: Int
+  municipality_residence: String
   municipality_significant: String
 
   """Array of names (JSON)"""
   name: JSON
+  owner: String
   paired_art_image_description: String
   paired_art_image_summary: String
   paired_art_placement: String
@@ -996,13 +1005,7 @@ type version_codex {
   """Array of writing style characteristics (JSON)"""
   writing_style: JSON
   x: Int
-  owner: String
-  municipality_residence: String
-  latlon_residence: String
-  latlon_significant: String
-  favourite_color: String
-  favourite_animal: String
-  agent_profiles: JSON
+  price: String
 }
 
 """"""
@@ -1037,6 +1040,8 @@ input boolean_filter_operators {
 }
 
 input codex_filter {
+  agent_profiles: string_filter_operators
+  agent_profiles_func: count_function_filter_operators
   ancestor: string_filter_operators
   artstyle_disliked: string_filter_operators
   artstyle_liked: string_filter_operators
@@ -1063,6 +1068,8 @@ input codex_filter {
   favorite_book: string_filter_operators
   favorite_cryptoartist: string_filter_operators
   favorite_role: string_filter_operators
+  favourite_animal: string_filter_operators
+  favourite_color: string_filter_operators
   fiery: string_filter_operators
   gender: string_filter_operators
   gender_func: count_function_filter_operators
@@ -1073,12 +1080,16 @@ input codex_filter {
   ipfs_character: string_filter_operators
   ipfs_final: string_filter_operators
   kindred: string_filter_operators
+  latlon_residence: string_filter_operators
+  latlon_significant: string_filter_operators
   metaphor_domain: string_filter_operators
   mood: string_filter_operators
   multiplicity: number_filter_operators
+  municipality_residence: string_filter_operators
   municipality_significant: string_filter_operators
   name: string_filter_operators
   name_func: count_function_filter_operators
+  owner: string_filter_operators
   paired_art_image_description: string_filter_operators
   paired_art_image_summary: string_filter_operators
   paired_art_placement: string_filter_operators
@@ -1107,14 +1118,7 @@ input codex_filter {
   writing_style: string_filter_operators
   writing_style_func: count_function_filter_operators
   x: number_filter_operators
-  owner: string_filter_operators
-  municipality_residence: string_filter_operators
-  latlon_residence: string_filter_operators
-  latlon_significant: string_filter_operators
-  favourite_color: string_filter_operators
-  favourite_animal: string_filter_operators
-  agent_profiles: string_filter_operators
-  agent_profiles_func: count_function_filter_operators
+  price: string_filter_operators
   _and: [codex_filter]
   _or: [codex_filter]
 }
@@ -1124,6 +1128,7 @@ input count_function_filter_operators {
 }
 
 input create_codex_input {
+  agent_profiles: JSON
   ancestor: String
   artstyle_disliked: String
   artstyle_liked: String
@@ -1151,6 +1156,8 @@ input create_codex_input {
   favorite_book: String
   favorite_cryptoartist: String
   favorite_role: String
+  favourite_animal: String
+  favourite_color: String
   fiery: String
 
   """Array of gender identities (JSON)"""
@@ -1169,13 +1176,17 @@ input create_codex_input {
   """IPFS hash for final composite image"""
   ipfs_final: String
   kindred: String
+  latlon_residence: String
+  latlon_significant: String
   metaphor_domain: String
   mood: String
   multiplicity: Int
+  municipality_residence: String
   municipality_significant: String
 
   """Array of names (JSON)"""
   name: JSON
+  owner: String
   paired_art_image_description: String
   paired_art_image_summary: String
   paired_art_placement: String
@@ -1205,13 +1216,7 @@ input create_codex_input {
   """Array of writing style characteristics (JSON)"""
   writing_style: JSON
   x: Int
-  owner: String
-  municipality_residence: String
-  latlon_residence: String
-  latlon_significant: String
-  favourite_color: String
-  favourite_animal: String
-  agent_profiles: JSON
+  price: String
 }
 
 input create_directus_access_input {
@@ -1869,6 +1874,7 @@ input string_filter_operators {
 }
 
 input update_codex_input {
+  agent_profiles: JSON
   ancestor: String
   artstyle_disliked: String
   artstyle_liked: String
@@ -1896,6 +1902,8 @@ input update_codex_input {
   favorite_book: String
   favorite_cryptoartist: String
   favorite_role: String
+  favourite_animal: String
+  favourite_color: String
   fiery: String
 
   """Array of gender identities (JSON)"""
@@ -1914,13 +1922,17 @@ input update_codex_input {
   """IPFS hash for final composite image"""
   ipfs_final: String
   kindred: String
+  latlon_residence: String
+  latlon_significant: String
   metaphor_domain: String
   mood: String
   multiplicity: Int
+  municipality_residence: String
   municipality_significant: String
 
   """Array of names (JSON)"""
   name: JSON
+  owner: String
   paired_art_image_description: String
   paired_art_image_summary: String
   paired_art_placement: String
@@ -1950,13 +1962,7 @@ input update_codex_input {
   """Array of writing style characteristics (JSON)"""
   writing_style: JSON
   x: Int
-  owner: String
-  municipality_residence: String
-  latlon_residence: String
-  latlon_significant: String
-  favourite_color: String
-  favourite_animal: String
-  agent_profiles: JSON
+  price: String
 }
 
 input update_directus_access_input {

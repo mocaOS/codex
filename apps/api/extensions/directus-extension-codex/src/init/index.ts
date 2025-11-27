@@ -163,7 +163,7 @@ export default defineHook(({ action, init }, { env, logger }) => {
       // Generate seed data from IPFS codex files after sync completes
       try {
         const ipfsGateway = env.IPFS_GATEWAY || config.ipfs.gateway || "http://127.0.0.1:8080";
-        const ipfsCodexHash = env.IPFS_CODEX_HASH || config.ipfs.codex_files_hash || "QmNdMnuJURo3sFkLR2WLSshPqycfjafbHoAcd2FTdBJ8S5";
+        const ipfsCodexHash = env.IPFS_CODEX_HASH || config.ipfs.codex_files_hash || "QmPm4Tgbt1MM5dE343mqsFkXwdzdmyUCQznf6SdD7fm4W2";
 
         const __filename = fileURLToPath(import.meta.url);
         const __dirname = dirname(__filename);

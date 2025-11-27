@@ -3,7 +3,7 @@
   "info": {
     "title": "Dynamic API Specification",
     "description": "This is a dynamically generated API specification for all endpoints existing on the current project.",
-    "version": "b1b9adf69c3b7ef6ebe24a941b54529ddbae8e82"
+    "version": "54ab8c0d221b4ea2a2cf31192f9478bfd6774027"
   },
   "servers": [
     {
@@ -10383,6 +10383,9 @@
       "ItemsCodex": {
         "type": "object",
         "properties": {
+          "agent_profiles": {
+            "nullable": true
+          },
           "ancestor": {
             "nullable": true,
             "type": "string"
@@ -10483,6 +10486,14 @@
             "nullable": true,
             "type": "string"
           },
+          "favourite_animal": {
+            "nullable": true,
+            "type": "string"
+          },
+          "favourite_color": {
+            "nullable": true,
+            "type": "string"
+          },
           "fiery": {
             "nullable": true,
             "type": "string"
@@ -10518,6 +10529,14 @@
             "nullable": true,
             "type": "string"
           },
+          "latlon_residence": {
+            "nullable": true,
+            "type": "string"
+          },
+          "latlon_significant": {
+            "nullable": true,
+            "type": "string"
+          },
           "metaphor_domain": {
             "nullable": true,
             "type": "string"
@@ -10530,6 +10549,10 @@
             "nullable": true,
             "type": "integer"
           },
+          "municipality_residence": {
+            "nullable": true,
+            "type": "string"
+          },
           "municipality_significant": {
             "nullable": true,
             "type": "string"
@@ -10537,6 +10560,10 @@
           "name": {
             "nullable": true,
             "description": "Array of names (JSON)"
+          },
+          "owner": {
+            "nullable": true,
+            "type": "string"
           },
           "paired_art_image_description": {
             "nullable": true,
@@ -10663,32 +10690,9 @@
             "nullable": true,
             "type": "integer"
           },
-          "owner": {
+          "price": {
             "nullable": true,
             "type": "string"
-          },
-          "municipality_residence": {
-            "nullable": true,
-            "type": "string"
-          },
-          "latlon_residence": {
-            "nullable": true,
-            "type": "string"
-          },
-          "latlon_significant": {
-            "nullable": true,
-            "type": "string"
-          },
-          "favourite_color": {
-            "nullable": true,
-            "type": "string"
-          },
-          "favourite_animal": {
-            "nullable": true,
-            "type": "string"
-          },
-          "agent_profiles": {
-            "nullable": true
           }
         },
         "x-collection": "codex"

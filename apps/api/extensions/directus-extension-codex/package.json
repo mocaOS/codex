@@ -38,6 +38,11 @@
         "type": "hook",
         "name": "update-codex-owners",
         "source": "src/hooks/update-codex-owners.ts"
+      },
+      {
+        "type": "hook",
+        "name": "update-codex-prices",
+        "source": "src/hooks/update-codex-prices.ts"
       }
     ],
     "host": "^10.10.0"

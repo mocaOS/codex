@@ -335,6 +335,8 @@ type auth_tokens {
 }
 
 type codex {
+  agent_profiles: JSON
+  agent_profiles_func: count_functions
   ancestor: String
   artstyle_disliked: String
   artstyle_liked: String
@@ -363,6 +365,8 @@ type codex {
   favorite_book: String
   favorite_cryptoartist: String
   favorite_role: String
+  favourite_animal: String
+  favourite_color: String
   fiery: String
 
   """Array of gender identities (JSON)"""
@@ -383,14 +387,18 @@ type codex {
   """IPFS hash for final composite image"""
   ipfs_final: String
   kindred: String
+  latlon_residence: String
+  latlon_significant: String
   metaphor_domain: String
   mood: String
   multiplicity: Int
+  municipality_residence: String
   municipality_significant: String
 
   """Array of names (JSON)"""
   name: JSON
   name_func: count_functions
+  owner: String
   paired_art_image_description: String
   paired_art_image_summary: String
   paired_art_placement: String
@@ -423,14 +431,7 @@ type codex {
   writing_style: JSON
   writing_style_func: count_functions
   x: Int
-  owner: String
-  municipality_residence: String
-  latlon_residence: String
-  latlon_significant: String
-  favourite_color: String
-  favourite_animal: String
-  agent_profiles: JSON
-  agent_profiles_func: count_functions
+  price: String
 }
 
 type codex_mutated {
