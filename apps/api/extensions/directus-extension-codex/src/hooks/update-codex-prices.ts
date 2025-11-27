@@ -38,22 +38,43 @@ function formatPrice(value: string, decimals: number, currency: string): string 
   // Convert fractional part to decimal string with leading zeros
   const fractionalString = fractionalPart.toString().padStart(decimals, "0");
 
-  // Take up to 5 digits, removing leading zeros
-  let significantDigits = fractionalString.replace(/^0+/, "");
+  // Find the first non-zero digit to determine where significant digits start
+  const firstNonZeroIndex = fractionalString.search(/[1-9]/);
 
-  // Limit to 5 digits
-  if (significantDigits.length > 5) {
-    significantDigits = significantDigits.substring(0, 5);
-  }
-
-  // Remove trailing zeros
-  significantDigits = significantDigits.replace(/0+$/, "");
-
-  if (significantDigits === "") {
+  if (firstNonZeroIndex === -1) {
+    // All zeros in fractional part
     return `${wholePart.toString()} ${currency}`;
   }
 
-  return `${wholePart.toString()}.${significantDigits} ${currency}`;
+  // Extract up to 5 digits total from the fractional string, starting from the first non-zero
+  // This preserves the correct decimal position
+  const maxDigits = 5;
+  const digitsToShow = fractionalString.substring(firstNonZeroIndex, firstNonZeroIndex + maxDigits);
+
+  // Remove trailing zeros but preserve leading zeros to maintain decimal position
+  const trimmedDigits = digitsToShow.replace(/0+$/, "");
+
+  if (trimmedDigits === "") {
+    return `${wholePart.toString()} ${currency}`;
+  }
+
+  // Calculate how many leading zeros we need before the significant digits
+  // This ensures the decimal position is correct
+  const leadingZerosNeeded = firstNonZeroIndex;
+  const totalDigitsInResult = leadingZerosNeeded + trimmedDigits.length;
+
+  // If we have more than 5 digits total, we need to adjust
+  // But we want to preserve at least one leading zero if the first digit is after position 0
+  if (totalDigitsInResult > maxDigits) {
+    // We can only show up to maxDigits total, so reduce leading zeros if needed
+    const leadingZerosToShow = Math.max(0, maxDigits - trimmedDigits.length);
+    const decimalPart = "0".repeat(leadingZerosToShow) + trimmedDigits;
+    return `${wholePart.toString()}.${decimalPart} ${currency}`;
+  }
+
+  // Normal case: preserve all leading zeros + significant digits
+  const decimalPart = "0".repeat(leadingZerosNeeded) + trimmedDigits;
+  return `${wholePart.toString()}.${decimalPart} ${currency}`;
 }
 
 /**
