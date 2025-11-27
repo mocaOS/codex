@@ -90,6 +90,32 @@ async function fetchAdoptionDetails(baseUrl: string): Promise<AdoptionPrice[]> {
 }
 
 /**
+ * Filters adoption details to keep only the lowest price for each tokenId
+ */
+function getLowestPricesByTokenId(adoptionDetails: AdoptionPrice[]): Map<string, AdoptionPrice> {
+  const lowestPrices = new Map<string, AdoptionPrice>();
+
+  for (const detail of adoptionDetails) {
+    const tokenId = detail.tokenId;
+    const currentPrice = BigInt(detail.price.value);
+
+    const existing = lowestPrices.get(tokenId);
+    if (!existing) {
+      // First entry for this tokenId
+      lowestPrices.set(tokenId, detail);
+    } else {
+      // Compare prices and keep the lowest
+      const existingPrice = BigInt(existing.price.value);
+      if (currentPrice < existingPrice) {
+        lowestPrices.set(tokenId, detail);
+      }
+    }
+  }
+
+  return lowestPrices;
+}
+
+/**
  * Updates codex items with prices from adoption details
  */
 async function updateCodexPrices(services: any, getSchema: () => Promise<any>, logger: any) {
@@ -155,12 +181,21 @@ async function updateCodexPrices(services: any, getSchema: () => Promise<any>, l
     const adoptionDetails = await fetchAdoptionDetails(baseUrl);
     logger.info(`Fetched ${adoptionDetails.length} adoption price entries`);
 
+    // Filter to get only the lowest price for each tokenId
+    logger.info("Filtering to lowest prices per tokenId...");
+    const lowestPricesMap = getLowestPricesByTokenId(adoptionDetails);
+    const uniqueTokenIds = lowestPricesMap.size;
+    const duplicatesRemoved = adoptionDetails.length - uniqueTokenIds;
+    if (duplicatesRemoved > 0) {
+      logger.info(`Found ${duplicatesRemoved} duplicate listings, keeping lowest prices for ${uniqueTokenIds} unique tokenIds`);
+    }
+
     let totalUpdated = 0;
     let totalErrors = 0;
     let totalNotFound = 0;
 
-    // Update codex items with prices
-    for (const adoptionDetail of adoptionDetails) {
+    // Update codex items with prices (only lowest price per tokenId)
+    for (const adoptionDetail of lowestPricesMap.values()) {
       try {
         const tokenId = Number.parseInt(adoptionDetail.tokenId, 10);
         if (Number.isNaN(tokenId)) {
