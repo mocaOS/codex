@@ -61,6 +61,17 @@ tags:
       - **File Information**: View file organization details including folders, tags, and descriptions
       
       Use these endpoints to access and display media assets, documents, and other file types stored in Directus.
+  - name: Examples
+    description: |
+      **Practical examples** demonstrating common query patterns and use cases for the MOCA Codex API.
+      
+      These examples show how to:
+      - Filter codex items by specific criteria
+      - Use Directus filter operators effectively
+      - Query collections with complex conditions
+      - Apply best practices for API queries
+      
+      Use these examples as a starting point for building your own queries.
 
 # HIDE ENDPOINTS: Use publishedTags to show only specific tagged endpoints
 # Only endpoints with at least one of these tags will appear in the docs
@@ -70,7 +81,7 @@ tags:
 publishedTags:
   - Codex
   - Files
-  - Tokens
+  - Examples
 
 # Override codex endpoints to use "Codex" tag and only show GET operations
 paths:
@@ -248,65 +259,51 @@ paths:
                         extensions:
                           code: "NOT_FOUND"
 
-  "/tokens-by-owner/{address}":
+  "/items/codex?filter[owner][_eq]=0x614a61a3b7f2fd8750acaad63b2a0cfe8b8524f1":
     get:
-      summary: Get Tokens by Owner
+      summary: Query Codex Items by Owner
       description: |
-        Retrieve all tokens (NFTs) owned by a specific Ethereum wallet address. This endpoint 
-        returns token IDs, names, and convenient links to OpenSea and the Codex API for each token.
+        This example demonstrates how to query all codex items owned by a specific Ethereum wallet address 
+        using Directus filter syntax.
         
-        ## Path Parameters
+        ## Important Notes
         
-        - **address** (required): The Ethereum wallet address (case-insensitive). The address will 
-          be automatically normalized to lowercase for consistent querying.
+        - **Address Format**: The owner address **must be lowercase**. Ethereum addresses are case-insensitive 
+          in the blockchain, but for consistent querying in Directus, always use lowercase format.
+        - **Filter Operator**: Use the `_eq` (equals) operator to match the exact owner address.
+        - **Filter Syntax**: The filter is passed as a query parameter using the bracket notation.
         
-        ## Response Structure
+        ## Example Request
         
-        The response follows the standard Directus items endpoint format:
-        - `data`: Array of items owned by the specified address
-        - `meta`: Metadata about the query results (filter count, total count)
+        Query all codex items owned by address `0x614a61a3b7f2fd8750acaad63b2a0cfe8b8524f1` using bracket notation:
         
-        Each item in the `data` array includes:
-        - **id**: The token ID (unique identifier for the codex item)
-        - **name**: The name of the entity/decc0
-        - **opensea_url**: Direct link to view the token on OpenSea
-        - **codex_api_url**: Direct link to fetch full codex item details via the API
-        
-        ## Use Cases
-        
-        - Displaying a user's NFT collection
-        - Building wallet-based token explorers
-        - Integrating with Web3 applications
-        - Fetching token metadata for owned NFTs
-        
-        ## Example
-        
-        Request tokens owned by address `0x1234...`:
         ```
-        GET /tokens-by-owner/0x1234...
+        GET /items/codex?filter[owner][_eq]=0x614a61a3b7f2fd8750acaad63b2a0cfe8b8524f1
         ```
         
-        The address is case-insensitive, so both `0xABC...` and `0xabc...` will return the same results.
+        ## Common Mistakes to Avoid
+        
+        1. **Using uppercase letters**: `0x614A61A3...` ❌ (will not match)
+        2. **Missing 0x prefix**: `614a61a3b7f2fd8750acaad63b2a0cfe8b8524f1` ❌ (will not match)
+        3. **Using wrong operator**: Use `_eq` for exact matches, not `_contains` or other operators
+        
+        ## Additional Filter Options
+        
+        You can combine the owner filter with other filters using logical operators:
+        
+        ```
+        GET /items/codex?filter={"_and":[{"owner":{"_eq":"0x614a61a3b7f2fd8750acaad63b2a0cfe8b8524f1"}},{"id":{"_gte":100}}]}
+        ```
+        
+        This example filters for items owned by the address AND with an ID greater than or equal to 100.
       tags:
-        - Tokens
-      parameters:
-        - name: address
-          in: path
-          required: true
-          description: |
-            The Ethereum wallet address that owns the tokens. This is case-insensitive and will be 
-            automatically normalized to lowercase. Must be a valid Ethereum address format.
-          schema:
-            type: string
-            pattern: '^0x[a-fA-F0-9]{40}$'
-            example: "0x97f69e1f54a4b10d934ff67e65b7ecfbab6ec652"
+        - Examples
       responses:
         '200':
           description: |
-            **Success** — Returns all codex tokens owned by the specified address.
+            **Success** — Returns a paginated list of codex items owned by the specified address.
             
-            The response includes an array of codex items in the `data` property, each containing 
-            the token ID, name, OpenSea URL, and Codex API URL. The `meta` property contains 
+            The response includes an array of codex items in the `data` property, along with 
             metadata about the query results.
           content:
             application/json:
@@ -316,111 +313,22 @@ paths:
                   data:
                     type: array
                     items:
-                      type: object
-                      properties:
-                        id:
-                          type: integer
-                          description: The token ID (unique identifier for the codex item)
-                          example: 337
-                        name:
-                          type: string
-                          nullable: true
-                          description: The name of the codex entity/decc0
-                          example: "Korka"
-                        opensea_url:
-                          type: string
-                          description: Direct link to view the token on OpenSea
-                          example: "https://opensea.io/item/ethereum/0x97f69e1f54a4b10d934ff67e65b7ecfbab6ec652/337"
-                        codex_api_url:
-                          type: string
-                          description: Direct link to fetch full codex item details via the API
-                          example: "https://api.decc0s.com/items/codex/337"
+                      $ref: '#/components/schemas/ItemsCodex'
                   meta:
-                    type: object
-                    properties:
-                      filter_count:
-                        type: integer
-                        description: Number of items matching the filter
-                        example: 2
-                      total_count:
-                        type: integer
-                        description: Total count of items (same as filter_count for filtered queries)
-                        example: 2
+                    $ref: '#/components/schemas/x-metadata'
               examples:
                 default:
-                  summary: Tokens owned by address
+                  summary: Items owned by specific address
                   value:
                     data:
-                      - id: 337
-                        name: "Korka"
-                        opensea_url: "https://opensea.io/item/ethereum/0x97f69e1f54a4b10d934ff67e65b7ecfbab6ec652/337"
-                        codex_api_url: "https://api.decc0s.com/items/codex/337"
-                      - id: 338
-                        name: "Aria"
-                        opensea_url: "https://opensea.io/item/ethereum/0x97f69e1f54a4b10d934ff67e65b7ecfbab6ec652/338"
-                        codex_api_url: "https://api.decc0s.com/items/codex/338"
+                      - id: 123
+                        name: "Example Entity"
+                        owner: "0x614a61a3b7f2fd8750acaad63b2a0cfe8b8524f1"
+                        description: "An example codex item"
+                        timestamp_created: "2025-01-15T10:30:00Z"
                     meta:
-                      filter_count: 2
-                      total_count: 2
-                empty:
-                  summary: No tokens found for address
-                  value:
-                    data: []
-                    meta:
-                      filter_count: 0
-                      total_count: 0
-        '400':
-          description: |
-            **Bad Request** — The address parameter is missing or invalid.
-            
-            This error occurs when:
-            - The address parameter is not provided
-            - The address format is invalid
-            
-            The response includes an error object with details about what went wrong.
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  error:
-                    type: string
-                    description: Human-readable error message
-                    example: "Address parameter is required"
-              examples:
-                default:
-                  summary: Missing address parameter
-                  value:
-                    error: "Address parameter is required"
-        '500':
-          description: |
-            **Internal Server Error** — An error occurred while processing the request.
-            
-            This error occurs when:
-            - The codex collection is not found in the schema
-            - A database error occurs
-            - An unexpected server error happens
-            
-            The response includes an error object with details about what went wrong.
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  error:
-                    type: string
-                    description: Human-readable error message
-                    example: "Internal server error"
-                  message:
-                    type: string
-                    description: Detailed error message
-                    example: "Codex collection not found in schema"
-              examples:
-                default:
-                  summary: Server error
-                  value:
-                    error: "Internal server error"
-                    message: "Codex collection not found in schema"
+                      filter_count: 1
+                      total_count: 1
 
   "/files":
     get:

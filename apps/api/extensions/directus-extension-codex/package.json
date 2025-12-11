@@ -43,11 +43,6 @@
         "type": "hook",
         "name": "update-codex-prices",
         "source": "src/hooks/update-codex-prices.ts"
-      },
-      {
-        "type": "endpoint",
-        "name": "tokens-by-owner",
-        "source": "src/endpoints/tokens-by-owner.ts"
       }
     ],
     "host": "^10.10.0"
