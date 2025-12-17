@@ -18,10 +18,8 @@ const uncheckQueryParamsPlugin: ZudokuPlugin = {
       >
         {`
             (function() {
-              // Only run on /api/** routes
-              if (!window.location.pathname.startsWith('/api')) {
-                return;
-              }
+              let currentPathname = window.location.pathname;
+              let mainObserver = null;
 
               function uncheckQueryParams() {
                 document.querySelectorAll('input[type="checkbox"][name^="queryParams"][name$=".active"]').forEach(function(input) {
@@ -54,18 +52,61 @@ const uncheckQueryParamsPlugin: ZudokuPlugin = {
                 }
               }
 
-              const mainObserver = new MutationObserver(function() {
-                document.querySelectorAll('div[role="dialog"]').forEach(setupDialogWatcher);
-              });
+              function initializeWatchers() {
+                // Only run on /api/** routes
+                if (!window.location.pathname.startsWith('/api')) {
+                  // Clean up observers if we navigate away from /api routes
+                  if (mainObserver) {
+                    mainObserver.disconnect();
+                    mainObserver = null;
+                  }
+                  return;
+                }
 
-              if (document.readyState === 'loading') {
-                document.addEventListener('DOMContentLoaded', function() {
-                  mainObserver.observe(document.body, { childList: true, subtree: true });
+                // Disconnect existing observer if re-initializing
+                if (mainObserver) {
+                  mainObserver.disconnect();
+                }
+
+                mainObserver = new MutationObserver(function() {
                   document.querySelectorAll('div[role="dialog"]').forEach(setupDialogWatcher);
                 });
-              } else {
+
                 mainObserver.observe(document.body, { childList: true, subtree: true });
                 document.querySelectorAll('div[role="dialog"]').forEach(setupDialogWatcher);
+              }
+
+              function checkUrlChange() {
+                const newPathname = window.location.pathname;
+                if (newPathname !== currentPathname) {
+                  currentPathname = newPathname;
+                  // Small delay to allow DOM to update after route change
+                  setTimeout(initializeWatchers, 100);
+                }
+              }
+
+              // Intercept pushState and replaceState to detect programmatic navigation
+              const originalPushState = history.pushState;
+              const originalReplaceState = history.replaceState;
+
+              history.pushState = function() {
+                originalPushState.apply(history, arguments);
+                checkUrlChange();
+              };
+
+              history.replaceState = function() {
+                originalReplaceState.apply(history, arguments);
+                checkUrlChange();
+              };
+
+              // Listen for browser back/forward navigation
+              window.addEventListener('popstate', checkUrlChange);
+
+              // Initial setup
+              if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', initializeWatchers);
+              } else {
+                initializeWatchers();
               }
             })();
         `}
