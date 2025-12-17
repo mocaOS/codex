@@ -242,9 +242,6 @@ const config: ZudokuConfig = {
       path: "/api",
     },
   ],
-  theme: {
-    registryUrl: "https://tweakcn.com/r/themes/vercel.json"
-  }
 };
 
 export default config;
