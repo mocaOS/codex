@@ -1,0 +1,353 @@
+---
+title: Query Guide
+description: Complete guide to filtering, sorting, searching, and pagination in the MOCA Codex API
+---
+
+import { Callout } from "zudoku/ui/Callout";
+import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "zudoku/ui/Card";
+
+Master the powerful query capabilities of the MOCA Codex API. This guide covers filtering, sorting, searching, pagination, and field selection using Directus conventions.
+
+---
+
+## Query Parameters Overview
+
+| Parameter | Description | Example |
+|-----------|-------------|---------|
+| `fields` | Select specific fields | `?fields=id,name` |
+| `filter` | Apply filter conditions | `?filter[name][_eq]=Korka` |
+| `sort` | Order results | `?sort=-created_on` |
+| `limit` | Maximum results | `?limit=25` |
+| `offset` | Skip results (pagination) | `?offset=50` |
+| `search` | Full-text search | `?search=curator` |
+| `meta` | Include metadata | `?meta=*` |
+
+---
+
+## Field Selection
+
+Use the `fields` parameter to request only the data you need, reducing response size and improving performance.
+
+### Basic Field Selection
+
+```bash
+GET /items/codex?fields=id,name,description
+```
+
+### Nested Fields
+
+For relational data, use dot notation:
+
+```bash
+GET /items/codex?fields=id,name,related_item.title
+```
+
+### All Fields
+
+Omit the `fields` parameter to get all available fields:
+
+```bash
+GET /items/codex
+```
+
+<Callout type="tip" title="Performance Tip" icon>
+  Always specify only the fields you need. This reduces response size and improves API performance.
+</Callout>
+
+---
+
+## Filtering
+
+Filter results using Directus filter syntax. Filters can be applied using bracket notation or JSON format.
+
+### Filter Syntax
+
+**Bracket Notation:**
+```
+?filter[field][operator]=value
+```
+
+**JSON Format:**
+```
+?filter={"field":{"operator":"value"}}
+```
+
+### Filter Operators
+
+<div className="overflow-x-auto">
+
+| Operator | Description | Example |
+|----------|-------------|---------|
+| `_eq` | Equals | `filter[name][_eq]=Korka` |
+| `_neq` | Not equals | `filter[name][_neq]=Korka` |
+| `_lt` | Less than | `filter[id][_lt]=100` |
+| `_lte` | Less than or equal | `filter[id][_lte]=100` |
+| `_gt` | Greater than | `filter[id][_gt]=50` |
+| `_gte` | Greater than or equal | `filter[id][_gte]=50` |
+| `_in` | In array | `filter[id][_in]=1,2,3` |
+| `_nin` | Not in array | `filter[id][_nin]=1,2,3` |
+| `_null` | Is null | `filter[ancestor][_null]=true` |
+| `_nnull` | Is not null | `filter[ancestor][_nnull]=true` |
+| `_contains` | Contains substring | `filter[name][_contains]=ork` |
+| `_ncontains` | Doesn't contain | `filter[name][_ncontains]=test` |
+| `_starts_with` | Starts with | `filter[name][_starts_with]=Ko` |
+| `_nstarts_with` | Doesn't start with | `filter[name][_nstarts_with]=Ko` |
+| `_ends_with` | Ends with | `filter[name][_ends_with]=ka` |
+| `_nends_with` | Doesn't end with | `filter[name][_nends_with]=ka` |
+| `_between` | Between values | `filter[id][_between]=10,50` |
+| `_nbetween` | Not between | `filter[id][_nbetween]=10,50` |
+| `_empty` | Is empty | `filter[tags][_empty]=true` |
+| `_nempty` | Is not empty | `filter[tags][_nempty]=true` |
+
+</div>
+
+### Filter Examples
+
+**Equals:**
+```bash
+GET /items/codex?filter[name][_eq]=Korka
+```
+
+**Contains:**
+```bash
+GET /items/codex?filter[description][_contains]=curator
+```
+
+**Greater than:**
+```bash
+GET /items/codex?filter[id][_gt]=100
+```
+
+**Not null:**
+```bash
+GET /items/codex?filter[ancestor][_nnull]=true
+```
+
+---
+
+## Logical Operators
+
+Combine multiple conditions using logical operators.
+
+### AND Operator
+
+All conditions must be true:
+
+```bash
+GET /items/codex?filter={"_and":[{"id":{"_gte":1}},{"name":{"_nnull":true}}]}
+```
+
+### OR Operator
+
+At least one condition must be true:
+
+```bash
+GET /items/codex?filter={"_or":[{"name":{"_eq":"Korka"}},{"name":{"_eq":"Aria"}}]}
+```
+
+### Complex Nesting
+
+Combine AND and OR:
+
+```json
+{
+  "_and": [
+    { "owner": { "_eq": "0x614a..." } },
+    {
+      "_or": [
+        { "id": { "_lt": 100 } },
+        { "id": { "_gt": 200 } }
+      ]
+    }
+  ]
+}
+```
+
+<Callout type="note" title="URL Encoding" icon>
+  When using JSON format in URLs, remember to URL-encode the filter parameter or use bracket notation for simpler queries.
+</Callout>
+
+---
+
+## Sorting
+
+Use the `sort` parameter to order results by one or more fields.
+
+### Ascending Order
+
+```bash
+GET /items/codex?sort=name
+```
+
+### Descending Order
+
+Prefix with `-` for descending:
+
+```bash
+GET /items/codex?sort=-timestamp_created
+```
+
+### Multiple Sort Fields
+
+Comma-separate multiple fields:
+
+```bash
+GET /items/codex?sort=-timestamp_created,name
+```
+
+<Callout type="tip" title="Default Sort" icon>
+  If no sort is specified, results are typically sorted by the primary key (id) in ascending order.
+</Callout>
+
+---
+
+## Pagination
+
+Control result set size using `limit` and `offset`.
+
+### Basic Pagination
+
+```bash
+# First page (items 1-10)
+GET /items/codex?limit=10&offset=0
+
+# Second page (items 11-20)
+GET /items/codex?limit=10&offset=10
+
+# Third page (items 21-30)
+GET /items/codex?limit=10&offset=20
+```
+
+### Pagination with Metadata
+
+Include `meta=*` to get total counts for pagination UI:
+
+```bash
+GET /items/codex?limit=10&offset=0&meta=*
+```
+
+Response includes:
+```json
+{
+  "data": [...],
+  "meta": {
+    "filter_count": 42,
+    "total_count": 100
+  }
+}
+```
+
+<Card className="my-4">
+  <CardHeader>
+    <CardTitle>Pagination Calculation</CardTitle>
+  </CardHeader>
+  <CardContent>
+    ```
+    Total Pages = ceil(total_count / limit)
+    Current Page = floor(offset / limit) + 1
+    ```
+  </CardContent>
+</Card>
+
+---
+
+## Full-Text Search
+
+Use the `search` parameter for full-text search across multiple fields.
+
+```bash
+GET /items/codex?search=curator
+```
+
+<Callout type="caution" title="Search Limitations" icon>
+  Search behavior depends on database configuration. Complex searches may benefit from specific field filters instead.
+</Callout>
+
+---
+
+## Metadata
+
+Include the `meta` parameter to get additional information about query results.
+
+### Available Metadata
+
+| Value | Description |
+|-------|-------------|
+| `*` | Include all metadata |
+| `total_count` | Total items in collection |
+| `filter_count` | Items matching current filter |
+
+### Example
+
+```bash
+GET /items/codex?meta=*&limit=10
+```
+
+Response:
+```json
+{
+  "data": [...],
+  "meta": {
+    "filter_count": 42,
+    "total_count": 100
+  }
+}
+```
+
+---
+
+## Combining Parameters
+
+Combine multiple query parameters for precise results:
+
+```bash
+GET /items/codex?fields=id,name,description&filter[ancestor][_nnull]=true&sort=-timestamp_created&limit=10&offset=0&meta=*
+```
+
+This query:
+- Returns only `id`, `name`, and `description` fields
+- Filters for items with non-null ancestors
+- Sorts by creation date (newest first)
+- Returns first 10 results
+- Includes metadata
+
+---
+
+## Best Practices
+
+<div className="grid grid-cols-1 md:grid-cols-2 gap-4 my-6">
+
+<Card>
+  <CardHeader>
+    <CardTitle>✅ Do</CardTitle>
+  </CardHeader>
+  <CardContent>
+    - Use field selection to minimize response size
+    - Include `meta=*` when building pagination UI
+    - Use specific filters instead of fetching all data
+    - Use lowercase for Ethereum addresses
+  </CardContent>
+</Card>
+
+<Card>
+  <CardHeader>
+    <CardTitle>❌ Don't</CardTitle>
+  </CardHeader>
+  <CardContent>
+    - Fetch all fields when you only need a few
+    - Use high limits without pagination
+    - Forget to URL-encode special characters
+    - Use case-sensitive matching for addresses
+  </CardContent>
+</Card>
+
+</div>
+
+---
+
+## Related Resources
+
+- **[Examples](/examples)** - Interactive examples with live playground
+- **[Codex Endpoints](/codex)** - Codex-specific query examples
+- **[Files Endpoints](/files)** - Files-specific query examples
+- **[Directus Documentation](https://docs.directus.io/reference/query.html)** - Complete Directus query reference

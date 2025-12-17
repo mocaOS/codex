@@ -11,7 +11,9 @@
     "dev:api": "FORCE_COLOR=1 turbo dev --filter=@local/config --filter=directus-extension-codex --filter=api",
     "build:api": "FORCE_COLOR=1 turbo build --filter=@local/config --filter=directus-extension-codex --filter=api",
     "dev:docs": "FORCE_COLOR=1 turbo dev --filter=docs",
-    "build:docs": "FORCE_COLOR=1 turbo build --filter=docs"
+    "build:docs": "FORCE_COLOR=1 turbo build --filter=docs",
+    "dev:documentation": "FORCE_COLOR=1 turbo dev --filter=documentation",
+    "build:documentation": "FORCE_COLOR=1 turbo build --filter=documentation"
   },
   "dependencies": {
     "dotenv": "^17.2.3",
@@ -24,7 +26,7 @@
   "workspaces": [
     "apps/api",
     "apps/api/extensions/*",
-    "apps/docs",
+    "apps/documentation",
     "packages/*"
   ]
 }

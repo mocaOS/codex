@@ -1,0 +1,136 @@
+---
+title: Examples
+description: Interactive examples demonstrating common query patterns for the MOCA Codex API
+---
+
+import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "zudoku/ui/Card";
+
+Practical, interactive examples demonstrating common query patterns and use cases for the MOCA Codex API. Use the **Open in Playground** buttons to test queries directly against the API.
+
+<Callout type="tip" title="Interactive Testing" icon>
+  Click the **Open in Playground** buttons to launch an interactive API playground where you can modify parameters, execute requests, and inspect responses in real-time.
+</Callout>
+
+## Example Categories
+
+<div className="grid grid-cols-1 md:grid-cols-2 gap-4 my-6">
+
+<Card>
+  <CardHeader>
+    <CardTitle>📚 Codex Examples</CardTitle>
+    <CardDescription>Query the MOCA Codex knowledge base</CardDescription>
+  </CardHeader>
+  <CardContent>
+    Learn to query codex items by owner, filter by name, paginate results, sort, and perform full-text search across entities.
+    
+    [View Codex Examples →](/examples/codex/list-items)
+  </CardContent>
+</Card>
+
+<Card>
+  <CardHeader>
+    <CardTitle>📁 Files Examples</CardTitle>
+    <CardDescription>Access and filter stored files</CardDescription>
+  </CardHeader>
+  <CardContent>
+    List files, filter by type (images, documents), retrieve metadata, and query recent uploads with sorting.
+    
+    [View Files Examples →](/examples/files/list-files)
+  </CardContent>
+</Card>
+
+<Card>
+  <CardHeader>
+    <CardTitle>🖼️ Assets Examples</CardTitle>
+    <CardDescription>Image transformations and presets</CardDescription>
+  </CardHeader>
+  <CardContent>
+    Use preset transformations, apply custom width/height/format options, and leverage Sharp API for advanced image processing.
+    
+    [View Assets Examples →](/examples/assets/presets)
+  </CardContent>
+</Card>
+
+<Card>
+  <CardHeader>
+    <CardTitle>🔧 Advanced Examples</CardTitle>
+    <CardDescription>Complex filters and logical operators</CardDescription>
+  </CardHeader>
+  <CardContent>
+    Combine filters with AND/OR operators, exclude null values, and build sophisticated queries for precise data retrieval.
+    
+    [View Advanced Examples →](/examples/advanced/complex-filters)
+  </CardContent>
+</Card>
+
+</div>
+
+## Quick Reference
+
+### Common Codex Queries
+
+| Use Case | Example |
+|----------|---------|
+| List items | `GET /items/codex?fields=id,name&limit=10` |
+| Get by ID | `GET /items/codex/1` |
+| Filter by owner | `GET /items/codex?filter[owner][_eq]=0x...` |
+| Search | `GET /items/codex?search=curator` |
+| Sort by date | `GET /items/codex?sort=-timestamp_created` |
+| Paginate | `GET /items/codex?limit=10&offset=20&meta=*` |
+
+### Common File Queries
+
+| Use Case | Example |
+|----------|---------|
+| List files | `GET /files?fields=id,title,type&limit=10` |
+| Images only | `GET /files?filter[type][_starts_with]=image/` |
+| Recent uploads | `GET /files?sort=-created_on&limit=5` |
+| Get metadata | `GET /files/{uuid}` |
+
+### Asset Transformations
+
+| Use Case | Example |
+|----------|---------|
+| Preset resize | `GET /assets/{id}?key=s512` |
+| Custom size | `GET /assets/{id}?width=800&height=600` |
+| Format conversion | `GET /assets/{id}?format=webp&quality=80` |
+| Rotate image | `GET /assets/{id}?transforms=[["rotate",90]]` |
+
+## Filter Operators
+
+The API uses Directus filter syntax. Here are the most common operators:
+
+| Operator | Description | Example |
+|----------|-------------|---------|
+| `_eq` | Equals | `filter[name][_eq]=Korka` |
+| `_neq` | Not equals | `filter[status][_neq]=draft` |
+| `_contains` | Contains substring | `filter[name][_contains]=art` |
+| `_starts_with` | Starts with | `filter[type][_starts_with]=image/` |
+| `_gte` | Greater than or equal | `filter[id][_gte]=100` |
+| `_lte` | Less than or equal | `filter[id][_lte]=50` |
+| `_null` | Is null | `filter[ancestor][_null]=true` |
+| `_nnull` | Is not null | `filter[owner][_nnull]=true` |
+
+<Callout type="note" title="Bracket vs JSON Syntax" icon>
+  Use **bracket notation** for simple filters: `filter[name][_eq]=value`
+  
+  Use **JSON syntax** for complex logic with `_and`/`_or`: `filter={"_and":[...]}`
+</Callout>
+
+## About the API
+
+The MOCA Codex API is built on **Directus**, providing a powerful and flexible interface for accessing:
+
+- **Codex Items**: Curated entities with identity, relationships, attributes, and temporal data
+- **Files**: Stored media with rich metadata including Exif, IPTC, and dimensions
+- **Assets**: File content with on-the-fly image transformations
+
+<Callout type="caution" title="Address Format" icon>
+  When filtering by Ethereum wallet addresses (e.g., `owner` field), always use **lowercase**. The blockchain is case-insensitive, but Directus requires lowercase for consistent matching.
+</Callout>
+
+## Next Steps
+
+- **[Query by Owner](/examples/codex/items-by-owner)** — Start with a common use case
+- **[Query Guide](/query-guide)** — Deep dive into filtering and sorting
+- **[API Reference](/api)** — Complete OpenAPI documentation

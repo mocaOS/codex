@@ -1,0 +1,62 @@
+---
+title: Custom Transformations
+description: Apply custom width, height, and format transformations
+---
+
+Apply custom transformations to images using query parameters for width, height, format, and more.
+
+```bash
+GET /assets/{id}?width=800&height=600&fit=cover&format=webp&quality=80
+```
+
+## Transformation Parameters
+
+| Parameter | Description | Values |
+|-----------|-------------|--------|
+| `width` | Target width in pixels | Number |
+| `height` | Target height in pixels | Number |
+| `fit` | How to fit the image | `cover`, `contain`, `inside`, `outside` |
+| `format` | Output format | `jpg`, `png`, `webp`, `avif`, `tiff` |
+| `quality` | Compression quality | 1-100 |
+| `withoutEnlargement` | Don't upscale small images | `true`, `false` |
+
+## Fit Options
+
+<Callout type="info" title="Fit Modes" icon>
+
+- **`cover`**: Crop to fill exact dimensions (default)
+- **`contain`**: Fit within dimensions, may letterbox
+- **`inside`**: Like contain, but never upscale
+- **`outside`**: Like cover, but never downscale
+
+</Callout>
+
+## Examples
+
+### Resize to Width
+
+```bash
+GET /assets/{id}?width=400
+```
+
+### Resize with Aspect Ratio
+
+```bash
+GET /assets/{id}?width=800&height=600&fit=contain
+```
+
+### Convert to WebP
+
+```bash
+GET /assets/{id}?format=webp&quality=85
+```
+
+### Square Thumbnail
+
+```bash
+GET /assets/{id}?width=200&height=200&fit=cover
+```
+
+<Callout type="tip" title="Performance" icon>
+  Use `webp` or `avif` formats for smaller file sizes. They offer 25-35% better compression than JPEG with similar quality.
+</Callout>

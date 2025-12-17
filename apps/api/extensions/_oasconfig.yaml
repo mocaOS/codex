@@ -1,0 +1,731 @@
+docsPath: 'api-docs'
+useAuthentication: false
+
+info:
+  title: MOCA Codex API Documentation
+  version: 1.0.0
+  description: |
+    # MOCA Codex API
+    
+    Welcome to the **MOCA Codex API** — a comprehensive RESTful interface for accessing and managing 
+    the MOCA Codex knowledge base. This API provides structured access to curated information about 
+    entities, their relationships, and metadata.
+    
+    ## About This API
+    
+    This API is built on **Directus**, an open-source headless CMS. All filtering, querying, and 
+    data operations follow Directus conventions. For detailed information on how to use filters, 
+    query parameters, and advanced features, please refer to the 
+    [Directus API Documentation](https://docs.directus.io/reference/query.html).
+    
+    ## Features
+    
+    - **Entity Management**: Retrieve and query codex items with rich metadata
+    - **File Management**: Upload, retrieve, update, and delete files with comprehensive metadata
+    - **Asset Retrieval**: Access file content with optional image transformations
+    - **Flexible Filtering**: Advanced query capabilities with filtering, sorting, and search
+    - **RESTful Design**: Standard HTTP methods and status codes
+    - **Structured Responses**: Consistent JSON responses with metadata and pagination support
+    
+    ## Getting Started
+    
+    All endpoints return JSON responses and follow standard REST conventions. Use query parameters 
+    to filter, sort, and paginate results according to your needs. For comprehensive documentation 
+    on query syntax, filters, and advanced features, see the 
+    [Directus API Documentation](https://directus.io/docs/api/fields#list-all-fields).
+
+servers:
+  - url: http://localhost:8055
+    description: MOCA Codex API Server
+
+tags:
+  - name: Codex
+    description: |
+      Operations for accessing and querying the **MOCA Codex** knowledge base. 
+      
+      The Codex contains curated information about entities, including their:
+      - **Identity**: Names, descriptions, and biographical information
+      - **Relationships**: Ancestral connections and associations
+      - **Attributes**: Characteristics, preferences, and metadata
+      - **Temporal Data**: Creation timestamps and historical context
+      
+      Use these endpoints to explore the rich interconnected data within the Codex.
+  - name: Files
+    description: |
+      Operations for retrieving **files and assets** from Directus. 
+      
+      The Files API provides read-only access to file information and content:
+      - **File Retrieval**: List and retrieve file metadata
+      - **Metadata Access**: Access file properties, dimensions, and extracted metadata
+      - **Asset Retrieval**: Get file content with optional image transformations
+      - **File Information**: View file organization details including folders, tags, and descriptions
+      
+      Use these endpoints to access and display media assets, documents, and other file types stored in Directus.
+  - name: Examples
+    description: |
+      **Practical examples** demonstrating common query patterns and use cases for the MOCA Codex API.
+      
+      These examples show how to:
+      - Filter codex items by specific criteria
+      - Use Directus filter operators effectively
+      - Query collections with complex conditions
+      - Apply best practices for API queries
+      
+      Use these examples as a starting point for building your own queries.
+
+# HIDE ENDPOINTS: Use publishedTags to show only specific tagged endpoints
+# Only endpoints with at least one of these tags will appear in the docs
+# All other paths and unused tags will be removed
+# Note: The extension filters endpoints but may still include all schemas.
+# Scalar should automatically hide schemas not referenced by visible endpoints.
+publishedTags:
+  - Codex
+  - Files
+  - Examples
+
+# Override codex endpoints to use "Codex" tag and only show GET operations
+paths:
+  "/items/codex":
+    get:
+      summary: List Codex Items
+      description: |
+        Retrieve a paginated list of all codex items. This endpoint supports advanced querying 
+        capabilities including filtering, sorting, searching, and field selection.
+        
+        ## Query Capabilities
+        
+        - **Filter**: Apply complex filters using Directus filter syntax. See the [Directus Filter Documentation](https://directus.io/docs/api/fields#list-all-fields) for detailed filter syntax and examples.
+        - **Search**: Full-text search across codex fields
+        - **Sort**: Order results by any field in ascending or descending order
+        - **Pagination**: Control result set size with `limit` and `offset`
+        - **Field Selection**: Specify which fields to include in the response
+        
+        For comprehensive query documentation including all available parameters and examples, refer to the [Directus API Documentation](https://directus.io/docs/api/fields#list-all-fields).
+        
+        ## Response Structure
+        
+        The response includes:
+        - `data`: Array of codex items matching the query
+        - `meta`: Metadata about the query results (total count, filter count, etc.)
+      tags:
+        - Codex
+      parameters:
+        - $ref: '#/components/parameters/Fields'
+        - $ref: '#/components/parameters/Limit'
+        - $ref: '#/components/parameters/Meta'
+        - $ref: '#/components/parameters/Offset'
+        - $ref: '#/components/parameters/Sort'
+        - $ref: '#/components/parameters/Filter'
+        - $ref: '#/components/parameters/Search'
+      responses:
+        '200':
+          description: |
+            **Success** — Returns a paginated list of codex items.
+            
+            The response includes an array of codex items in the `data` property, along with 
+            metadata about the query results (total count, filter count, etc.) in the `meta` property.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/ItemsCodex'
+                  meta:
+                    $ref: '#/components/schemas/x-metadata'
+              examples:
+                default:
+                  summary: List of codex items
+                  value:
+                    data:
+                      - id: 1
+                        name: "Korka"
+                        ancestor: "Slovenian king"
+                        description: "A contemplative curator with deep roots in Eastern Orthodox hesychasm"
+                        artstyle_disliked: "overly commercial"
+                        timestamp_created: "2025-01-15T10:30:00Z"
+                      - id: 2
+                        name: "Aria"
+                        ancestor: null
+                        description: "An artist exploring digital boundaries"
+                        artstyle_disliked: null
+                        timestamp_created: "2025-01-16T14:20:00Z"
+                    meta:
+                      filter_count: 2
+                      total_count: 2
+  "/items/codex/{id}":
+    get:
+      summary: Get Codex Item by ID
+      description: |
+        Retrieve a single codex item by its unique identifier. This endpoint returns detailed 
+        information about a specific entity in the Codex, including all available fields and metadata.
+        
+        ## Path Parameters
+        
+        - **id** (required): The unique incremental identifier of the codex item
+        
+        ## Query Parameters
+        
+        - **fields**: Specify which fields to include in the response (comma-separated)
+        - **meta**: Include additional metadata in the response
+        
+        ## Use Cases
+        
+        - Fetching complete details for a specific entity
+        - Retrieving full biographical information
+        - Accessing relationship data and attributes
+      tags:
+        - Codex
+      parameters:
+        - $ref: '#/components/parameters/Fields'
+        - $ref: '#/components/parameters/Meta'
+        - name: id
+          in: path
+          required: true
+          description: |
+            The unique incremental identifier of the codex item. This is a sequential integer 
+            that uniquely identifies each entity in the Codex.
+          schema:
+            type: integer
+            minimum: 1
+            example: 1
+      responses:
+        '200':
+          description: |
+            **Success** — Returns the requested codex item.
+            
+            The response contains a single codex item object in the `data` property, including 
+            all available fields such as name, description, ancestor, biographical information, 
+            and metadata.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/ItemsCodex'
+              examples:
+                default:
+                  summary: Single codex item with complete details
+                  value:
+                    data:
+                      id: 1
+                      name: "Korka"
+                      ancestor: "Slovenian king"
+                      description: "A contemplative curator with deep roots in Eastern Orthodox hesychasm, interpreting inner stillness as deeper attention to the world's beautiful chaos."
+                      artstyle_disliked: "overly commercial"
+                      timestamp_created: "2025-01-15T10:30:00Z"
+                      biography: "Her psychology is built on Eastern Orthodox hesychasm..."
+                      whatness: ["curator", "philosopher", "guardian"]
+        '404':
+          description: |
+            **Not Found** — The requested codex item does not exist.
+            
+            This error occurs when:
+            - The provided `id` does not match any existing codex item
+            - The item has been deleted or removed
+            - The `id` is invalid or out of range
+            
+            The response includes an error object with details about what went wrong.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        message:
+                          type: string
+                          description: Human-readable error message
+                        extensions:
+                          type: object
+                          description: Additional error context and metadata
+                          properties:
+                            code:
+                              type: string
+                              description: Machine-readable error code
+                              example: "NOT_FOUND"
+              examples:
+                default:
+                  summary: Item not found error response
+                  value:
+                    errors:
+                      - message: "Item not found"
+                        extensions:
+                          code: "NOT_FOUND"
+
+  "/items/codex?filter[owner][_eq]=0x614a61a3b7f2fd8750acaad63b2a0cfe8b8524f1":
+    get:
+      summary: Query Codex Items by Owner
+      description: |
+        This example demonstrates how to query all codex items owned by a specific Ethereum wallet address 
+        using Directus filter syntax.
+        
+        ## Important Notes
+        
+        - **Address Format**: The owner address **must be lowercase**. Ethereum addresses are case-insensitive 
+          in the blockchain, but for consistent querying in Directus, always use lowercase format.
+        - **Filter Operator**: Use the `_eq` (equals) operator to match the exact owner address.
+        - **Filter Syntax**: The filter is passed as a query parameter using the bracket notation.
+        
+        ## Example Request
+        
+        Query all codex items owned by address `0x614a61a3b7f2fd8750acaad63b2a0cfe8b8524f1` using bracket notation:
+        
+        ```
+        GET /items/codex?filter[owner][_eq]=0x614a61a3b7f2fd8750acaad63b2a0cfe8b8524f1
+        ```
+        
+        ## Common Mistakes to Avoid
+        
+        1. **Using uppercase letters**: `0x614A61A3...` ❌ (will not match)
+        2. **Missing 0x prefix**: `614a61a3b7f2fd8750acaad63b2a0cfe8b8524f1` ❌ (will not match)
+        3. **Using wrong operator**: Use `_eq` for exact matches, not `_contains` or other operators
+        
+        ## Additional Filter Options
+        
+        You can combine the owner filter with other filters using logical operators:
+        
+        ```
+        GET /items/codex?filter={"_and":[{"owner":{"_eq":"0x614a61a3b7f2fd8750acaad63b2a0cfe8b8524f1"}},{"id":{"_gte":100}}]}
+        ```
+        
+        This example filters for items owned by the address AND with an ID greater than or equal to 100.
+      tags:
+        - Examples
+      responses:
+        '200':
+          description: |
+            **Success** — Returns a paginated list of codex items owned by the specified address.
+            
+            The response includes an array of codex items in the `data` property, along with 
+            metadata about the query results.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/ItemsCodex'
+                  meta:
+                    $ref: '#/components/schemas/x-metadata'
+              examples:
+                default:
+                  summary: Items owned by specific address
+                  value:
+                    data:
+                      - id: 123
+                        name: "Example Entity"
+                        owner: "0x614a61a3b7f2fd8750acaad63b2a0cfe8b8524f1"
+                        description: "An example codex item"
+                        timestamp_created: "2025-01-15T10:30:00Z"
+                    meta:
+                      filter_count: 1
+                      total_count: 1
+
+  "/files":
+    get:
+      summary: List Files
+      description: |
+        Retrieve a paginated list of all files stored in Directus. This endpoint supports advanced 
+        querying capabilities including filtering, sorting, searching, and field selection.
+        
+        ## Query Capabilities
+        
+        - **Filter**: Apply complex filters using Directus filter syntax. See the [Directus Filter Documentation](https://directus.io/docs/api/fields#list-all-fields) for detailed filter syntax and examples.
+        - **Search**: Full-text search across file metadata fields (title, description, filename, etc.)
+        - **Sort**: Order results by any field in ascending or descending order
+        - **Pagination**: Control result set size with `limit` and `offset`
+        - **Field Selection**: Specify which fields to include in the response
+        
+        ## File Properties
+        
+        Each file object includes:
+        - **Identification**: Unique ID, storage location, filenames
+        - **Metadata**: Title, description, MIME type, file size
+        - **Media Properties**: Dimensions (for images), duration (for audio/video)
+        - **Organization**: Folder path, tags, location data
+        - **Extracted Data**: IPTC, Exif, and ICC metadata
+        - **Focal Point**: X/Y coordinates for image focal points
+        
+        For comprehensive query documentation including all available parameters and examples, refer to the [Directus API Documentation](https://directus.io/docs/api/files).
+      tags:
+        - Files
+      parameters:
+        - $ref: '#/components/parameters/Fields'
+        - $ref: '#/components/parameters/Limit'
+        - $ref: '#/components/parameters/Meta'
+        - $ref: '#/components/parameters/Offset'
+        - $ref: '#/components/parameters/Sort'
+        - $ref: '#/components/parameters/Filter'
+        - $ref: '#/components/parameters/Search'
+      responses:
+        '200':
+          description: |
+            **Success** — Returns a paginated list of files.
+            
+            The response includes an array of file objects in the `data` property, along with 
+            metadata about the query results (total count, filter count, etc.) in the `meta` property.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/DirectusFiles'
+                  meta:
+                    $ref: '#/components/schemas/x-metadata'
+              examples:
+                default:
+                  summary: List of files
+                  value:
+                    data:
+                      - id: "a1b2c3d4-e5f6-7890-1234-abcdef123456"
+                        storage: "local"
+                        filename_disk: "image-1234567890.jpg"
+                        filename_download: "profile-photo.jpg"
+                        title: "Profile Photo"
+                        type: "image/jpeg"
+                        folder: null
+                        uploaded_by: "admin-user-id"
+                        created_on: "2025-01-15T10:30:00Z"
+                        filesize: 245678
+                        width: 1920
+                        height: 1080
+                        description: "User profile photo"
+                        tags: []
+                    meta:
+                      filter_count: 1
+                      total_count: 1
+
+  "/files/{id}":
+    get:
+      summary: Get File by ID
+      description: |
+        Retrieve a single file's metadata by its unique identifier. This endpoint returns detailed 
+        information about a specific file, including all available fields and metadata.
+        
+        ## Path Parameters
+        
+        - **id** (required): The unique identifier of the file (UUID string)
+        
+        ## Query Parameters
+        
+        - **fields**: Specify which fields to include in the response (comma-separated)
+        - **meta**: Include additional metadata in the response
+        
+        ## Use Cases
+        
+        - Fetching complete file metadata
+        - Accessing extracted metadata (Exif, IPTC, ICC)
+        - Retrieving file properties for display or processing
+        - Getting file organization information (folder, tags)
+      tags:
+        - Files
+      parameters:
+        - $ref: '#/components/parameters/Fields'
+        - $ref: '#/components/parameters/Meta'
+        - name: id
+          in: path
+          required: true
+          description: |
+            The unique identifier of the file. This is a UUID string that uniquely identifies 
+            each file in Directus.
+          schema:
+            type: string
+            format: uuid
+            example: "a1b2c3d4-e5f6-7890-1234-abcdef123456"
+      responses:
+        '200':
+          description: |
+            **Success** — Returns the requested file metadata.
+            
+            The response contains a single file object in the `data` property, including 
+            all available fields such as storage location, filenames, dimensions, metadata, 
+            and organization information.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/DirectusFiles'
+              examples:
+                default:
+                  summary: File metadata response
+                  value:
+                    data:
+                      id: "a1b2c3d4-e5f6-7890-1234-abcdef123456"
+                      storage: "local"
+                      filename_disk: "image-1234567890.jpg"
+                      filename_download: "profile-photo.jpg"
+                      title: "Profile Photo"
+                      type: "image/jpeg"
+                      folder: null
+                      uploaded_by: "admin-user-id"
+                      created_on: "2025-01-15T10:30:00Z"
+                      filesize: 245678
+                      width: 1920
+                      height: 1080
+                      description: "User profile photo"
+                      tags: []
+                      metadata:
+                        exif:
+                          Make: "Canon"
+                          Model: "EOS 5D Mark IV"
+        '404':
+          description: |
+            **Not Found** — The requested file does not exist.
+            
+            This error occurs when:
+            - The provided `id` does not match any existing file
+            - The file has been deleted
+            - The `id` is invalid or malformed
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        message:
+                          type: string
+                        extensions:
+                          type: object
+                          properties:
+                            code:
+                              type: string
+                              example: "NOT_FOUND"
+
+  "/assets/{id}":
+    get:
+      summary: Get Asset
+      description: |
+        Retrieve the actual file content (asset) by its unique identifier. This endpoint returns 
+        the raw file data, making it ideal for displaying images, serving documents, or streaming 
+        media files.
+        
+        ## Path Parameters
+        
+        - **id** (required): The unique identifier of the file (UUID string)
+        
+        ## Image Transformations
+        
+        For image files, you can apply transformations using query parameters:
+        
+        ### Basic Transformations
+        
+        - **width**: Desired width in pixels (integer)
+        - **height**: Desired height in pixels (integer)
+        - **quality**: Compression quality (0-100, integer). Lower values = smaller file size
+        - **fit**: How the image should fit within dimensions:
+          - `cover`: Crop to fill dimensions (default)
+          - `contain`: Fit within dimensions, maintaining aspect ratio
+          - `inside`: Fit within dimensions, no upscaling
+          - `outside`: Fill dimensions, may exceed if needed
+        - **format**: Output format (`jpeg`, `png`, `webp`, `tiff`, `avif`)
+        
+        ### Advanced Transformations
+        
+        Use the `transforms` parameter to apply Sharp API transformations. This accepts a JSON 
+        array of transformation operations:
+        
+        ```json
+        [["rotate", 90], ["blur", 10], ["tint", "rgb(255, 0, 255)"]]
+        ```
+        
+        Available Sharp operations include: `rotate`, `resize`, `blur`, `sharpen`, `tint`, 
+        `greyscale`, `negate`, `normalize`, and many more.
+        
+        ### Transformation Presets
+        
+        Pre-configured transformation presets are available for quick image resizing. Use the `key` 
+        parameter to apply a preset transformation:
+        
+        - **key**: Name of a configured transformation preset
+        
+        Available presets:
+        - `s128`: Resizes image to 128px width (maintains aspect ratio)
+        - `s256`: Resizes image to 256px width (maintains aspect ratio)
+        - `s512`: Resizes image to 512px width (maintains aspect ratio)
+        - `s1024`: Resizes image to 1024px width (maintains aspect ratio)
+        
+        Example: `GET /assets/{id}?key=s512`
+        
+        ## Response
+        
+        The response returns the file content directly with appropriate `Content-Type` headers. 
+        For images with transformations, the transformed image is returned. For other file types, 
+        the original file is returned.
+        
+        ## Use Cases
+        
+        - Displaying images in web applications
+        - Serving optimized images with automatic transformations
+        - Downloading documents or media files
+        - Streaming audio/video content
+        
+        For more information on transformations, see the [Directus File Transformation Guide](https://directus.io/docs/guides/files/transform).
+      tags:
+        - Files
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: |
+            The unique identifier of the file. This is a UUID string that uniquely identifies 
+            each file in Directus.
+          schema:
+            type: string
+            format: uuid
+            example: "a1b2c3d4-e5f6-7890-1234-abcdef123456"
+        - name: width
+          in: query
+          required: false
+          description: Desired width in pixels (for images)
+          schema:
+            type: integer
+            minimum: 1
+            example: 800
+        - name: height
+          in: query
+          required: false
+          description: Desired height in pixels (for images)
+          schema:
+            type: integer
+            minimum: 1
+            example: 600
+        - name: quality
+          in: query
+          required: false
+          description: Compression quality (0-100, for images)
+          schema:
+            type: integer
+            minimum: 0
+            maximum: 100
+            example: 80
+        - name: fit
+          in: query
+          required: false
+          description: How the image should fit within dimensions
+          schema:
+            type: string
+            enum: [cover, contain, inside, outside]
+            default: cover
+            example: contain
+        - name: format
+          in: query
+          required: false
+          description: Output image format
+          schema:
+            type: string
+            enum: [jpeg, png, webp, tiff, avif]
+            example: webp
+        - name: key
+          in: query
+          required: false
+          description: |
+            Name of a configured transformation preset. Available presets:
+            - `s128` (128px width)
+            - `s256` (256px width)
+            - `s512` (512px width)
+            - `s1024` (1024px width)
+          schema:
+            type: string
+            enum: [s128, s256, s512, s1024]
+            example: "s512"
+        - name: transforms
+          in: query
+          required: false
+          description: |
+            JSON array of Sharp API transformation operations. Example: 
+            `[["rotate", 90], ["blur", 10], ["tint", "rgb(255, 0, 255)"]]`
+          schema:
+            type: string
+            example: '[["rotate", 90], ["blur", 10]]'
+      responses:
+        '200':
+          description: |
+            **Success** — Returns the file content.
+            
+            The response contains the raw file data with appropriate `Content-Type` headers. 
+            For images with transformations applied, the transformed image is returned. For 
+            other file types, the original file content is returned.
+          content:
+            image/jpeg:
+              schema:
+                type: string
+                format: binary
+            image/png:
+              schema:
+                type: string
+                format: binary
+            image/webp:
+              schema:
+                type: string
+                format: binary
+            application/pdf:
+              schema:
+                type: string
+                format: binary
+            video/mp4:
+              schema:
+                type: string
+                format: binary
+            '*/*':
+              schema:
+                type: string
+                format: binary
+        '404':
+          description: |
+            **Not Found** — The requested file does not exist.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        message:
+                          type: string
+                        extensions:
+                          type: object
+                          properties:
+                            code:
+                              type: string
+                              example: "NOT_FOUND"
+
+# Custom components (schemas, securitySchemes, etc.) can be added here
+# To hide specific schemas from Scalar's Models section, use x-scalar-ignore: true
+# Example:
+# components:
+#   schemas:
+#     UnwantedSchema:
+#       x-scalar-ignore: true
+#       type: object
+#     YourCustomSchema:
+#       type: object
+#       properties:
+#         id:
+#           type: string
+#   securitySchemes:
+#     Auth:
+#       in: header
+#       name: Authorization
+#       type: apiKey
+

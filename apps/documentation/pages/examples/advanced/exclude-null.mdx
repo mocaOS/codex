@@ -1,0 +1,96 @@
+---
+title: Exclude Null Values
+description: Filter out items with null values in specific fields
+---
+
+import { API_BASE_URL } from "../../../constants";
+
+Filter out items that have null values in specific fields using the `_nnull` (not null) operator.
+
+<OpenPlaygroundButton
+  server={API_BASE_URL}
+  url="/items/codex"
+  method="GET"
+  queryParams={[
+    { name: "filter[ancestor][_nnull]", defaultValue: "true" },
+    { name: "fields", defaultValue: "id,name,ancestor" }
+  ]}
+/>
+
+```bash
+GET /items/codex?filter[ancestor][_nnull]=true&fields=id,name,ancestor
+```
+
+## Null Check Operators
+
+| Operator | Description |
+|----------|-------------|
+| `_null` | Field is null |
+| `_nnull` | Field is not null |
+| `_empty` | Field is empty (null, empty string, or empty array) |
+| `_nempty` | Field is not empty |
+
+## Find Items Without Owner
+
+Find items where the owner field is null:
+
+<OpenPlaygroundButton
+  server={API_BASE_URL}
+  url="/items/codex"
+  method="GET"
+  queryParams={[
+    { name: "filter[owner][_null]", defaultValue: "true" },
+    { name: "fields", defaultValue: "id,name,owner" },
+    { name: "limit", defaultValue: "10" }
+  ]}
+/>
+
+```bash
+GET /items/codex?filter[owner][_null]=true&fields=id,name,owner
+```
+
+## Find Items With Description
+
+Find items that have a non-empty description:
+
+<OpenPlaygroundButton
+  server={API_BASE_URL}
+  url="/items/codex"
+  method="GET"
+  queryParams={[
+    { name: "filter[description][_nempty]", defaultValue: "true" },
+    { name: "fields", defaultValue: "id,name,description" },
+    { name: "limit", defaultValue: "10" }
+  ]}
+/>
+
+```bash
+GET /items/codex?filter[description][_nempty]=true
+```
+
+## Combine Multiple Null Checks
+
+Find items with both name and description:
+
+<OpenPlaygroundButton
+  server={API_BASE_URL}
+  url="/items/codex"
+  method="GET"
+  queryParams={[
+    { name: "filter[name][_nnull]", defaultValue: "true" },
+    { name: "filter[description][_nnull]", defaultValue: "true" },
+    { name: "fields", defaultValue: "id,name,description" },
+    { name: "limit", defaultValue: "10" }
+  ]}
+/>
+
+```bash
+GET /items/codex?filter[name][_nnull]=true&filter[description][_nnull]=true
+```
+
+<Callout type="info" title="Empty vs Null" icon>
+  - **`_null`**: Checks if the database value is `NULL`
+  - **`_empty`**: Checks for `NULL`, empty string `""`, or empty array `[]`
+  
+  Use `_empty` when you want to exclude both null and blank values.
+</Callout>

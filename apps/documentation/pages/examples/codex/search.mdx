@@ -1,0 +1,69 @@
+---
+title: Full-Text Search
+description: Search across all codex fields
+---
+
+import { API_BASE_URL } from "../../../constants";
+
+Use the `search` parameter to perform full-text search across all searchable fields in the codex collection.
+
+<OpenPlaygroundButton
+  server={API_BASE_URL}
+  url="/items/codex"
+  method="GET"
+  queryParams={[
+    { name: "search", defaultValue: "curator" },
+    { name: "fields", defaultValue: "id,name,description" }
+  ]}
+/>
+
+```bash
+GET /items/codex?search=curator&fields=id,name,description
+```
+
+<Callout type="info" title="Search vs Filter" icon>
+  - **Search**: Matches across multiple text fields simultaneously
+  - **Filter**: Targets specific fields with precise operators
+
+  Use search for discovery, filters for precise queries.
+</Callout>
+
+## Combine Search with Filters
+
+You can combine full-text search with filters for more refined results:
+
+<OpenPlaygroundButton
+  server={API_BASE_URL}
+  url="/items/codex"
+  method="GET"
+  queryParams={[
+    { name: "search", defaultValue: "art" },
+    { name: "filter[id][_gte]", defaultValue: "10" },
+    { name: "fields", defaultValue: "id,name,description" },
+    { name: "limit", defaultValue: "10" }
+  ]}
+/>
+
+```bash
+GET /items/codex?search=art&filter[id][_gte]=10&fields=id,name,description&limit=10
+```
+
+## Search with Sorting
+
+Sort search results by relevance or other fields:
+
+<OpenPlaygroundButton
+  server={API_BASE_URL}
+  url="/items/codex"
+  method="GET"
+  queryParams={[
+    { name: "search", defaultValue: "collection" },
+    { name: "sort", defaultValue: "-timestamp_created" },
+    { name: "fields", defaultValue: "id,name,description,timestamp_created" },
+    { name: "limit", defaultValue: "10" }
+  ]}
+/>
+
+```bash
+GET /items/codex?search=collection&sort=-timestamp_created&fields=id,name,description,timestamp_created&limit=10
+```

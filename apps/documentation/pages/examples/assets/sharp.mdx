@@ -1,0 +1,75 @@
+---
+title: Sharp Transformations
+description: Use Sharp API for advanced image processing
+---
+
+Apply advanced image transformations using the Sharp library's powerful API through the `transforms` parameter.
+
+```bash
+GET /assets/{id}?transforms=[["rotate",90],["blur",5]]
+```
+
+<Callout type="caution" title="JSON Syntax" icon>
+  The `transforms` parameter accepts a JSON array of operations. Each operation is an array with the method name and its arguments.
+</Callout>
+
+## Available Operations
+
+| Operation | Arguments | Description |
+|-----------|-----------|-------------|
+| `rotate` | `degrees` | Rotate image (90, 180, 270) |
+| `blur` | `sigma` | Gaussian blur (0.3-1000) |
+| `sharpen` | `sigma?`, `flat?`, `jagged?` | Sharpen image |
+| `flip` | — | Flip vertically |
+| `flop` | — | Flip horizontally |
+| `grayscale` | — | Convert to grayscale |
+| `negate` | — | Invert colors |
+| `normalize` | — | Enhance contrast |
+| `gamma` | `gamma` | Adjust gamma (1.0-3.0) |
+| `tint` | `{r,g,b}` | Apply color tint |
+
+## Examples
+
+### Rotate 90 Degrees
+
+```bash
+GET /assets/{id}?transforms=[["rotate",90]]
+```
+
+### Apply Blur
+
+```bash
+GET /assets/{id}?transforms=[["blur",10]]
+```
+
+### Grayscale
+
+```bash
+GET /assets/{id}?transforms=[["grayscale"]]
+```
+
+### Multiple Operations
+
+Chain multiple transformations:
+
+```bash
+GET /assets/{id}?transforms=[["rotate",90],["grayscale"],["blur",2]]
+```
+
+### Flip and Sharpen
+
+```bash
+GET /assets/{id}?transforms=[["flip"],["sharpen"]]
+```
+
+<Callout type="note" title="Order Matters" icon>
+  Transformations are applied in the order specified. `rotate` then `blur` produces different results than `blur` then `rotate`.
+</Callout>
+
+## Combine with Other Parameters
+
+Sharp transforms can be combined with standard parameters:
+
+```bash
+GET /assets/{id}?width=800&format=webp&transforms=[["grayscale"],["sharpen"]]
+```

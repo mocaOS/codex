@@ -1,0 +1,56 @@
+---
+title: Filter Images
+description: Get only image files from the collection
+---
+
+import { API_BASE_URL } from "../../../constants";
+
+Filter files to return only images using the `_starts_with` operator on the MIME type.
+
+<OpenPlaygroundButton
+  server={API_BASE_URL}
+  url="/files"
+  method="GET"
+  queryParams={[
+    { name: "filter[type][_starts_with]", defaultValue: "image/" },
+    { name: "fields", defaultValue: "id,title,type,width,height" }
+  ]}
+/>
+
+```bash
+GET /files?filter[type][_starts_with]=image/&fields=id,title,type,width,height
+```
+
+## Filter by Specific Image Type
+
+Get only JPEG images:
+
+<OpenPlaygroundButton
+  server={API_BASE_URL}
+  url="/files"
+  method="GET"
+  queryParams={[
+    { name: "filter[type][_eq]", defaultValue: "image/jpeg" },
+    { name: "fields", defaultValue: "id,title,type,width,height" }
+  ]}
+/>
+
+```bash
+GET /files?filter[type][_eq]=image/jpeg&fields=id,title,type,width,height
+```
+
+## Common MIME Types
+
+| Type | MIME |
+|------|------|
+| JPEG | `image/jpeg` |
+| PNG | `image/png` |
+| WebP | `image/webp` |
+| GIF | `image/gif` |
+| SVG | `image/svg+xml` |
+| PDF | `application/pdf` |
+| JSON | `application/json` |
+
+<Callout type="info" title="Videos & Other Media" icon>
+  Use `video/` prefix for videos, `audio/` for audio files, and `application/` for documents.
+</Callout>

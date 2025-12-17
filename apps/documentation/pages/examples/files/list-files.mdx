@@ -1,0 +1,40 @@
+---
+title: List Files
+description: Retrieve a list of files with basic metadata
+---
+
+import { API_BASE_URL } from "../../../constants";
+
+Retrieve a list of files with basic metadata such as title, type, and filesize.
+
+<OpenPlaygroundButton
+  server={API_BASE_URL}
+  url="/files"
+  method="GET"
+  queryParams={[
+    { name: "fields", defaultValue: "id,title,type,filesize" },
+    { name: "limit", defaultValue: "10" }
+  ]}
+/>
+
+```bash
+GET /files?fields=id,title,type,filesize&limit=10
+```
+
+## Available File Fields
+
+| Field | Description |
+|-------|-------------|
+| `id` | Unique file identifier (UUID) |
+| `title` | File title |
+| `filename_download` | Original filename |
+| `type` | MIME type (e.g., `image/jpeg`) |
+| `filesize` | Size in bytes |
+| `width` | Image width (images only) |
+| `height` | Image height (images only) |
+| `created_on` | Upload timestamp |
+| `modified_on` | Last modification timestamp |
+
+<Callout type="tip" title="File Size Formatting" icon>
+  The `filesize` field returns bytes. Divide by 1024 for KB, or by 1048576 for MB.
+</Callout>

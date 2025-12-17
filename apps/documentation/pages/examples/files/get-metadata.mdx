@@ -1,0 +1,67 @@
+---
+title: Get File Metadata
+description: Retrieve detailed metadata for a specific file
+---
+
+import { API_BASE_URL } from "../../../constants";
+
+Retrieve detailed metadata for a specific file by its UUID.
+
+<OpenPlaygroundButton
+  server={API_BASE_URL}
+  url="/files/{id}"
+  method="GET"
+  pathParams={[
+    { name: "id", defaultValue: "a1b2c3d4-e5f6-7890-1234-abcdef123456" }
+  ]}
+/>
+
+```bash
+GET /files/a1b2c3d4-e5f6-7890-1234-abcdef123456
+```
+
+<Callout type="note" title="File IDs" icon>
+  File IDs are UUIDs in the format `xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx`. You can find file IDs by listing files or from relational fields in codex items.
+</Callout>
+
+## Response Structure
+
+A file metadata response includes:
+
+```json
+{
+  "data": {
+    "id": "a1b2c3d4-e5f6-7890-1234-abcdef123456",
+    "storage": "local",
+    "filename_disk": "a1b2c3d4-e5f6-7890-1234-abcdef123456.jpg",
+    "filename_download": "original-name.jpg",
+    "title": "My Image",
+    "type": "image/jpeg",
+    "filesize": 1234567,
+    "width": 1920,
+    "height": 1080,
+    "created_on": "2024-01-15T10:30:00Z",
+    "modified_on": "2024-01-15T10:30:00Z"
+  }
+}
+```
+
+## With Selected Fields
+
+Request only specific metadata fields:
+
+<OpenPlaygroundButton
+  server={API_BASE_URL}
+  url="/files/{id}"
+  method="GET"
+  pathParams={[
+    { name: "id", defaultValue: "a1b2c3d4-e5f6-7890-1234-abcdef123456" }
+  ]}
+  queryParams={[
+    { name: "fields", defaultValue: "id,title,type,width,height,filesize" }
+  ]}
+/>
+
+```bash
+GET /files/a1b2c3d4-e5f6-7890-1234-abcdef123456?fields=id,title,type,width,height,filesize
+```

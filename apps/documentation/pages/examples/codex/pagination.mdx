@@ -1,0 +1,73 @@
+---
+title: Pagination
+description: Retrieve paginated results with total counts
+---
+
+import { API_BASE_URL } from "../../../constants";
+
+Retrieve paginated results using `limit` and `offset` parameters. Include `meta=*` to get total counts for building pagination UI.
+
+<OpenPlaygroundButton
+  server={API_BASE_URL}
+  url="/items/codex"
+  method="GET"
+  queryParams={[
+    { name: "limit", defaultValue: "5" },
+    { name: "offset", defaultValue: "0" },
+    { name: "meta", defaultValue: "*" },
+    { name: "fields", defaultValue: "id,name" }
+  ]}
+/>
+
+```bash
+GET /items/codex?limit=5&offset=0&meta=*&fields=id,name
+```
+
+## Pagination Parameters
+
+| Parameter | Description | Default |
+|-----------|-------------|---------|
+| `limit` | Maximum items to return | 100 |
+| `offset` | Number of items to skip | 0 |
+| `page` | Page number (alternative to offset) | 1 |
+| `meta` | Include metadata (`*` for all) | none |
+
+## Meta Response
+
+When `meta=*` is included, the response contains:
+
+```json
+{
+  "data": [...],
+  "meta": {
+    "total_count": 1250,
+    "filter_count": 1250
+  }
+}
+```
+
+<Callout type="info" title="Calculating Pages" icon>
+  Total pages = `Math.ceil(total_count / limit)`
+  
+  For example, with 1250 items and limit=5: `Math.ceil(1250 / 5) = 250 pages`
+</Callout>
+
+## Page-Based Pagination
+
+Alternatively, use the `page` parameter instead of `offset`:
+
+<OpenPlaygroundButton
+  server={API_BASE_URL}
+  url="/items/codex"
+  method="GET"
+  queryParams={[
+    { name: "limit", defaultValue: "10" },
+    { name: "page", defaultValue: "2" },
+    { name: "meta", defaultValue: "*" },
+    { name: "fields", defaultValue: "id,name" }
+  ]}
+/>
+
+```bash
+GET /items/codex?limit=10&page=2&meta=*&fields=id,name
+```

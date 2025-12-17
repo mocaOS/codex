@@ -1,0 +1,114 @@
+---
+title: Complex Filters
+description: Combine multiple filters using logical operators
+---
+
+import { API_BASE_URL } from "../../../constants";
+
+Combine multiple filter conditions using logical operators like `_and` and `_or` for complex queries.
+
+<OpenPlaygroundButton
+  server={API_BASE_URL}
+  url="/items/codex"
+  method="GET"
+  queryParams={[
+    { name: "filter", defaultValue: "{\"_and\":[{\"id\":{\"_gte\":1}},{\"name\":{\"_nnull\":true}}]}" },
+    { name: "fields", defaultValue: "id,name,description" },
+    { name: "limit", defaultValue: "10" }
+  ]}
+/>
+
+```bash
+GET /items/codex?filter={"_and":[{"id":{"_gte":1}},{"name":{"_nnull":true}}]}
+```
+
+## Logical Operators
+
+| Operator | Description |
+|----------|-------------|
+| `_and` | All conditions must match |
+| `_or` | At least one condition must match |
+
+## AND Example
+
+Find items with ID >= 100 AND name is not null:
+
+<OpenPlaygroundButton
+  server={API_BASE_URL}
+  url="/items/codex"
+  method="GET"
+  queryParams={[
+    { name: "filter", defaultValue: "{\"_and\":[{\"id\":{\"_gte\":100}},{\"name\":{\"_nnull\":true}}]}" },
+    { name: "fields", defaultValue: "id,name" },
+    { name: "limit", defaultValue: "10" }
+  ]}
+/>
+
+```bash
+GET /items/codex?filter={"_and":[{"id":{"_gte":100}},{"name":{"_nnull":true}}]}
+```
+
+## OR Example
+
+Find items with ID = 1 OR ID = 2:
+
+<OpenPlaygroundButton
+  server={API_BASE_URL}
+  url="/items/codex"
+  method="GET"
+  queryParams={[
+    { name: "filter", defaultValue: "{\"_or\":[{\"id\":{\"_eq\":1}},{\"id\":{\"_eq\":2}}]}" },
+    { name: "fields", defaultValue: "id,name" }
+  ]}
+/>
+
+```bash
+GET /items/codex?filter={"_or":[{"id":{"_eq":1}},{"id":{"_eq":2}}]}
+```
+
+## Nested Logical Operators
+
+Combine AND and OR for complex logic:
+
+<OpenPlaygroundButton
+  server={API_BASE_URL}
+  url="/items/codex"
+  method="GET"
+  queryParams={[
+    { name: "filter", defaultValue: "{\"_and\":[{\"name\":{\"_nnull\":true}},{\"_or\":[{\"id\":{\"_lte\":10}},{\"id\":{\"_gte\":100}}]}]}" },
+    { name: "fields", defaultValue: "id,name" },
+    { name: "limit", defaultValue: "10" }
+  ]}
+/>
+
+```bash
+GET /items/codex?filter={"_and":[{"name":{"_nnull":true}},{"_or":[{"id":{"_lte":10}},{"id":{"_gte":100}}]}]}
+```
+
+<Callout type="tip" title="Filter Syntax" icon>
+  For complex filters, use the JSON syntax instead of bracket notation. URL-encode the JSON when sending requests.
+</Callout>
+
+## Alternative: Bracket Notation
+
+For simpler AND conditions, bracket notation is cleaner:
+
+<OpenPlaygroundButton
+  server={API_BASE_URL}
+  url="/items/codex"
+  method="GET"
+  queryParams={[
+    { name: "filter[id][_gte]", defaultValue: "1" },
+    { name: "filter[name][_nnull]", defaultValue: "true" },
+    { name: "fields", defaultValue: "id,name" },
+    { name: "limit", defaultValue: "10" }
+  ]}
+/>
+
+```bash
+GET /items/codex?filter[id][_gte]=1&filter[name][_nnull]=true
+```
+
+<Callout type="note" title="When to Use JSON" icon>
+  Use JSON syntax when you need `_or` operators or nested logic. Use bracket notation for simple AND conditions.
+</Callout>

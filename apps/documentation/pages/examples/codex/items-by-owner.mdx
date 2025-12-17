@@ -1,0 +1,76 @@
+---
+title: Query by Owner
+description: Query all codex items owned by a specific Ethereum wallet address
+---
+
+import { API_BASE_URL } from "../../../constants";
+
+Query all codex items owned by a specific Ethereum wallet address using Directus filter syntax.
+
+<Callout type="caution" title="Important Notes" icon>
+  - **Address Format**: The owner address **must be lowercase**. Ethereum addresses are case-insensitive on the blockchain, but for consistent querying in Directus, always use lowercase format.
+  - **Filter Operator**: Use the `_eq` (equals) operator to match the exact owner address.
+  - **Filter Syntax**: The filter is passed as a query parameter using the bracket notation.
+</Callout>
+
+## Basic Query
+
+Query all codex items owned by address `0x614a61a3b7f2fd8750acaad63b2a0cfe8b8524f1`:
+
+<OpenPlaygroundButton
+  server={API_BASE_URL}
+  url="/items/codex"
+  method="GET"
+  queryParams={[
+    { name: "filter[owner][_eq]", defaultValue: "0x614a61a3b7f2fd8750acaad63b2a0cfe8b8524f1" },
+    { name: "fields", defaultValue: "id,name,owner" },
+    { name: "meta", defaultValue: "*" }
+  ]}
+/>
+
+```bash
+GET /items/codex?filter[owner][_eq]=0x614a61a3b7f2fd8750acaad63b2a0cfe8b8524f1&fields=id,name,owner&meta=*
+```
+
+## Common Mistakes
+
+<Callout type="danger" title="Avoid These Errors" icon>
+  
+  **1. Using uppercase letters**
+  ```
+  ❌ filter[owner][_eq]=0x614A61A3...  (won't match)
+  ✅ filter[owner][_eq]=0x614a61a3...  (correct)
+  ```
+  
+  **2. Missing `0x` prefix**
+  ```
+  ❌ filter[owner][_eq]=614a61a3...    (won't match)
+  ✅ filter[owner][_eq]=0x614a61a3...  (correct)
+  ```
+  
+  **3. Wrong operator**
+  ```
+  ❌ filter[owner][_contains]=0x614a...  (use _eq for exact match)
+  ✅ filter[owner][_eq]=0x614a61a3...    (correct)
+  ```
+</Callout>
+
+## Combine with Other Filters
+
+You can combine the owner filter with additional conditions using logical operators:
+
+<OpenPlaygroundButton
+  server={API_BASE_URL}
+  url="/items/codex"
+  method="GET"
+  queryParams={[
+    { name: "filter", defaultValue: "{\"_and\":[{\"owner\":{\"_eq\":\"0x614a61a3b7f2fd8750acaad63b2a0cfe8b8524f1\"}},{\"id\":{\"_gte\":100}}]}" },
+    { name: "fields", defaultValue: "id,name,owner" }
+  ]}
+/>
+
+```bash
+GET /items/codex?filter={"_and":[{"owner":{"_eq":"0x614a61a3b7f2fd8750acaad63b2a0cfe8b8524f1"}},{"id":{"_gte":100}}]}
+```
+
+This filters for items owned by the address AND with an ID greater than or equal to 100.

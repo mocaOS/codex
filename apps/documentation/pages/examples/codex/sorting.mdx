@@ -1,0 +1,76 @@
+---
+title: Sorting
+description: Sort codex items by various fields
+---
+
+import { API_BASE_URL } from "../../../constants";
+
+Sort results using the `sort` parameter. Prefix with `-` for descending order.
+
+## Recent Items First
+
+Get the most recently created codex items:
+
+<OpenPlaygroundButton
+  server={API_BASE_URL}
+  url="/items/codex"
+  method="GET"
+  queryParams={[
+    { name: "sort", defaultValue: "-timestamp_created" },
+    { name: "limit", defaultValue: "10" },
+    { name: "fields", defaultValue: "id,name,timestamp_created" }
+  ]}
+/>
+
+```bash
+GET /items/codex?sort=-timestamp_created&limit=10&fields=id,name,timestamp_created
+```
+
+## Sort Direction
+
+| Prefix | Direction | Example |
+|--------|-----------|---------|
+| (none) | Ascending (A-Z, 0-9, oldest first) | `sort=name` |
+| `-` | Descending (Z-A, 9-0, newest first) | `sort=-name` |
+
+## Multiple Sort Fields
+
+Sort by multiple fields by separating them with commas:
+
+<OpenPlaygroundButton
+  server={API_BASE_URL}
+  url="/items/codex"
+  method="GET"
+  queryParams={[
+    { name: "sort", defaultValue: "-timestamp_created,name" },
+    { name: "limit", defaultValue: "10" },
+    { name: "fields", defaultValue: "id,name,timestamp_created" }
+  ]}
+/>
+
+```bash
+GET /items/codex?sort=-timestamp_created,name&limit=10
+```
+
+<Callout type="tip" title="Sort Order Priority" icon>
+  Fields are sorted in the order specified. In the example above, items are first sorted by creation date (newest first), then alphabetically by name for items with the same creation date.
+</Callout>
+
+## Sort Alphabetically
+
+Sort items by name in alphabetical order:
+
+<OpenPlaygroundButton
+  server={API_BASE_URL}
+  url="/items/codex"
+  method="GET"
+  queryParams={[
+    { name: "sort", defaultValue: "name" },
+    { name: "limit", defaultValue: "10" },
+    { name: "fields", defaultValue: "id,name" }
+  ]}
+/>
+
+```bash
+GET /items/codex?sort=name&limit=10&fields=id,name
+```

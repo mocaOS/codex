@@ -1,0 +1,270 @@
+---
+title: Files Endpoints
+description: API endpoints for retrieving files and assets from the MOCA Codex
+---
+
+import { Callout } from "zudoku/ui/Callout";
+import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "zudoku/ui/Card";
+import { API_BASE_URL } from "../constants";
+
+The Files API provides read-only access to files and assets stored in Directus. Use these endpoints to access and display media assets, documents, and other file types.
+
+## Overview
+
+<div className="grid grid-cols-1 md:grid-cols-2 gap-4 my-6">
+
+<Card>
+  <CardHeader>
+    <CardTitle>📋 File Retrieval</CardTitle>
+  </CardHeader>
+  <CardContent>
+    List and retrieve file metadata including dimensions, file size, and type.
+  </CardContent>
+</Card>
+
+<Card>
+  <CardHeader>
+    <CardTitle>📊 Metadata Access</CardTitle>
+  </CardHeader>
+  <CardContent>
+    Access extracted metadata including Exif, IPTC, and ICC data.
+  </CardContent>
+</Card>
+
+<Card>
+  <CardHeader>
+    <CardTitle>🖼️ Asset Retrieval</CardTitle>
+  </CardHeader>
+  <CardContent>
+    Get file content with optional image transformations.
+  </CardContent>
+</Card>
+
+<Card>
+  <CardHeader>
+    <CardTitle>🏷️ Organization</CardTitle>
+  </CardHeader>
+  <CardContent>
+    View file organization including folders, tags, and descriptions.
+  </CardContent>
+</Card>
+
+</div>
+
+---
+
+## Endpoints
+
+### List Files
+
+```
+GET /files
+```
+
+Retrieve a paginated list of all files stored in Directus.
+
+#### Query Parameters
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `fields` | string | Comma-separated list of fields to include |
+| `limit` | integer | Maximum number of items to return |
+| `offset` | integer | Number of items to skip for pagination |
+| `sort` | string | Field(s) to sort by (prefix with `-` for descending) |
+| `filter` | object | Filter criteria using Directus syntax |
+| `search` | string | Full-text search across file metadata |
+| `meta` | string | Metadata to include |
+
+#### Example Request
+
+<pre><code className="language-bash">{`curl "${API_BASE_URL}/files?limit=10&fields=id,title,type,filesize"`}</code></pre>
+
+#### Example Response
+
+```json
+{
+  "data": [
+    {
+      "id": "a1b2c3d4-e5f6-7890-1234-abcdef123456",
+      "storage": "local",
+      "filename_disk": "image-1234567890.jpg",
+      "filename_download": "profile-photo.jpg",
+      "title": "Profile Photo",
+      "type": "image/jpeg",
+      "filesize": 245678,
+      "width": 1920,
+      "height": 1080
+    }
+  ],
+  "meta": {
+    "filter_count": 1,
+    "total_count": 1
+  }
+}
+```
+
+---
+
+### Get File by ID
+
+```
+GET /files/{id}
+```
+
+Retrieve a single file's metadata by its unique identifier.
+
+#### Path Parameters
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| `id` | string (UUID) | Yes | The unique identifier of the file |
+
+#### Example Request
+
+<pre><code className="language-bash">{`curl "${API_BASE_URL}/files/a1b2c3d4-e5f6-7890-1234-abcdef123456"`}</code></pre>
+
+#### Example Response
+
+```json
+{
+  "data": {
+    "id": "a1b2c3d4-e5f6-7890-1234-abcdef123456",
+    "storage": "local",
+    "filename_disk": "image-1234567890.jpg",
+    "filename_download": "profile-photo.jpg",
+    "title": "Profile Photo",
+    "type": "image/jpeg",
+    "folder": null,
+    "uploaded_by": "admin-user-id",
+    "created_on": "2025-01-15T10:30:00Z",
+    "filesize": 245678,
+    "width": 1920,
+    "height": 1080,
+    "description": "User profile photo",
+    "tags": [],
+    "metadata": {
+      "exif": {
+        "Make": "Canon",
+        "Model": "EOS 5D Mark IV"
+      }
+    }
+  }
+}
+```
+
+---
+
+### Get Asset
+
+```
+GET /assets/{id}
+```
+
+Retrieve the actual file content (asset) by its unique identifier. This endpoint returns the raw file data.
+
+<Callout type="tip" title="Use for Displaying Content" icon>
+  This is the endpoint to use when displaying images, serving documents, or streaming media files in your application.
+</Callout>
+
+#### Path Parameters
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| `id` | string (UUID) | Yes | The unique identifier of the file |
+
+#### Image Transformation Parameters
+
+For image files, you can apply transformations:
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `width` | integer | Desired width in pixels |
+| `height` | integer | Desired height in pixels |
+| `quality` | integer | Compression quality (0-100) |
+| `fit` | string | How image fits dimensions: `cover`, `contain`, `inside`, `outside` |
+| `format` | string | Output format: `jpeg`, `png`, `webp`, `tiff`, `avif` |
+| `key` | string | Preset transformation key |
+| `transforms` | string | JSON array of Sharp API transformations |
+
+#### Transformation Presets
+
+Pre-configured presets for quick resizing:
+
+| Preset | Description |
+|--------|-------------|
+| `s128` | Resize to 128px width |
+| `s256` | Resize to 256px width |
+| `s512` | Resize to 512px width |
+| `s1024` | Resize to 1024px width |
+
+#### Example: Basic Asset Request
+
+<pre><code className="language-bash">{`curl "${API_BASE_URL}/assets/a1b2c3d4-e5f6-7890-1234-abcdef123456"`}</code></pre>
+
+#### Example: Resize with Preset
+
+<pre><code className="language-bash">{`curl "${API_BASE_URL}/assets/a1b2c3d4-e5f6-7890-1234-abcdef123456?key=s512"`}</code></pre>
+
+#### Example: Custom Transformation
+
+<pre><code className="language-bash">{`curl "${API_BASE_URL}/assets/a1b2c3d4-e5f6-7890-1234-abcdef123456?width=800&height=600&fit=cover&format=webp&quality=80"`}</code></pre>
+
+#### Example: Sharp Transformations
+
+<pre><code className="language-bash">{`curl "${API_BASE_URL}/assets/a1b2c3d4-e5f6-7890-1234-abcdef123456?transforms=[[\"rotate\",90],[\"blur\",10]]"`}</code></pre>
+
+<Callout type="note" title="Sharp API" icon>
+  The `transforms` parameter accepts Sharp API operations like `rotate`, `resize`, `blur`, `sharpen`, `tint`, `greyscale`, `negate`, and `normalize`. See the [Sharp documentation](https://sharp.pixelplumbing.com/) for all available options.
+</Callout>
+
+---
+
+## File Schema
+
+Each file object contains the following fields:
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `id` | string (UUID) | Unique identifier |
+| `storage` | string | Storage location identifier |
+| `filename_disk` | string | Name of the file on disk |
+| `filename_download` | string | Name used when downloading |
+| `title` | string | User-defined title |
+| `type` | string | MIME type |
+| `folder` | string | Folder identifier |
+| `uploaded_by` | string | User who uploaded the file |
+| `created_on` | datetime | Upload timestamp |
+| `filesize` | integer | File size in bytes |
+| `width` | integer | Image width in pixels |
+| `height` | integer | Image height in pixels |
+| `duration` | integer | Duration for audio/video in seconds |
+| `description` | string | File description |
+| `location` | string | Geographic location |
+| `tags` | array | Array of tags |
+| `metadata` | object | Extracted metadata (Exif, IPTC, ICC) |
+| `focal_point_x` | number | Focal point X coordinate |
+| `focal_point_y` | number | Focal point Y coordinate |
+
+---
+
+## Filtering Examples
+
+### Filter by Type
+
+<pre><code className="language-bash">{`curl "${API_BASE_URL}/files?filter[type][_starts_with]=image/"`}</code></pre>
+
+### Filter by Upload Date
+
+<pre><code className="language-bash">{`curl "${API_BASE_URL}/files?filter[created_on][_gte]=2025-01-01&sort=-created_on"`}</code></pre>
+
+### Search Files
+
+<pre><code className="language-bash">{`curl "${API_BASE_URL}/files?search=profile"`}</code></pre>
+
+---
+
+## Related Resources
+
+- **[Query Guide](/query-guide)** - Complete guide to filtering, sorting, and pagination
+- **[Examples](/examples)** - Interactive examples with live playground
+- **[API Reference](/api)** - Full OpenAPI documentation

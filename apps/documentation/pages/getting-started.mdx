@@ -1,0 +1,123 @@
+---
+title: Getting Started
+description: Quick start guide for the MOCA Codex API
+---
+
+import { Callout } from "zudoku/ui/Callout";
+import { Stepper } from "zudoku/ui/Stepper";
+import { API_BASE_URL } from "../constants";
+
+Get up and running with the MOCA Codex API in just a few minutes. This guide will walk you through your first API calls.
+
+## Prerequisites
+
+Before you begin, ensure you have:
+
+- Access to the MOCA Codex API server
+- A tool for making HTTP requests (like `curl`, Postman, or your favorite HTTP client)
+
+## Quick Start
+
+<Stepper>
+
+1. **Verify API Access**
+
+   First, let's verify you can reach the API server. The base URL is:
+
+   <pre><code>{API_BASE_URL}</code></pre>
+
+1. **Fetch Your First Codex Items**
+
+   Let's retrieve a list of codex items. This is the simplest API call you can make:
+
+   <pre><code className="language-bash">{`curl "${API_BASE_URL}/items/codex"`}</code></pre>
+
+   You should receive a JSON response with an array of codex items:
+
+   ```json
+   {
+     "data": [
+       {
+         "id": 1,
+         "name": "Korka",
+         "ancestor": "Slovenian king",
+         "description": "A contemplative curator..."
+       }
+     ]
+   }
+   ```
+
+1. **Get a Specific Item**
+
+   To retrieve a single codex item by ID:
+
+   <pre><code className="language-bash">{`curl "${API_BASE_URL}/items/codex/1"`}</code></pre>
+
+1. **Apply Filters**
+
+   Filter results using Directus filter syntax:
+
+   <pre><code className="language-bash">{`curl "${API_BASE_URL}/items/codex?filter[name][_contains]=Korka"`}</code></pre>
+
+1. **Select Specific Fields**
+
+   Request only the fields you need:
+
+   <pre><code className="language-bash">{`curl "${API_BASE_URL}/items/codex?fields=id,name,description"`}</code></pre>
+
+</Stepper>
+
+## Response Structure
+
+All successful responses follow a consistent structure:
+
+```json
+{
+  "data": [...],   // The requested data
+  "meta": {        // Optional metadata (when requested)
+    "filter_count": 10,
+    "total_count": 100
+  }
+}
+```
+
+<Callout type="tip" title="Include Metadata" icon>
+  Add `?meta=*` to your requests to include useful metadata like total counts and filter counts.
+</Callout>
+
+## Error Handling
+
+When an error occurs, the API returns an error object:
+
+```json
+{
+  "errors": [
+    {
+      "message": "Item not found",
+      "extensions": {
+        "code": "NOT_FOUND"
+      }
+    }
+  ]
+}
+```
+
+<Callout type="caution" title="Common Errors" icon>
+  - **404 Not Found**: The requested resource doesn't exist
+  - **400 Bad Request**: Invalid query parameters or filter syntax
+  - **403 Forbidden**: Access denied (if authentication is required)
+</Callout>
+
+## What's Next?
+
+Now that you've made your first API calls, explore these resources:
+
+- **[Query Guide](/query-guide)** - Master filtering, sorting, and pagination
+- **[Codex Endpoints](/codex)** - Deep dive into codex item operations
+- **[Files Endpoints](/files)** - Learn about file and asset management
+- **[Examples](/examples)** - Interactive examples with live playground
+- **[API Reference](/api)** - Complete endpoint documentation
+
+<Callout type="note" title="Need More Help?" icon>
+  For comprehensive documentation on Directus query syntax, visit the [Directus API Documentation](https://docs.directus.io/reference/query.html).
+</Callout>

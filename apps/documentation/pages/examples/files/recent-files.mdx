@@ -1,0 +1,66 @@
+---
+title: Recent Files
+description: Get the most recently uploaded files
+---
+
+import { API_BASE_URL } from "../../../constants";
+
+Get the most recently uploaded files by sorting on the `created_on` field in descending order.
+
+<OpenPlaygroundButton
+  server={API_BASE_URL}
+  url="/files"
+  method="GET"
+  queryParams={[
+    { name: "sort", defaultValue: "-created_on" },
+    { name: "limit", defaultValue: "5" },
+    { name: "fields", defaultValue: "id,title,created_on,type" }
+  ]}
+/>
+
+```bash
+GET /files?sort=-created_on&limit=5&fields=id,title,created_on,type
+```
+
+## Recently Modified Files
+
+Get files that were recently modified:
+
+<OpenPlaygroundButton
+  server={API_BASE_URL}
+  url="/files"
+  method="GET"
+  queryParams={[
+    { name: "sort", defaultValue: "-modified_on" },
+    { name: "limit", defaultValue: "5" },
+    { name: "fields", defaultValue: "id,title,modified_on,type" }
+  ]}
+/>
+
+```bash
+GET /files?sort=-modified_on&limit=5&fields=id,title,modified_on,type
+```
+
+## Filter by Date Range
+
+Get files uploaded after a specific date:
+
+<OpenPlaygroundButton
+  server={API_BASE_URL}
+  url="/files"
+  method="GET"
+  queryParams={[
+    { name: "filter[created_on][_gte]", defaultValue: "2024-01-01" },
+    { name: "sort", defaultValue: "-created_on" },
+    { name: "fields", defaultValue: "id,title,created_on" },
+    { name: "limit", defaultValue: "10" }
+  ]}
+/>
+
+```bash
+GET /files?filter[created_on][_gte]=2024-01-01&sort=-created_on&fields=id,title,created_on&limit=10
+```
+
+<Callout type="tip" title="Date Format" icon>
+  Dates can be specified in ISO 8601 format: `YYYY-MM-DD` or `YYYY-MM-DDTHH:MM:SSZ`
+</Callout>

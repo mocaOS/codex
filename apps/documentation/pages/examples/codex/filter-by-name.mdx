@@ -1,0 +1,55 @@
+---
+title: Filter by Name
+description: Search for codex items containing a specific name
+---
+
+import { API_BASE_URL } from "../../../constants";
+
+Search for codex items containing a specific text in their name using the `_contains` filter operator.
+
+<OpenPlaygroundButton
+  server={API_BASE_URL}
+  url="/items/codex"
+  method="GET"
+  queryParams={[
+    { name: "filter[name][_contains]", defaultValue: "Korka" },
+    { name: "fields", defaultValue: "id,name,description" }
+  ]}
+/>
+
+```bash
+GET /items/codex?filter[name][_contains]=Korka&fields=id,name,description
+```
+
+## Filter Operators
+
+| Operator | Description | Example |
+|----------|-------------|---------|
+| `_eq` | Equals | `filter[name][_eq]=Exact Name` |
+| `_neq` | Not equals | `filter[name][_neq]=Excluded` |
+| `_contains` | Contains substring | `filter[name][_contains]=partial` |
+| `_ncontains` | Does not contain | `filter[name][_ncontains]=excluded` |
+| `_starts_with` | Starts with | `filter[name][_starts_with]=prefix` |
+| `_ends_with` | Ends with | `filter[name][_ends_with]=suffix` |
+
+<Callout type="tip" title="Case Sensitivity" icon>
+  String filters are case-sensitive by default. Use `_icontains` for case-insensitive contains matching.
+</Callout>
+
+## Exact Match
+
+For an exact name match, use the `_eq` operator:
+
+<OpenPlaygroundButton
+  server={API_BASE_URL}
+  url="/items/codex"
+  method="GET"
+  queryParams={[
+    { name: "filter[name][_eq]", defaultValue: "My Exact Item Name" },
+    { name: "fields", defaultValue: "id,name,description" }
+  ]}
+/>
+
+```bash
+GET /items/codex?filter[name][_eq]=My Exact Item Name
+```

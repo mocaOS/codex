@@ -1,0 +1,40 @@
+---
+title: List Items
+description: Retrieve all codex items with basic fields
+---
+
+import { API_BASE_URL } from "../../../constants";
+
+Retrieve all codex items with basic fields. Use the `fields` parameter to specify which fields to return and `limit` to control the number of results.
+
+<OpenPlaygroundButton
+  server={API_BASE_URL}
+  url="/items/codex"
+  method="GET"
+  queryParams={[
+    { name: "fields", defaultValue: "id,name,description" },
+    { name: "limit", defaultValue: "10" }
+  ]}
+/>
+
+```bash
+GET /items/codex?fields=id,name,description&limit=10
+```
+
+<Callout type="tip" title="Performance Tip" icon>
+  Always specify the `fields` parameter to return only the data you need. This reduces response size and improves performance.
+</Callout>
+
+## Available Fields
+
+Common fields you can request:
+
+| Field | Description |
+|-------|-------------|
+| `id` | Unique identifier |
+| `name` | Item name |
+| `description` | Item description |
+| `owner` | Ethereum wallet address |
+| `ancestor` | Parent item reference |
+| `timestamp_created` | Creation timestamp |
+| `timestamp_updated` | Last update timestamp |

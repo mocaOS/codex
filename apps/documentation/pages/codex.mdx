@@ -1,0 +1,208 @@
+---
+title: Codex Endpoints
+description: API endpoints for accessing and querying the MOCA Codex knowledge base
+---
+
+import { Callout } from "zudoku/ui/Callout";
+import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "zudoku/ui/Card";
+import { API_BASE_URL } from "../constants";
+
+The Codex API provides operations for accessing and querying the **MOCA Codex** knowledge base. The Codex contains curated information about entities, including their identity, relationships, attributes, and temporal data.
+
+## Overview
+
+<div className="grid grid-cols-1 md:grid-cols-2 gap-4 my-6">
+
+<Card>
+  <CardHeader>
+    <CardTitle>🪪 Identity</CardTitle>
+  </CardHeader>
+  <CardContent>
+    Names, descriptions, and biographical information for each entity.
+  </CardContent>
+</Card>
+
+<Card>
+  <CardHeader>
+    <CardTitle>🔗 Relationships</CardTitle>
+  </CardHeader>
+  <CardContent>
+    Ancestral connections and associations between entities.
+  </CardContent>
+</Card>
+
+<Card>
+  <CardHeader>
+    <CardTitle>✨ Attributes</CardTitle>
+  </CardHeader>
+  <CardContent>
+    Characteristics, preferences, and metadata for entities.
+  </CardContent>
+</Card>
+
+<Card>
+  <CardHeader>
+    <CardTitle>⏰ Temporal Data</CardTitle>
+  </CardHeader>
+  <CardContent>
+    Creation timestamps and historical context.
+  </CardContent>
+</Card>
+
+</div>
+
+## Endpoints
+
+### List Codex Items
+
+```
+GET /items/codex
+```
+
+Retrieve a paginated list of all codex items. This endpoint supports advanced querying capabilities.
+
+#### Query Parameters
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `fields` | string | Comma-separated list of fields to include |
+| `limit` | integer | Maximum number of items to return |
+| `offset` | integer | Number of items to skip for pagination |
+| `sort` | string | Field(s) to sort by (prefix with `-` for descending) |
+| `filter` | object | Filter criteria using Directus syntax |
+| `search` | string | Full-text search query |
+| `meta` | string | Metadata to include (`*`, `filter_count`, `total_count`) |
+
+#### Example Request
+
+<pre><code className="language-bash">{`curl "${API_BASE_URL}/items/codex?fields=id,name,description&limit=10&meta=*"`}</code></pre>
+
+#### Example Response
+
+```json
+{
+  "data": [
+    {
+      "id": 1,
+      "name": "Korka",
+      "description": "A contemplative curator with deep roots in Eastern Orthodox hesychasm"
+    },
+    {
+      "id": 2,
+      "name": "Aria",
+      "description": "An artist exploring digital boundaries"
+    }
+  ],
+  "meta": {
+    "filter_count": 2,
+    "total_count": 2
+  }
+}
+```
+
+---
+
+### Get Codex Item by ID
+
+```
+GET /items/codex/{id}
+```
+
+Retrieve a single codex item by its unique identifier.
+
+#### Path Parameters
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| `id` | integer | Yes | The unique identifier of the codex item |
+
+#### Query Parameters
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `fields` | string | Comma-separated list of fields to include |
+| `meta` | string | Metadata to include |
+
+#### Example Request
+
+<pre><code className="language-bash">{`curl "${API_BASE_URL}/items/codex/1"`}</code></pre>
+
+#### Example Response
+
+```json
+{
+  "data": {
+    "id": 1,
+    "name": "Korka",
+    "ancestor": "Slovenian king",
+    "description": "A contemplative curator with deep roots in Eastern Orthodox hesychasm, interpreting inner stillness as deeper attention to the world's beautiful chaos.",
+    "artstyle_disliked": "overly commercial",
+    "timestamp_created": "2025-01-15T10:30:00Z",
+    "biography": "Her psychology is built on Eastern Orthodox hesychasm...",
+    "whatness": ["curator", "philosopher", "guardian"]
+  }
+}
+```
+
+<Callout type="caution" title="Error: Not Found" icon>
+  If the requested ID doesn't exist, the API returns a `404 Not Found` error:
+  
+  ```json
+  {
+    "errors": [
+      {
+        "message": "Item not found",
+        "extensions": { "code": "NOT_FOUND" }
+      }
+    ]
+  }
+  ```
+</Callout>
+
+---
+
+## Codex Item Schema
+
+Each codex item contains the following fields:
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `id` | integer | Unique incremental identifier |
+| `name` | string | Entity name |
+| `ancestor` | string | Ancestral or origin information |
+| `description` | string | Brief description |
+| `biography` | string | Detailed biographical information |
+| `whatness` | array | Array of characteristics or roles |
+| `artstyle_disliked` | string | Art styles the entity dislikes |
+| `owner` | string | Ethereum wallet address of the owner |
+| `timestamp_created` | datetime | Creation timestamp |
+
+---
+
+## Filtering Examples
+
+### Filter by Name
+
+<pre><code className="language-bash">{`curl "${API_BASE_URL}/items/codex?filter[name][_contains]=Korka"`}</code></pre>
+
+### Filter by Owner Address
+
+<Callout type="note" title="Important: Lowercase Addresses" icon>
+  Owner addresses **must be lowercase**. Ethereum addresses are case-insensitive on the blockchain, but Directus requires lowercase for consistent querying.
+</Callout>
+
+<pre><code className="language-bash">{`curl "${API_BASE_URL}/items/codex?filter[owner][_eq]=0x614a61a3b7f2fd8750acaad63b2a0cfe8b8524f1"`}</code></pre>
+
+### Complex Filters
+
+Combine multiple conditions:
+
+<pre><code className="language-bash">{`curl "${API_BASE_URL}/items/codex?filter={\"_and\":[{\"owner\":{\"_eq\":\"0x614a61a3b7f2fd8750acaad63b2a0cfe8b8524f1\"}},{\"id\":{\"_gte\":100}}]}"`}</code></pre>
+
+---
+
+## Related Resources
+
+- **[Query Guide](/query-guide)** - Complete guide to filtering, sorting, and pagination
+- **[Examples](/examples)** - Interactive examples with live playground
+- **[API Reference](/api)** - Full OpenAPI documentation

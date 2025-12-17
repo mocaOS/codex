@@ -1,0 +1,86 @@
+---
+title: MOCA Codex API
+description: A comprehensive RESTful interface for accessing and managing the MOCA Codex knowledge base
+---
+
+import { Callout } from "zudoku/ui/Callout";
+import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "zudoku/ui/Card";
+import { API_BASE_URL } from "../constants";
+
+Welcome to the **MOCA Codex API** — a comprehensive RESTful interface for accessing and managing the MOCA Codex knowledge base. This API provides structured access to curated information about entities, their relationships, and metadata.
+
+<Callout type="note" title="Built on Directus" icon>
+  This API is built on **Directus**, an open-source headless CMS. All filtering, querying, and data operations follow Directus conventions.
+</Callout>
+
+## Key Features
+
+<div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+
+<Card>
+  <CardHeader>
+    <CardTitle>📚 Entity Management</CardTitle>
+    <CardDescription>Retrieve and query codex items with rich metadata</CardDescription>
+  </CardHeader>
+  <CardContent>
+    Access curated information about entities including their identity, relationships, attributes, and temporal data.
+  </CardContent>
+</Card>
+
+<Card>
+  <CardHeader>
+    <CardTitle>📁 File Management</CardTitle>
+    <CardDescription>Upload, retrieve, update, and delete files</CardDescription>
+  </CardHeader>
+  <CardContent>
+    Comprehensive file operations with full metadata support including dimensions, IPTC, and Exif data.
+  </CardContent>
+</Card>
+
+<Card>
+  <CardHeader>
+    <CardTitle>🖼️ Asset Retrieval</CardTitle>
+    <CardDescription>Access file content with image transformations</CardDescription>
+  </CardHeader>
+  <CardContent>
+    Get file content with optional image transformations including resizing, cropping, format conversion, and more.
+  </CardContent>
+</Card>
+
+<Card>
+  <CardHeader>
+    <CardTitle>🔍 Flexible Filtering</CardTitle>
+    <CardDescription>Advanced query capabilities</CardDescription>
+  </CardHeader>
+  <CardContent>
+    Powerful filtering, sorting, and search using Directus filter syntax with full-text search support.
+  </CardContent>
+</Card>
+
+</div>
+
+## API Overview
+
+| Feature | Description |
+|---------|-------------|
+| **RESTful Design** | Standard HTTP methods and status codes |
+| **JSON Responses** | Consistent structured responses with metadata |
+| **Pagination** | Built-in support for paginated results |
+| **Field Selection** | Specify which fields to include in responses |
+
+## Base URL
+
+<pre><code>{API_BASE_URL}</code></pre>
+
+<Callout type="tip" title="Getting Started" icon>
+  Ready to start using the API? Check out the [Getting Started](/getting-started) guide for a quick introduction, or jump straight to the [API Reference](/api) for detailed endpoint documentation.
+</Callout>
+
+## Need Help?
+
+- **[Getting Started](/getting-started)** - Quick start guide for your first API calls
+- **[Query Guide](/query-guide)** - Learn about filtering, sorting, and pagination
+- **[Examples](/examples)** - Interactive examples with live playground
+- **[API Reference](/api)** - Complete endpoint documentation
+
+For detailed information on Directus query syntax and advanced features, see the [Directus API Documentation](https://docs.directus.io/reference/query.html).

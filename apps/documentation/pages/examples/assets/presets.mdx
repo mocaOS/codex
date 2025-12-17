@@ -1,0 +1,40 @@
+---
+title: Image Presets
+description: Retrieve images using transformation presets
+---
+
+Retrieve images using pre-configured transformation presets. Presets allow you to consistently resize and transform images without specifying parameters each time.
+
+```bash
+GET /assets/{id}?key=s512
+```
+
+<Callout type="note" title="Available Presets" icon>
+  Available presets: `s128`, `s256`, `s512`, `s1024` — each resizes the image to the specified width while maintaining aspect ratio.
+</Callout>
+
+## Preset Reference
+
+| Preset | Width | Use Case |
+|--------|-------|----------|
+| `s128` | 128px | Thumbnails, avatars |
+| `s256` | 256px | Small previews |
+| `s512` | 512px | Medium previews, cards |
+| `s1024` | 1024px | Large images, hero sections |
+
+## Example URLs
+
+```bash
+# Thumbnail (128px)
+GET /assets/a1b2c3d4-e5f6-7890-1234-abcdef123456?key=s128
+
+# Card preview (512px)
+GET /assets/a1b2c3d4-e5f6-7890-1234-abcdef123456?key=s512
+
+# Full size (1024px)
+GET /assets/a1b2c3d4-e5f6-7890-1234-abcdef123456?key=s1024
+```
+
+<Callout type="tip" title="Caching" icon>
+  Transformed images are cached on the server. Subsequent requests for the same preset are served instantly.
+</Callout>
