@@ -2,6 +2,15 @@ import type { ZudokuConfig } from "zudoku";
 import uncheckQueryParamsPlugin from "./plugins/uncheck-query-params";
 
 const config: ZudokuConfig = {
+  docs: {
+    files: "pages/**/*.{md,mdx}",
+    publishMarkdown: true,
+    llms: {
+      llmsTxt: true,
+      llmsTxtFull: true,
+      includeProtected: false,
+    },
+  },
   site: {
     logo: {
       src: { light: "/moca-logo-light.svg", dark: "/moca-logo-dark.svg" },
