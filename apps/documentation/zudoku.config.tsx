@@ -1,5 +1,6 @@
 import type { ZudokuConfig } from "zudoku";
 import uncheckQueryParamsPlugin from "./plugins/uncheck-query-params";
+import fixPagefindUrlsPlugin from "./plugins/fix-pagefind-urls";
 
 const config: ZudokuConfig = {
   docs: {
@@ -20,8 +21,35 @@ const config: ZudokuConfig = {
       termSimilarity: 1.2,
       termSaturation: 1.2,
     },
+    transformResults: ({ result }) => {
+      // Remove .html extension from URLs to match clean URL structure
+      if (!result) return result;
+      
+      const modifiedResult = { ...result };
+      
+      // Fix main result URL
+      if (modifiedResult.url && typeof modifiedResult.url === 'string' && modifiedResult.url.includes(".html")) {
+        modifiedResult.url = modifiedResult.url.replace(/\.html(?=[#?]|$)/, "");
+      }
+      
+      // Fix sub-results URLs if they exist
+      if (modifiedResult.sub_results && Array.isArray(modifiedResult.sub_results)) {
+        modifiedResult.sub_results = modifiedResult.sub_results.map((subResult) => {
+          if (subResult && subResult.url && typeof subResult.url === 'string' && subResult.url.includes(".html")) {
+            return {
+              ...subResult,
+              url: subResult.url.replace(/\.html(?=[#?]|$)/, ""),
+            };
+          }
+          return subResult;
+        });
+      }
+      
+      return modifiedResult;
+    },
   },
   site: {
+    title: "MOCA Codex Documentation",
     logo: {
       src: { light: "/moca-logo-light.svg", dark: "/moca-logo-dark.svg" },
       alt: "MOCA Codex",
@@ -253,7 +281,7 @@ const config: ZudokuConfig = {
     { from: "/", to: "/introduction" },
     { from: "/examples", to: "/examples/introduction" },
   ],
-  plugins: [uncheckQueryParamsPlugin],
+  plugins: [uncheckQueryParamsPlugin, fixPagefindUrlsPlugin],
   apis: [
     {
       type: "file",
