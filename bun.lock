@@ -51,6 +51,7 @@
       "name": "documentation",
       "version": "0.1.0",
       "dependencies": {
+        "@local/config": "workspace:*",
         "react": ">=19.0.0",
         "react-dom": ">=19.0.0",
         "zudoku": "0.66.4",

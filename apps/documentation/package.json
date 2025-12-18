@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "zudoku dev",
     "build": "zudoku build",
+    "postbuild": "npx pagefind --site ./dist",
     "preview": "zudoku preview",
     "lint": "eslint"
   },

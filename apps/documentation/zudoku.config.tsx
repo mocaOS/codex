@@ -11,6 +11,16 @@ const config: ZudokuConfig = {
       includeProtected: false,
     },
   },
+  search: {
+    type: "pagefind",
+    maxSubResults: 3,
+    ranking: {
+      termFrequency: 0.8,
+      pageLength: 0.6,
+      termSimilarity: 1.2,
+      termSaturation: 1.2,
+    },
+  },
   site: {
     logo: {
       src: { light: "/moca-logo-light.svg", dark: "/moca-logo-dark.svg" },
