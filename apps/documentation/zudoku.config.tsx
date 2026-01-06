@@ -56,6 +56,12 @@ const config: ZudokuConfig = {
       width: "130px",
     },
   },
+  metadata: {
+    title: "MOCA Codex Documentation",
+    defaultTitle: "MOCA Codex Documentation",
+    description: "MOCA Codex Documentation",
+    keywords: ["MOCA Codex", "Documentation", "API", "Directus"],
+  },
   navigation: [
     {
       type: "category",
@@ -125,6 +131,24 @@ const config: ZudokuConfig = {
               icon: "database",
               label: "Directus Docs",
               to: "https://docs.directus.io/",
+            },
+            {
+              type: "link",
+              icon: "file-text",
+              label: "LLMs.txt",
+              to: "https://docs.decc0s.com/llms.txt",
+            },
+            {
+              type: "link",
+              icon: "file-text",
+              label: "LLMs.txt Full",
+              to: "https://docs.decc0s.com/llms-full.txt",
+            },
+            {
+              type: "link",
+              icon: "code",
+              label: "OpenAPI Reference",
+              to: "https://api.decc0s.com/api-docs/oas",
             },
           ],
         },
