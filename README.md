@@ -23,6 +23,27 @@ Every DeCC0 character comes with extensive metadata that makes them truly unique
 - **Cultural Context**: Explore cultural affiliations, significant locations, and the communities they belong to
 - **Visual Assets**: Access character images, backgrounds, and composite artwork through IPFS hashes and on-demand transformations
 
+## Moltbot: AI Agent Personalities
+
+Each DeCC0 character includes a `moltbot` field containing versioned personality and identity data designed for AI agents:
+
+```json
+{
+  "moltbot": {
+    "v0.1": {
+      "soul": "# SOUL.md — Parvata\n\nYou are Parvata...",
+      "identity": "# IDENTITY.md\n\nName: Parvata\nEmoji: 🌊..."
+    }
+  }
+}
+```
+
+- **Soul**: Complete character personality including core temperament, voice rules, style exemplars, and behavioral guidelines
+- **Identity**: Character metadata with name, emoji, residence, and characterization
+- **Versioning**: Multiple versions can coexist, allowing for character evolution tracking
+
+This enables building AI agents that embody each character's unique voice, personality, and worldview.
+
 ## Powerful Querying & Filtering
 
 The API is built on Directus, providing enterprise-grade querying capabilities:
@@ -81,6 +102,12 @@ curl "https://api.decc0s.com/items/codex?filter[cultural_affiliation][_contains]
 
 ```bash
 curl "https://api.decc0s.com/assets/{file-id}?key=s512&format=webp"
+```
+
+**Example: Get character moltbot data for AI agents**
+
+```bash
+curl "https://api.decc0s.com/items/codex/1?fields=id,name,moltbot"
 ```
 
 For detailed API documentation including all available fields, filter operators, and query parameters, visit [docs.decc0s.com](https://docs.decc0s.com).

@@ -1,2 +1,4 @@
 !.env
 !.env.*
+!scripts/souls
+!scripts/souls_json

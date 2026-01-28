@@ -16,6 +16,7 @@
     "build:documentation": "FORCE_COLOR=1 turbo build --filter=documentation"
   },
   "dependencies": {
+    "@directus/sdk": "^21.0.0",
     "dotenv": "^17.2.3",
     "eslint": "^8.57.1"
   },

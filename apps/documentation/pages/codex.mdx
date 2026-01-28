@@ -175,7 +175,59 @@ Each codex item contains the following fields:
 | `whatness` | array | Array of characteristics or roles |
 | `artstyle_disliked` | string | Art styles the entity dislikes |
 | `owner` | string | Ethereum wallet address of the owner |
+| `moltbot` | object | Versioned soul and identity data (see below) |
 | `timestamp_created` | datetime | Creation timestamp |
+
+---
+
+## Moltbot Data
+
+The `moltbot` field contains versioned personality and identity data for each entity. This data is used by AI agents to embody the character's voice and persona.
+
+### Structure
+
+```json
+{
+  "v0.1": {
+    "soul": "# SOUL.md — EntityName\n\nYou are EntityName...",
+    "identity": "# IDENTITY.md\n\nName: EntityName\n..."
+  }
+}
+```
+
+### Version Keys
+
+Each version key (e.g., `v0.1`, `v0.2`) contains:
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `soul` | string | Full SOUL.md content - character personality, voice rules, and behavior |
+| `identity` | string | Full IDENTITY.md content - name, emoji, residence, and characterization |
+
+### Example Request
+
+<pre><code className="language-bash">{`curl "${API_BASE_URL}/items/codex/1?fields=id,name,moltbot"`}</code></pre>
+
+### Example Response
+
+```json
+{
+  "data": {
+    "id": 1,
+    "name": ["Parvata"],
+    "moltbot": {
+      "v0.1": {
+        "soul": "# SOUL.md — Parvata\n\nYou are Parvata. Stay consistent with your identity.\n\n## Core Temperament\nfractured; surreal; paradoxical...",
+        "identity": "# IDENTITY.md\n\nName: Parvata\nEmoji: 🌊\n\nSelf-identity: a male person\nResidence: Cairo, Cairo Governorate, Egypt..."
+      }
+    }
+  }
+}
+```
+
+<Callout type="info" title="Versioning" icon>
+  Multiple versions can coexist in the `moltbot` field. New versions are added without overwriting previous ones, allowing for character evolution tracking.
+</Callout>
 
 ---
 

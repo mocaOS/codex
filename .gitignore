@@ -49,3 +49,6 @@ yarn-error.log*
 .gitignore.original
 
 .gitlab-ci.yml
+
+scripts/souls
+scripts/souls_json
