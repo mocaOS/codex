@@ -115,6 +115,6 @@ EXPOSE 8055
 HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=5 \
   CMD curl -f http://localhost:8055/server/health || exit 1
 
-# Use default Directus start command (init hook handles setup)
-CMD ["npx", "directus", "start"]
+# Run bootstrap (applies pending migrations + ensures admin user) then start
+CMD ["sh", "-c", "npx directus bootstrap && npx directus start"]
 
