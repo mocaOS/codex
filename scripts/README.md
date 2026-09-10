@@ -10,6 +10,46 @@ Scripts for managing soul and identity data for the Codex collection.
 
 ## Available Scripts
 
+### generate-decc0-mds.ts
+
+Generates one Markdown document per Art DeCC0 (all 10,000) from the Codex API, laid out like the explorer page (https://codex.decc0s.com/{id}): the trait list, an Images section split into Optimized Versions (main image, character layer, and background layer via the API's s512 thumbnails) and Original Source (IPFS gateway links), and all narrative data (description, confession, basic information, personal attributes, art preferences, biography, visual appearance, favorites, writing behavior, characterization) — for ingestion into a dedicated knowledge base that agents can query.
+
+Agent-framework payloads (`moltbot` SOUL.md/IDENTITY.md and ElizaOS `agent_profiles`) are intentionally excluded — they are derivative data and not needed here.
+
+The output folder `decc0-mds/` is gitignored; documents are reconstructed deterministically from the API at any time.
+
+```bash
+# Generate all 10,000 documents
+bun run scripts/generate-decc0-mds.ts
+
+# Generate only the first N documents (e.g. for a quick check)
+bun run scripts/generate-decc0-mds.ts --limit=3
+
+# Generate specific codex IDs
+bun run scripts/generate-decc0-mds.ts --ids=1,2,437,227
+
+# Preview without writing files
+bun run scripts/generate-decc0-mds.ts --dry-run
+
+# Custom output directory
+bun run scripts/generate-decc0-mds.ts --out=/tmp/decc0s-md
+```
+
+| Option | Description |
+|--------|-------------|
+| `--limit=N` | Only process the first N records |
+| `--ids=1,2,3` | Only process the given codex IDs |
+| `--out=DIR` | Output directory (default: `decc0-mds`) |
+| `--dry-run` | Fetch and count, but write no files |
+
+**Environment Variables:**
+
+| Variable | Description | Default |
+|----------|-------------|---------|
+| `PUBLIC_URL` | Codex API URL | `https://api.decc0s.com` |
+
+**Output:** one `<repo>/decc0-mds/0001.md` … `10000.md`, named by token ID (zero-padded for stable sorting).
+
 ### parse-souls.ts
 
 Reads `IDENTITY.md` and `SOUL.md` files from the `souls/` folder and generates JSON files with the raw markdown content.

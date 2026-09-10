@@ -55,3 +55,6 @@ scripts/souls_json
 
 # Claude
 .claude/settings.local.json
+
+# Generated DeCC0 markdown documents (reconstructed by scripts/generate-decc0-mds.ts)
+decc0-mds/
