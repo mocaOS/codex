@@ -45,7 +45,12 @@ async function fetchTokensFromGraph(lastTokenId: number = 0, apiKey: string): Pr
     });
 
     if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
+      const body = await response.text().catch(() => "");
+      const isCloudflareBlock = body.includes("cloudflare") || body.includes("Attention Required");
+      const detail = isCloudflareBlock
+        ? "blocked by Cloudflare (IP or request flagged, not an auth error)"
+        : body.slice(0, 500);
+      throw new Error(`HTTP error! status: ${response.status} - ${detail}`);
     }
 
     const result = await response.json();
@@ -96,11 +101,14 @@ async function updateCodexOwners(services: any, getSchema: () => Promise<any>, l
     let totalErrors = 0;
     let lastTokenId = 0;
     let hasMore = true;
+    let consecutiveFetchFailures = 0;
+    const MAX_CONSECUTIVE_FETCH_FAILURES = 3;
 
     // Fetch all tokens in batches
     while (hasMore) {
       try {
         const { tokens, lastTokenId: newLastTokenId } = await fetchTokensFromGraph(lastTokenId, apiKey);
+        consecutiveFetchFailures = 0;
         totalFetched += tokens.length;
 
         if (tokens.length === 0) {
@@ -164,11 +172,15 @@ async function updateCodexOwners(services: any, getSchema: () => Promise<any>, l
         // Add a small delay to avoid rate limiting
         await new Promise(resolve => setTimeout(resolve, 100));
       } catch (error) {
-        logger.error("Error fetching batch from The Graph:", error);
+        consecutiveFetchFailures++;
         totalErrors++;
-        // If we get an error, try to continue with next batch after a delay
+        if (consecutiveFetchFailures >= MAX_CONSECUTIVE_FETCH_FAILURES) {
+          logger.error(`❌ ${consecutiveFetchFailures} consecutive batch fetches failed. Aborting owners update to prevent infinite retry loop. First error:`, error);
+          break;
+        }
+        logger.error("Error fetching batch from The Graph:", error);
+        // Retry the same batch after a delay
         await new Promise(resolve => setTimeout(resolve, 1000));
-        lastTokenId += 1000; // Skip ahead to avoid infinite loop
       }
     }
 
