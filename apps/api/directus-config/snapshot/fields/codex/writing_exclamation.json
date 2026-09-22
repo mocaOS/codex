@@ -15,6 +15,7 @@
     "options": null,
     "readonly": false,
     "required": false,
+    "searchable": true,
     "sort": 55,
     "special": null,
     "translations": null,
