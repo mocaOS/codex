@@ -5,8 +5,9 @@ const THE_GRAPH_SUBGRAPH_ID = "G39v7PFNz911KNWga8erpgei622XKQLW7P6JBmm6fC97";
 /**
  * Gets The Graph API URL with API key from environment
  */
-function getTheGraphApiUrl(apiKey: string): string {
-  return `https://gateway.thegraph.com/api/${apiKey}/subgraphs/id/${THE_GRAPH_SUBGRAPH_ID}`;
+function getTheGraphApiUrl(apiKey: string, gatewayUrl?: string): string {
+  const base = (gatewayUrl || "https://gateway.thegraph.com").replace(/\/+$/, "");
+  return `${base}/api/${apiKey}/subgraphs/id/${THE_GRAPH_SUBGRAPH_ID}`;
 }
 
 /**
@@ -32,7 +33,7 @@ async function fetchTokensFromGraph(lastTokenId: number = 0, apiKey: string): Pr
   `;
 
   try {
-    const apiUrl = getTheGraphApiUrl(apiKey);
+    const apiUrl = getTheGraphApiUrl(apiKey, env.THE_GRAPH_GATEWAY_URL);
     const response = await fetch(apiUrl, {
       method: "POST",
       headers: {
