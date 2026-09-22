@@ -37,6 +37,9 @@ async function fetchTokensFromGraph(lastTokenId: number = 0, apiKey: string): Pr
       method: "POST",
       headers: {
         "Content-Type": "application/json",
+        // Cloudflare blocks requests without a User-Agent (403 challenge page)
+        "User-Agent": "codex-owner-sync/1.0 (+https://github.com/mocaOS/codex)",
+        "Accept": "application/json",
       },
       body: JSON.stringify({
         query,
@@ -102,7 +105,8 @@ async function updateCodexOwners(services: any, getSchema: () => Promise<any>, l
     let lastTokenId = 0;
     let hasMore = true;
     let consecutiveFetchFailures = 0;
-    const MAX_CONSECUTIVE_FETCH_FAILURES = 3;
+    const MAX_CONSECUTIVE_FETCH_FAILURES = 6;
+    const FETCH_RETRY_DELAYS_MS = [2000, 5000, 10000, 20000, 40000, 60000];
 
     // Fetch all tokens in batches
     while (hasMore) {
@@ -179,8 +183,8 @@ async function updateCodexOwners(services: any, getSchema: () => Promise<any>, l
           break;
         }
         logger.error("Error fetching batch from The Graph:", error);
-        // Retry the same batch after a delay
-        await new Promise(resolve => setTimeout(resolve, 1000));
+        // Retry the same batch with growing backoff (Cloudflare blocks are often transient)
+        await new Promise(resolve => setTimeout(resolve, FETCH_RETRY_DELAYS_MS[Math.min(consecutiveFetchFailures - 1, FETCH_RETRY_DELAYS_MS.length - 1)]));
       }
     }
 
