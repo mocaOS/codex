@@ -67,7 +67,9 @@ RUN mkdir -p ./directus && \
 RUN cd ./directus/directus-extension-api-docs && \
     npm install --no-audit --no-fund --legacy-peer-deps --include=dev ajv || true
 
-FROM directus/directus:latest AS api-production
+# Pinned: Directus 12.3+ returns 403 for unauthenticated /server/health (breaks docker healthcheck);
+# pin instead of :latest so upstream changes don't break prod deploys unexpectedly
+FROM directus/directus:12.3.1 AS api-production
 
 # Switch to root to install dependencies and copy files
 USER root
