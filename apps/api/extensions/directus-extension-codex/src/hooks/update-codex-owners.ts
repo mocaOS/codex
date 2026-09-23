@@ -14,9 +14,10 @@ function getTheGraphApiUrl(apiKey: string, gatewayUrl?: string): string {
  * Fetches tokens from The Graph API with pagination
  * @param lastTokenId - The last tokenId from the previous batch (for pagination)
  * @param apiKey - The Graph API key from environment
+ * @param gatewayUrl - Optional override for the gateway base URL (env.THE_GRAPH_GATEWAY_URL)
  * @returns Promise with tokens array and last tokenId
  */
-async function fetchTokensFromGraph(lastTokenId: number = 0, apiKey: string): Promise<{ tokens: Array<{ id: string; tokenId: string; owner: string }>; lastTokenId: number }> {
+async function fetchTokensFromGraph(lastTokenId: number = 0, apiKey: string, gatewayUrl?: string): Promise<{ tokens: Array<{ id: string; tokenId: string; owner: string }>; lastTokenId: number }> {
   const query = `
     query Tokens($lastTokenId: Int) {
       tokens(
@@ -33,7 +34,7 @@ async function fetchTokensFromGraph(lastTokenId: number = 0, apiKey: string): Pr
   `;
 
   try {
-    const apiUrl = getTheGraphApiUrl(apiKey, env.THE_GRAPH_GATEWAY_URL);
+    const apiUrl = getTheGraphApiUrl(apiKey, gatewayUrl);
     const response = await fetch(apiUrl, {
       method: "POST",
       headers: {
@@ -112,7 +113,7 @@ async function updateCodexOwners(services: any, getSchema: () => Promise<any>, l
     // Fetch all tokens in batches
     while (hasMore) {
       try {
-        const { tokens, lastTokenId: newLastTokenId } = await fetchTokensFromGraph(lastTokenId, apiKey);
+        const { tokens, lastTokenId: newLastTokenId } = await fetchTokensFromGraph(lastTokenId, apiKey, env.THE_GRAPH_GATEWAY_URL);
         consecutiveFetchFailures = 0;
         totalFetched += tokens.length;
 
