@@ -2,6 +2,14 @@ import { defineHook } from "@directus/extensions-sdk";
 
 const THE_GRAPH_SUBGRAPH_ID = "G39v7PFNz911KNWga8erpgei622XKQLW7P6JBmm6fC97";
 
+interface SubgraphEndpoint {
+  name: string;
+  url: string;
+  headers: Record<string, string>;
+}
+
+type GraphToken = { id: string; tokenId: string; owner: string };
+
 /**
  * Gets The Graph API URL. The API key is sent as a Bearer header, not in the path:
  * Cloudflare blocks the key-in-path URL for our key + subgraph (403 from any IP).
@@ -12,13 +20,31 @@ function getTheGraphApiUrl(gatewayUrl?: string): string {
 }
 
 /**
- * Fetches tokens from The Graph API with pagination
+ * Subgraph endpoints in the order they are tried: The Graph gateway (needs THE_GRAPH_API_KEY), then
+ * THE_GRAPH_FALLBACK_URL, our self-hosted graph-node serving the same deployment without an API key
+ */
+function getSubgraphEndpoints(env: any): SubgraphEndpoint[] {
+  const endpoints: SubgraphEndpoint[] = [];
+  if (env.THE_GRAPH_API_KEY) {
+    endpoints.push({
+      name: "The Graph gateway",
+      url: getTheGraphApiUrl(env.THE_GRAPH_GATEWAY_URL),
+      headers: { Authorization: `Bearer ${env.THE_GRAPH_API_KEY}` },
+    });
+  }
+  if (env.THE_GRAPH_FALLBACK_URL) {
+    endpoints.push({ name: "fallback graph-node", url: env.THE_GRAPH_FALLBACK_URL, headers: {} });
+  }
+  return endpoints;
+}
+
+/**
+ * Fetches tokens from a subgraph endpoint with pagination
  * @param lastTokenId - The last tokenId from the previous batch (for pagination)
- * @param apiKey - The Graph API key from environment
- * @param gatewayUrl - Optional override for the gateway base URL (env.THE_GRAPH_GATEWAY_URL)
+ * @param endpoint - The subgraph endpoint to query
  * @returns Promise with tokens array and last tokenId
  */
-async function fetchTokensFromGraph(lastTokenId: number = 0, apiKey: string, gatewayUrl?: string): Promise<{ tokens: Array<{ id: string; tokenId: string; owner: string }>; lastTokenId: number }> {
+async function fetchTokensFromGraph(lastTokenId: number = 0, endpoint: SubgraphEndpoint): Promise<{ tokens: GraphToken[]; lastTokenId: number }> {
   const query = `
     query Tokens($lastTokenId: Int) {
       tokens(
@@ -35,11 +61,10 @@ async function fetchTokensFromGraph(lastTokenId: number = 0, apiKey: string, gat
   `;
 
   try {
-    const apiUrl = getTheGraphApiUrl(gatewayUrl);
-    const response = await fetch(apiUrl, {
+    const response = await fetch(endpoint.url, {
       method: "POST",
       headers: {
-        "Authorization": `Bearer ${apiKey}`,
+        ...endpoint.headers,
         "Content-Type": "application/json",
         // Cloudflare blocks requests without a User-Agent (403 challenge page)
         "User-Agent": "codex-owner-sync/1.0 (+https://github.com/mocaOS/codex)",
@@ -71,9 +96,26 @@ async function fetchTokensFromGraph(lastTokenId: number = 0, apiKey: string, gat
 
     return { tokens, lastTokenId: lastId };
   } catch (error) {
-    console.error("Error fetching tokens from The Graph:", error);
+    console.error(`Error fetching tokens from ${endpoint.name}:`, error);
     throw error;
   }
+}
+
+/**
+ * Fetches a batch from the first endpoint that answers, starting with the one that answered the
+ * previous batch, so a failing endpoint costs one failed request per run instead of one per batch
+ */
+async function fetchTokensWithFallback(lastTokenId: number, endpoints: SubgraphEndpoint[], startIndex: number): Promise<{ tokens: GraphToken[]; lastTokenId: number; endpointIndex: number }> {
+  let lastError: unknown;
+  for (const endpoint of [ ...endpoints.slice(startIndex), ...endpoints.slice(0, startIndex) ]) {
+    try {
+      const result = await fetchTokensFromGraph(lastTokenId, endpoint);
+      return { ...result, endpointIndex: endpoints.indexOf(endpoint) };
+    } catch (error) {
+      lastError = error;
+    }
+  }
+  throw lastError;
 }
 
 /**
@@ -82,9 +124,9 @@ async function fetchTokensFromGraph(lastTokenId: number = 0, apiKey: string, gat
 async function updateCodexOwners(services: any, getSchema: () => Promise<any>, logger: any, env: any) {
   logger.info("🔄 Starting codex owners update job...");
 
-  const apiKey = env.THE_GRAPH_API_KEY;
-  if (!apiKey) {
-    logger.error("❌ THE_GRAPH_API_KEY environment variable is not set. Skipping owner update.");
+  const endpoints = getSubgraphEndpoints(env);
+  if (endpoints.length === 0) {
+    logger.error("❌ Neither THE_GRAPH_API_KEY nor THE_GRAPH_FALLBACK_URL is set. Skipping owner update.");
     return;
   }
 
@@ -109,13 +151,18 @@ async function updateCodexOwners(services: any, getSchema: () => Promise<any>, l
     let lastTokenId = 0;
     let hasMore = true;
     let consecutiveFetchFailures = 0;
+    let activeEndpoint = 0;
     const MAX_CONSECUTIVE_FETCH_FAILURES = 6;
     const FETCH_RETRY_DELAYS_MS = [2000, 5000, 10000, 20000, 40000, 60000];
 
     // Fetch all tokens in batches
     while (hasMore) {
       try {
-        const { tokens, lastTokenId: newLastTokenId } = await fetchTokensFromGraph(lastTokenId, apiKey, env.THE_GRAPH_GATEWAY_URL);
+        const { tokens, lastTokenId: newLastTokenId, endpointIndex } = await fetchTokensWithFallback(lastTokenId, endpoints, activeEndpoint);
+        if (endpointIndex !== activeEndpoint) {
+          logger.warn(`⚠️ ${endpoints[activeEndpoint]?.name} failed, continuing with ${endpoints[endpointIndex]?.name}`);
+          activeEndpoint = endpointIndex;
+        }
         consecutiveFetchFailures = 0;
         totalFetched += tokens.length;
 
@@ -186,13 +233,14 @@ async function updateCodexOwners(services: any, getSchema: () => Promise<any>, l
           logger.error(`❌ ${consecutiveFetchFailures} consecutive batch fetches failed. Aborting owners update to prevent infinite retry loop. First error:`, error);
           break;
         }
-        logger.error("Error fetching batch from The Graph:", error);
+        logger.error("Error fetching batch from all subgraph endpoints:", error);
         // Retry the same batch with growing backoff (Cloudflare blocks are often transient)
         await new Promise(resolve => setTimeout(resolve, FETCH_RETRY_DELAYS_MS[Math.min(consecutiveFetchFailures - 1, FETCH_RETRY_DELAYS_MS.length - 1)]));
       }
     }
 
     logger.info("✅ Codex owners update job completed!");
+    logger.info(`   - Source: ${totalFetched > 0 ? endpoints[activeEndpoint]?.name : "none (all endpoints failed)"}`);
     logger.info(`   - Total tokens fetched: ${totalFetched}`);
     logger.info(`   - Total codex items updated: ${totalUpdated}`);
     logger.info(`   - Total errors: ${totalErrors}`);

@@ -80,6 +80,8 @@ services:
       - THE_GRAPH_API_KEY=${THE_GRAPH_API_KEY}
       # Optional: override the gateway base URL (e.g. route via a proxy to bypass Cloudflare IP blocks)
       - THE_GRAPH_GATEWAY_URL=${THE_GRAPH_GATEWAY_URL:-https://gateway.thegraph.com}
+      # Fallback when the gateway fails: self-hosted graph-node serving the same subgraph deployment (no API key)
+      - THE_GRAPH_FALLBACK_URL=${THE_GRAPH_FALLBACK_URL:-https://mainnet-graph.deploy.qwellco.de/subgraphs/name/moca/decc0s}
       
       # Admin token for directus-sync
       - ADMIN_TOKEN=${ADMIN_TOKEN}
