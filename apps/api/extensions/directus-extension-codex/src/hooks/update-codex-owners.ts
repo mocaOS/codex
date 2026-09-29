@@ -3,11 +3,12 @@ import { defineHook } from "@directus/extensions-sdk";
 const THE_GRAPH_SUBGRAPH_ID = "G39v7PFNz911KNWga8erpgei622XKQLW7P6JBmm6fC97";
 
 /**
- * Gets The Graph API URL with API key from environment
+ * Gets The Graph API URL. The API key is sent as a Bearer header, not in the path:
+ * Cloudflare blocks the key-in-path URL for our key + subgraph (403 from any IP).
  */
-function getTheGraphApiUrl(apiKey: string, gatewayUrl?: string): string {
+function getTheGraphApiUrl(gatewayUrl?: string): string {
   const base = (gatewayUrl || "https://gateway.thegraph.com").replace(/\/+$/, "");
-  return `${base}/api/${apiKey}/subgraphs/id/${THE_GRAPH_SUBGRAPH_ID}`;
+  return `${base}/api/subgraphs/id/${THE_GRAPH_SUBGRAPH_ID}`;
 }
 
 /**
@@ -34,10 +35,11 @@ async function fetchTokensFromGraph(lastTokenId: number = 0, apiKey: string, gat
   `;
 
   try {
-    const apiUrl = getTheGraphApiUrl(apiKey, gatewayUrl);
+    const apiUrl = getTheGraphApiUrl(gatewayUrl);
     const response = await fetch(apiUrl, {
       method: "POST",
       headers: {
+        "Authorization": `Bearer ${apiKey}`,
         "Content-Type": "application/json",
         // Cloudflare blocks requests without a User-Agent (403 challenge page)
         "User-Agent": "codex-owner-sync/1.0 (+https://github.com/mocaOS/codex)",
